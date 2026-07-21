@@ -76,7 +76,7 @@ const packageTemplateString = `<!DOCTYPE html>
 			}
 			.versions a.current {
 				color: black;
-				font-decoration: none;
+				text-decoration: none;
 			}
 
 			/* wrapper for page content to push down footer */
@@ -179,7 +179,7 @@ const packageTemplateString = `<!DOCTYPE html>
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-12">
-						<p class="text-muted credit"><a href="https://gopkg.in">gopkg.in<a></p>
+						<p class="text-muted credit"><a href="https://gopkg.in">gopkg.in</a></p>
 					</div>
 				</div>
 			</div>

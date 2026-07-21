@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+- title: Imported gopkg.in source into app/
+  author: minulo
+  type: minor
+  description: Snapshot copy of the gopkg.in service source (niemeyer/gopkg at commit aaef014) grouped under app/ while the repository layout is being set up. The upstream BSD-style LICENSE replaces the previous Apache-2.0 license. Verified go build, go vet, and go test all pass after import.
+  urls:
+    pr:
+      - "https://github.com/canonical/gopkg/pull/4"
+    related_doc:
+    related_issue:
+  visibility: internal
+  highlight: false

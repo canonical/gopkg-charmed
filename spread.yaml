@@ -1,7 +1,7 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-project: platform-engineering-charm-template
+project: gopkg
 path: /home/ubuntu/proj
 kill-timeout: 60m
 warn-timeout: 1m
@@ -19,9 +19,9 @@ exclude:
 - .venv
 - .*_cache
 integration-suites:
-  tests/integration/:
+  charm/tests/integration/:
     summary: integration tests
-    working-dir: ./
+    working-dir: charm/
     backends:
     - integration-test
     pytest-arguments-template: |

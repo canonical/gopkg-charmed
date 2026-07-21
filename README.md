@@ -7,7 +7,7 @@ Avoid using this README file for information that is maintained or published els
 
 Use links instead.
 -->
-# Platform engineering charm template
+# gopkg
 <!-- Use this space for badges -->
 
 Describe your charm in 1-2 sentences. Include the software that the charm deploys (if applicable), and the substrate (VM/K8s).
@@ -15,7 +15,7 @@ Describe your charm in 1-2 sentences. Include the software that the charm deploy
 Like any Juju charm, this charm supports one-line deployment, configuration, integration, scaling, and more. For Charmed {Name}, this includes:
 * list or summary of app-specific features
 
-For information about how to deploy, integrate, and manage this charm, see the Official [platform-engineering-charm-template Documentation](external link).
+For information about how to deploy, integrate, and manage this charm, see the Official [gopkg Documentation](external link).
 
 ## Get started
 <!--If the charm already contains a relevant how-to guide or tutorial in its documentation,

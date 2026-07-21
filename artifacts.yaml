@@ -2,14 +2,16 @@
 # See LICENSE file for licensing details.
 
 version: 1
-rocks: []
+rocks:
+- name: gopkg
+  rockcraft-yaml: rockcraft.yaml
 charms:
-- name: platform-engineering-charm-template
-  charmcraft-yaml: charmcraft.yaml
+- name: gopkg
+  charmcraft-yaml: charm/charmcraft.yaml
   channel: latest/edge
   resources:
-    httpbin-image:
+    app-image:
       type: oci-image
+      rock: gopkg
   platforms:
   - arch: amd64
-snaps: []

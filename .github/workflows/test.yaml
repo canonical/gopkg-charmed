@@ -11,4 +11,4 @@ jobs:
       pull-requests: write
     secrets: inherit
     with:
-      with-uv: true
+      working-directory: charm

@@ -4,13 +4,13 @@
 variable "app_name" {
   description = "Name of the application in the Juju model."
   type        = string
-  default     = "netbox-k8s"
+  default     = "gopkg"
 }
 
 variable "base" {
   description = "The operating system on which to deploy"
   type        = string
-  default     = "ubuntu@22.04"
+  default     = "ubuntu@24.04"
 }
 
 variable "channel" {
@@ -20,7 +20,7 @@ variable "channel" {
 }
 
 variable "config" {
-  description = "Application config. Details about available options can be found at https://charmhub.io/netbox-k8s/configurations."
+  description = "Application config. Details about available options can be found at https://charmhub.io/gopkg/configurations."
   type        = map(string)
   default     = {}
 }

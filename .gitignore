@@ -9,7 +9,7 @@ __pycache__/
 .vscode
 .mypy_cache
 *.egg-info/
-*/*.rock
+*.rock
 terraform/tests/.terraform
 
 # BEGIN VALE WORKFLOW IGNORE

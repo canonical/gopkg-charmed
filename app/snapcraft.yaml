@@ -1,0 +1,36 @@
+name: gopkg
+version: 2018.03.27
+summary: Daemon that runs gopkg.in
+description: Daemon that runs gopkg.in
+base: core18
+
+confinement: strict
+grade: stable
+
+plugs:
+    network:
+    network-bind:
+
+apps:
+    gopkg:
+        command: bin/gopkg
+        adapter: none
+
+    daemon:
+        command: gopkg -acme=$SNAP_DATA/certs -http=:80 -https=:443
+        daemon: simple
+
+parts:
+    gopkg:
+        plugin: go
+        source: .
+        go-importpath: niemeyer/gopkg
+        build-packages:
+            - git
+        build-environment:
+            # https://github.com/golang/go/issues/33840
+            - CGO_ENABLED: "0"
+        build-snaps:
+            - go
+        prime:
+            - bin/gopkg

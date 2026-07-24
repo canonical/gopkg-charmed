@@ -22,12 +22,60 @@ import (
 )
 
 var (
-	httpFlag  = flag.String("http", ":8080", "Serve HTTP at given address")
-	httpsFlag = flag.String("https", "", "Serve HTTPS at given address")
-	certFlag  = flag.String("cert", "", "Use the provided TLS certificate")
-	keyFlag   = flag.String("key", "", "Use the provided TLS key")
-	acmeFlag  = flag.String("acme", "", "Auto-request TLS certs and store in given directory")
+	httpFlag     = flag.String("http", defaultHTTPAddr(), "Serve HTTP at given address (default honours APP_PORT)")
+	httpsFlag    = flag.String("https", "", "Serve HTTPS at given address")
+	certFlag     = flag.String("cert", "", "Use the provided TLS certificate")
+	keyFlag      = flag.String("key", "", "Use the provided TLS key")
+	acmeFlag     = flag.String("acme", "", "Auto-request TLS certs and store in given directory")
+	hostnameFlag = flag.String("hostname", envOr("APP_HOSTNAME", "gopkg.in"), "Hostname rendered in package pages and go-import meta tags (default honours APP_HOSTNAME)")
 )
+
+// envOr returns the value of the environment variable key, or fallback if it
+// is unset or empty.
+func envOr(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
+// defaultHTTPAddr returns the default HTTP listen address. APP_PORT carries a
+// bare port number when running under a 12-factor charm.
+func defaultHTTPAddr() string {
+	if port := os.Getenv("APP_PORT"); port != "" {
+		return ":" + port
+	}
+	return ":8080"
+}
+
+var hostnamePattern = regexp.MustCompile(`^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?)*$`)
+
+// validPort reports whether s is an integer TCP port in the range 1-65535.
+func validPort(s string) bool {
+	n, err := strconv.Atoi(s)
+	return err == nil && n >= 1 && n <= 65535
+}
+
+// validateHostname checks that host is a bare "host" or "host:port" suitable
+// for rendering into import paths and links, rejecting values with a scheme,
+// path, or malformed labels so bad config fails at startup rather than as
+// broken go-import meta tags.
+func validateHostname(host string) error {
+	if strings.Contains(host, "/") {
+		return fmt.Errorf("invalid hostname %q: must not contain a scheme or path (e.g. \"gopkg.in\", not \"https://gopkg.in/\")", host)
+	}
+	hostOnly := host
+	if i := strings.LastIndexByte(host, ':'); i >= 0 {
+		if !validPort(host[i+1:]) {
+			return fmt.Errorf("invalid hostname %q: port must be an integer between 1 and 65535", host)
+		}
+		hostOnly = host[:i]
+	}
+	if !hostnamePattern.MatchString(hostOnly) {
+		return fmt.Errorf("invalid hostname %q: must be host or host:port without scheme or path (e.g. \"gopkg.in\")", host)
+	}
+	return nil
+}
 
 var httpClient = &http.Client{
 	Timeout: 10 * time.Second,
@@ -54,6 +102,16 @@ func main() {
 func run() error {
 	flag.Parse()
 
+	// Fail fast on malformed config. APP_PORT is checked whenever set, even
+	// if -http overrides it: an invalid value in the environment is a
+	// deployment bug that should never be masked.
+	if port := os.Getenv("APP_PORT"); port != "" && !validPort(port) {
+		return fmt.Errorf("invalid APP_PORT %q: must be an integer between 1 and 65535", port)
+	}
+	if err := validateHostname(*hostnameFlag); err != nil {
+		return err
+	}
+
 	http.HandleFunc("/", handler)
 
 	if *httpFlag == "" && *httpsFlag == "" {
@@ -70,12 +128,12 @@ func run() error {
 	}
 
 	// side effect, if errors comes to channel, run() immediately escape
-	// So if http, https, or acme through an error, it will 
+	// So if http, https, or acme through an error, it will
 	// escape immediately, rather than waiting for other goroutines.
 	ch := make(chan error, 2)
 
 	// If acme is set and we cant create a directory to do sth (Copilot suggest this dir
-	// store the cert), we will exit early with error. 
+	// store the cert), we will exit early with error.
 	if *acmeFlag != "" {
 		// So a potential error is seen upfront.
 		if err := os.MkdirAll(*acmeFlag, 0700); err != nil {
@@ -98,7 +156,7 @@ func run() error {
 		server := newServer()
 		server.Addr = *httpsFlag
 
-		// if acme is set, we setup the certificate challenger responder 
+		// if acme is set, we setup the certificate challenger responder
 		// to handle ACME HTTP-01 challenges add add the config to server using the TLSConfig field
 		// I am not sure if we gonna need to change the email or not
 		if *acmeFlag != "" {
@@ -119,8 +177,8 @@ func run() error {
 			server.TLSConfig = &tls.Config{
 				GetCertificate: m.GetCertificate,
 			}
-			// The HTTPS server with the cert will then listen at port 80 
-			// and send stuff into the channel with queue length of 2 
+			// The HTTPS server with the cert will then listen at port 80
+			// and send stuff into the channel with queue length of 2
 			go func() {
 				ch <- http.ListenAndServe(":80", m.HTTPHandler(nil))
 			}()
@@ -132,7 +190,7 @@ func run() error {
 
 	}
 	// This is what cause the run() function to immediately exit when
-	// an error is received from any of the goroutines. 
+	// an error is received from any of the goroutines.
 	return <-ch
 }
 
@@ -207,10 +265,7 @@ var redirect = map[repoBase]repoBase{
 // we may need to parameterized this constant in the future to allow
 // configuring the base URLs for GitHub and gopkg.in, rather than
 // hardcoding them as part of our 12-factor app requirements.
-const (
-	githubCom = "github.com"
-	gopkgIn   = "gopkg.in"
-)
+const githubCom = "github.com"
 
 // GitHubRoot returns the repository root at GitHub, without a schema.
 func (repo *Repo) GitHubRoot() string {
@@ -247,15 +302,15 @@ func (repo *Repo) GopkgVersionRoot(version Version) string {
 	v := version.String()
 	if repo.OldFormat {
 		if repo.User == "" {
-			return gopkgIn + "/" + v + "/" + repo.Name
+			return *hostnameFlag + "/" + v + "/" + repo.Name
 		} else {
-			return gopkgIn + "/" + repo.User + "/" + v + "/" + repo.Name
+			return *hostnameFlag + "/" + repo.User + "/" + v + "/" + repo.Name
 		}
 	} else {
 		if repo.User == "" {
-			return gopkgIn + "/" + repo.Name + "." + v
+			return *hostnameFlag + "/" + repo.Name + "." + v
 		} else {
-			return gopkgIn + "/" + repo.User + "/" + repo.Name + "." + v
+			return *hostnameFlag + "/" + repo.User + "/" + repo.Name + "." + v
 		}
 	}
 }

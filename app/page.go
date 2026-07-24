@@ -179,7 +179,7 @@ const packageTemplateString = `<!DOCTYPE html>
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-12">
-						<p class="text-muted credit"><a href="https://gopkg.in">gopkg.in</a></p>
+						<p class="text-muted credit"><a href="https://{{.Hostname}}">{{.Hostname}}</a></p>
 					</div>
 				</div>
 			</div>
@@ -211,6 +211,7 @@ func init() {
 
 type packageData struct {
 	Repo           *Repo
+	Hostname       string      // Hostname served in links, from -hostname/APP_HOSTNAME
 	LatestVersions VersionList // Contains only the latest version for each major
 	PackageName    string      // Actual package identifier as specified in https://golang.org/ref/spec#PackageClause
 	Synopsis       string
@@ -229,7 +230,8 @@ var regexpPackageName = regexp.MustCompile(`<h2 id="pkg-overview">package ([\p{L
 
 func renderPackagePage(resp http.ResponseWriter, req *http.Request, repo *Repo) {
 	data := &packageData{
-		Repo: repo,
+		Repo:     repo,
+		Hostname: *hostnameFlag,
 	}
 
 	// Calculate the latest version for each major version, both stable and unstable.

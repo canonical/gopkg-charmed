@@ -22,3 +22,20 @@ The repository root is deliberately reserved for sibling concerns that need
 separation from the app: `docs/` (release-notes tooling, existing), and in
 the future `terraform/` (deployment module) and `tests/` (integration
 tests).
+
+## Quickstart: run locally
+
+```bash
+cd app
+go test ./... && go build -o gopkg .
+APP_PORT=8080 APP_HOSTNAME=localhost ./gopkg
+# in another terminal:
+curl localhost:8080/health-check        # -> ok
+```
+
+Config comes from the environment (`APP_PORT`, `APP_HOSTNAME`); explicit flags
+(`-http`, `-hostname`) override it. Invalid values fail at startup with a
+one-line error.
+
+The rock/charm build and Juju deployment workflow will land with the charm in
+a dedicated PR :D.

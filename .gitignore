@@ -11,3 +11,5 @@ app/gopkg
 .tox/
 .coverage
 12-Factor-Compliance.md
+PLAN-Factor-III-Config.md
+12-Factor-Plan.md

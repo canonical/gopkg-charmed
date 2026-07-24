@@ -69,15 +69,21 @@ func run() error {
 		return fmt.Errorf("-https -cert and -key must be used together")
 	}
 
+	// side effect, if errors comes to channel, run() immediately escape
+	// So if http, https, or acme through an error, it will 
+	// escape immediately, rather than waiting for other goroutines.
 	ch := make(chan error, 2)
 
+	// If acme is set and we cant create a directory to do sth (Copilot suggest this dir
+	// store the cert), we will exit early with error. 
 	if *acmeFlag != "" {
 		// So a potential error is seen upfront.
 		if err := os.MkdirAll(*acmeFlag, 0700); err != nil {
 			return err
 		}
 	}
-
+	// If http is requested (!=) and https and acme is not requested:
+	// just start a server and listen in the address at *httpFlag as the default
 	if *httpFlag != "" && (*httpsFlag == "" || *acmeFlag == "") {
 		server := newServer()
 		server.Addr = *httpFlag
@@ -85,9 +91,16 @@ func run() error {
 			ch <- server.ListenAndServe()
 		}()
 	}
+
+	// If https is set to some address.
 	if *httpsFlag != "" {
+		// then create some new server listening at the address at *httpsFlag
 		server := newServer()
 		server.Addr = *httpsFlag
+
+		// if acme is set, we setup the certificate challenger responder 
+		// to handle ACME HTTP-01 challenges add add the config to server using the TLSConfig field
+		// I am not sure if we gonna need to change the email or not
 		if *acmeFlag != "" {
 			m := autocert.Manager{
 				ForceRSA:    true,
@@ -106,15 +119,20 @@ func run() error {
 			server.TLSConfig = &tls.Config{
 				GetCertificate: m.GetCertificate,
 			}
+			// The HTTPS server with the cert will then listen at port 80 
+			// and send stuff into the channel with queue length of 2 
 			go func() {
 				ch <- http.ListenAndServe(":80", m.HTTPHandler(nil))
 			}()
 		}
+		// no matter what, we start the HTTPS server with the cert
 		go func() {
 			ch <- server.ListenAndServeTLS(*certFlag, *keyFlag)
 		}()
 
 	}
+	// This is what cause the run() function to immediately exit when
+	// an error is received from any of the goroutines. 
 	return <-ch
 }
 
@@ -180,11 +198,15 @@ type repoBase struct {
 	name string
 }
 
+// redirect is a map that defines repository redirects.
 var redirect = map[repoBase]repoBase{
 	// https://github.com/go-fsnotify/fsnotify/issues/1
 	{"", "fsnotify"}: {"fsnotify", "fsnotify"},
 }
 
+// we may need to parameterized this constant in the future to allow
+// configuring the base URLs for GitHub and gopkg.in, rather than
+// hardcoding them as part of our 12-factor app requirements.
 const (
 	githubCom = "github.com"
 	gopkgIn   = "gopkg.in"

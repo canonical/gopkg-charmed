@@ -10,3 +10,4 @@ __pycache__/
 app/gopkg
 .tox/
 .coverage
+12-Factor-Compliance.md

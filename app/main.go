@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"errors"
 	"flag"
 	"fmt"
@@ -17,16 +16,14 @@ import (
 	"sync"
 	"text/template"
 	"time"
-
-	"golang.org/x/crypto/acme/autocert"
 )
 
+// Config comes from the environment (APP_PORT, APP_HOSTNAME) per the 12-factor
+// charm contract; the flags remain as explicit local overrides for development
+// and CI (precedence: flag > env var > default). TLS is not handled in-app —
+// the platform ingress terminates it.
 var (
 	httpFlag     = flag.String("http", defaultHTTPAddr(), "Serve HTTP at given address (default honours APP_PORT)")
-	httpsFlag    = flag.String("https", "", "Serve HTTPS at given address")
-	certFlag     = flag.String("cert", "", "Use the provided TLS certificate")
-	keyFlag      = flag.String("key", "", "Use the provided TLS key")
-	acmeFlag     = flag.String("acme", "", "Auto-request TLS certs and store in given directory")
 	hostnameFlag = flag.String("hostname", envOr("APP_HOSTNAME", "gopkg.in"), "Hostname rendered in package pages and go-import meta tags (default honours APP_HOSTNAME)")
 )
 
@@ -114,84 +111,13 @@ func run() error {
 
 	http.HandleFunc("/", handler)
 
-	if *httpFlag == "" && *httpsFlag == "" {
-		return fmt.Errorf("must provide -http and/or -https")
-	}
-	if *acmeFlag != "" && *httpsFlag == "" {
-		return fmt.Errorf("cannot use -acme without -https")
-	}
-	if *acmeFlag != "" && (*certFlag != "" || *keyFlag != "") {
-		return fmt.Errorf("cannot provide -acme with -key or -cert")
-	}
-	if *acmeFlag == "" && (*httpsFlag != "" || *certFlag != "" || *keyFlag != "") && (*httpsFlag == "" || *certFlag == "" || *keyFlag == "") {
-		return fmt.Errorf("-https -cert and -key must be used together")
+	if *httpFlag == "" {
+		return fmt.Errorf("must provide -http or APP_PORT")
 	}
 
-	// side effect, if errors comes to channel, run() immediately escape
-	// So if http, https, or acme through an error, it will
-	// escape immediately, rather than waiting for other goroutines.
-	ch := make(chan error, 2)
-
-	// If acme is set and we cant create a directory to do sth (Copilot suggest this dir
-	// store the cert), we will exit early with error.
-	if *acmeFlag != "" {
-		// So a potential error is seen upfront.
-		if err := os.MkdirAll(*acmeFlag, 0700); err != nil {
-			return err
-		}
-	}
-	// If http is requested (!=) and https and acme is not requested:
-	// just start a server and listen in the address at *httpFlag as the default
-	if *httpFlag != "" && (*httpsFlag == "" || *acmeFlag == "") {
-		server := newServer()
-		server.Addr = *httpFlag
-		go func() {
-			ch <- server.ListenAndServe()
-		}()
-	}
-
-	// If https is set to some address.
-	if *httpsFlag != "" {
-		// then create some new server listening at the address at *httpsFlag
-		server := newServer()
-		server.Addr = *httpsFlag
-
-		// if acme is set, we setup the certificate challenger responder
-		// to handle ACME HTTP-01 challenges add add the config to server using the TLSConfig field
-		// I am not sure if we gonna need to change the email or not
-		if *acmeFlag != "" {
-			m := autocert.Manager{
-				ForceRSA:    true,
-				Prompt:      autocert.AcceptTOS,
-				Cache:       autocert.DirCache(*acmeFlag),
-				RenewBefore: 24 * 30 * time.Hour,
-				HostPolicy: autocert.HostWhitelist(
-					"localhost",
-					"gopkg.in",
-					"p1.gopkg.in",
-					"p2.gopkg.in",
-					"p3.gopkg.in",
-				),
-				Email: "gustavo@niemeyer.net",
-			}
-			server.TLSConfig = &tls.Config{
-				GetCertificate: m.GetCertificate,
-			}
-			// The HTTPS server with the cert will then listen at port 80
-			// and send stuff into the channel with queue length of 2
-			go func() {
-				ch <- http.ListenAndServe(":80", m.HTTPHandler(nil))
-			}()
-		}
-		// no matter what, we start the HTTPS server with the cert
-		go func() {
-			ch <- server.ListenAndServeTLS(*certFlag, *keyFlag)
-		}()
-
-	}
-	// This is what cause the run() function to immediately exit when
-	// an error is received from any of the goroutines.
-	return <-ch
+	server := newServer()
+	server.Addr = *httpFlag
+	return server.ListenAndServe()
 }
 
 var gogetTemplate = template.Must(template.New("").Parse(`

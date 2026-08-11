@@ -17,7 +17,9 @@ apps:
         adapter: none
 
     daemon:
-        command: gopkg -acme=$SNAP_DATA/certs -http=:80 -https=:443
+        # DEPRECATED deployment path: superseded by the rock+charm (12-factor).
+        # In-app TLS/ACME was removed; HTTPS is terminated by the platform now.
+        command: gopkg -http=:80
         daemon: simple
 
 parts:

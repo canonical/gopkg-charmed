@@ -1,0 +1,15 @@
+name: gopkg
+base: bare
+build-base: ubuntu@24.04
+version: '0.1'
+summary: Stable APIs for the Go language
+description: The gopkg.in versioned-import-path redirector.
+license: BSD-2-Clause
+platforms:
+  arm64:   # match the build VM: `dpkg --print-architecture` (arm64 in Multipass on Apple Silicon; amd64 on Intel/CI)
+extensions:
+  - go-framework
+parts:
+  go-framework/install-app:
+    build-environment:
+      - CGO_ENABLED: "0"

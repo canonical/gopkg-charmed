@@ -4,6 +4,8 @@ branch = true
 
 [tool.coverage.report]
 show_missing = true
+# Team standard: maximum of 85% and the current percentage on main.
+fail_under = 85
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -39,3 +41,16 @@ skip = "build,lib,venv,icon.svg,.tox,.git,.mypy_cache,.ruff_cache,.coverage"
 
 [tool.pyright]
 include = ["src/**.py"]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_defs = true
+# paas-charm ships without type stubs.
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.bandit]
+exclude_dirs = ["tests", "lib", ".tox", "build"]

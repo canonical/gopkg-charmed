@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+- title: Adopted IS Charms team standards tooling configuration
+  author: minulo
+  type: minor
+  description: Committed the team standards document as repo-compliance.md and aligned the charm quality gates with it. Added the required mypy strictness configuration, a coverage fail_under of 85, and bandit configuration to pyproject.toml. Pinned tox to python3.12 to match the ubuntu@24.04 charm base and aligned the tox lint/static environments with the platform-engineering-charm-template. Removed the TODO comment from CODEOWNERS.
+  urls:
+    pr:
+      - "https://github.com/canonical/gopkg/pull/10"
+    related_doc:
+    related_issue:
+  visibility: internal
+  highlight: false

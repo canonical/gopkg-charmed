@@ -6,7 +6,8 @@ summary: Stable APIs for the Go language
 description: The gopkg.in versioned-import-path redirector.
 license: BSD-2-Clause
 platforms:
-  arm64:   # match the build VM: `dpkg --print-architecture` (arm64 in Multipass on Apple Silicon; amd64 on Intel/CI)
+  arm64:
+  amd64:
 extensions:
   - go-framework
 parts:

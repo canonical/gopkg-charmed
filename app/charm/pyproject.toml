@@ -10,6 +10,7 @@ fail_under = 85
 [tool.pytest.ini_options]
 minversion = "6.0"
 log_cli_level = "INFO"
+asyncio_mode = "auto"
 
 # Linting tools configuration
 [tool.ruff]
@@ -20,6 +21,10 @@ lint.ignore = [
     "D107",
     "D203",
     "D204",
+    # D205/D213 ignored per platform-engineering-charm-template: the team's
+    # arrange/act/assert test docstring format (repo-compliance.md) starts on
+    # the second line with no summary-line/blank-line separation.
+    "D205",
     "D213",
     "D215",
     "D400",
@@ -31,7 +36,10 @@ lint.ignore = [
     "D413",
 ]
 extend-exclude = ["__pycache__", "*.egg_info"]
-lint.per-file-ignores = {"tests/*" = ["D100","D101","D102","D103","D104"]}
+# Tests additionally ignore docstring summary rules (D212/D415/D417 per the
+# template) and imperative-mood D401, which the standards' own fixture
+# docstring examples ("The current test model.") do not satisfy.
+lint.per-file-ignores = {"tests/*" = ["D100","D101","D102","D103","D104","D212","D401","D415","D417"]}
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10

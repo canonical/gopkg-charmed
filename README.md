@@ -12,11 +12,9 @@ the operated source of truth for the service going forward.
 
 The service is scoped to the [app/](app/) folder, which is the permanent Go
 project root and the home of the entire 12-factor pipeline: the Go source and
-`go.mod` live there today, and the rock (`app/rockcraft.yaml`) and charm
-(`app/charm/`) — built with the 12-factor `go-framework` extensions for
-Rockcraft and Charmcraft — will be added there as the re-platforming
-progresses. A pre-built 12-factor scaffold is available on the
-`charm-scaffold` branch for reference.
+`go.mod` live there, alongside the rock (`app/rockcraft.yaml`) and charm
+(`app/charm/`) — both built with the 12-factor `go-framework` extensions for
+Rockcraft and Charmcraft.
 
 The repository root is deliberately reserved for sibling concerns that need
 separation from the app: `docs/` (release-notes tooling, existing), and in
@@ -37,5 +35,5 @@ Config comes from the environment (`APP_PORT`, `APP_HOSTNAME`); explicit flags
 (`-http`, `-hostname`) override it. Invalid values fail at startup with a
 one-line error.
 
-The rock/charm build and Juju deployment workflow will land with the charm in
-a dedicated PR :D.
+To build the rock and charm and deploy to a local MicroK8s cloud, follow
+[docs/charm-deployment.md](docs/charm-deployment.md).

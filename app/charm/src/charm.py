@@ -8,7 +8,6 @@ import logging
 import typing
 
 import ops
-
 import paas_charm.go
 
 logger = logging.getLogger(__name__)
@@ -26,5 +25,6 @@ class GopkgCharm(paas_charm.go.Charm):
         super().__init__(*args)
 
 
-if __name__ == "__main__":
+# Exclude from coverage since unit tests should not run as __main__
+if __name__ == "__main__":  # pragma: no cover
     ops.main(GopkgCharm)

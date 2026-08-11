@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+- title: Added charm unit and integration tests
+  author: minulo
+  type: minor
+  description: Added unit tests for the charm shim (instantiation, workload container, hostname config contract, charmcraft.yaml go-framework declaration) with 100% coverage of src, satisfying the 85% team gate. Scaffolded pytest-operator integration tests that deploy the packed charm and verify the health-check endpoint. Restored the tests_path wiring in tox.ini and excluded the __main__ guard from coverage per team standards.
+  urls:
+    pr:
+      - "https://github.com/canonical/gopkg/pull/11"
+    related_doc:
+    related_issue:
+  visibility: internal
+  highlight: false

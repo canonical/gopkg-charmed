@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+- title: Migrated charm unit tests from Harness to the ops.testing framework
+  author: minulo
+  type: minor
+  description: Replaced the deprecated ops.testing.Harness with the current state-transition ops.testing API (Context/State). Tests now dispatch real config-changed events through paas-charm, which additionally exercises its pydantic config validation. Coverage remains at 100% of src. Added ops[testing] to the tox unit and lint environments.
+  urls:
+    pr:
+      - "https://github.com/canonical/gopkg/pull/12"
+    related_doc:
+    related_issue:
+  visibility: internal
+  highlight: false

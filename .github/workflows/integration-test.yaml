@@ -9,6 +9,13 @@ on:
 jobs:
   integration-test:
     uses: canonical/charm-ci/.github/workflows/integration-test.yml@v0.0.1-alpha.10
+    # charm-ci's nested jobs need these: build pushes the rock to ghcr
+    # (packages: write) and reads workflow artifacts (actions: read).
+    # Same grants as haproxy-operator's integration_test.yaml.
+    permissions:
+      contents: read
+      packages: write
+      actions: read
     with:
       working-directory: .
       spread-jobs-include: "integration-test-ci:*"

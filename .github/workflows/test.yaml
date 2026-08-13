@@ -6,6 +6,13 @@ on:
 jobs:
   test:
     uses: canonical/operator-workflows/.github/workflows/test.yaml@main
+    # Nested jobs (check-libraries, license header commenter) post PR
+    # comments/checks; without these grants the token is read-only and
+    # they fail with "Resource not accessible by integration".
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     with:
       working-directory: ./app/charm/
       charm-directory: .

@@ -3,7 +3,7 @@
 version: 1
 
 backends:
-  integration-test:
+  integration-test-ci:
     type: integration-test
     systems:
       - ubuntu-24.04
@@ -16,7 +16,7 @@ integration-suites:
     working-dir: app/charm/
     auto-discover: true
     backends:
-      - integration-test
+      - integration-test-ci
     pytest-arguments-template: |
       --juju-model testing
       --no-juju-teardown

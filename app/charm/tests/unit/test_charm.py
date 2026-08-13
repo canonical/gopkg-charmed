@@ -13,63 +13,72 @@ import yaml
 from charm import GopkgCharm
 
 
-def test_charm_instantiates(harness: ops.testing.Harness) -> None:
+def test_charm_instantiates(ctx: ops.testing.Context, base_state: ops.testing.State) -> None:
     """
-    arrange: given a testing harness built with packed-shape charm metadata
-    act: when the operator framework initialises the charm
+    arrange: given a testing context with packed-shape charm metadata
+    act: when a config-changed event is dispatched
     assert: the charm initialises without raising and is a paas-charm Go
         charm, so the go-framework contract (Pebble-driven workload, APP_*
         env delivery) applies to it.
     """
-    harness.begin()
+    with ctx(ctx.on.config_changed(), base_state) as mgr:
+        mgr.run()
 
-    charm = harness.charm
-
-    assert isinstance(charm, GopkgCharm)
-    assert isinstance(charm, paas_charm.go.Charm)
+        assert isinstance(mgr.charm, GopkgCharm)
+        assert isinstance(mgr.charm, paas_charm.go.Charm)
 
 
-def test_workload_container_defined(harness: ops.testing.Harness) -> None:
+def test_workload_container_defined(
+    ctx: ops.testing.Context, base_state: ops.testing.State
+) -> None:
     """
     arrange: given an initialised gopkg charm
     act: when the workload container is looked up by the name the
         go-framework extension wires ("app")
     assert: the container exists on the unit.
     """
-    harness.begin()
+    with ctx(ctx.on.config_changed(), base_state) as mgr:
+        mgr.run()
 
-    container = harness.charm.unit.get_container("app")
+        container = mgr.charm.unit.get_container("app")
 
-    assert container.name == "app"
+        assert container.name == "app"
 
 
-def test_hostname_config_default(harness: ops.testing.Harness) -> None:
+def test_hostname_config_default(ctx: ops.testing.Context, base_state: ops.testing.State) -> None:
     """
     arrange: given an initialised gopkg charm with no config overrides
     act: when the hostname option is read
     assert: it defaults to gopkg.in, matching the application's own
         compiled-in fallback.
     """
-    harness.begin()
+    with ctx(ctx.on.config_changed(), base_state) as mgr:
+        mgr.run()
 
-    hostname = harness.charm.config["hostname"]
+        hostname = mgr.charm.config["hostname"]
 
-    assert hostname == "gopkg.in"
+        assert hostname == "gopkg.in"
 
 
-def test_hostname_config_update(harness: ops.testing.Harness) -> None:
+def test_hostname_config_update(ctx: ops.testing.Context, base_state: ops.testing.State) -> None:
     """
-    arrange: given an initialised gopkg charm and a random hostname
-    act: when the hostname option is updated
+    arrange: given a gopkg charm state carrying a random hostname value
+    act: when a config-changed event is dispatched
     assert: the charm observes the updated value, which paas-charm delivers
         to the workload as APP_HOSTNAME.
     """
     hostname = f"{token_hex(8)}.example.com"
-    harness.begin()
+    state = ops.testing.State(
+        leader=True,
+        config={"hostname": hostname},
+        containers=base_state.containers,
+        relations=base_state.relations,
+    )
 
-    harness.update_config({"hostname": hostname})
+    with ctx(ctx.on.config_changed(), state) as mgr:
+        mgr.run()
 
-    assert harness.charm.config["hostname"] == hostname
+        assert mgr.charm.config["hostname"] == hostname
 
 
 def test_charmcraft_declares_go_framework_contract() -> None:

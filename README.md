@@ -23,6 +23,28 @@ tests).
 
 ## Quickstart: run locally
 
+### Prerequisites
+
+The app itself needs only a **Go toolchain ≥ 1.21** (see `app/go.mod`):
+
+```bash
+# macOS
+brew install go
+# Ubuntu/Debian
+sudo snap install go --classic
+# verify
+go version
+```
+
+Go downloads and verifies the module dependencies automatically on the
+first build (from `go.mod`/`go.sum`; network access required once — they
+are cached afterwards). Nothing else is needed: no database, no config
+files. Running the charm test suites needs Python 3.12 and
+[tox](https://tox.wiki) (`pipx install tox`), and deploying needs the
+tooling in the next section — neither is required just to run the app.
+
+### Build, test, run
+
 ```bash
 cd app
 go test ./... && go build -o gopkg .

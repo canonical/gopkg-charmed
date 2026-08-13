@@ -1,3 +1,11 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# Runs the pytest-operator integration suite (app/charm/tests/integration)
+# via operator-workflows, which builds the charm and rock and provides a
+# MicroK8s cloud. Replaces the earlier charm-ci spread wiring: spread
+# requires a spread.yaml and task suites this repo does not define, whereas
+# the pytest-operator tests already exist.
 name: Integration Tests
 
 on:
@@ -8,11 +16,15 @@ on:
 
 jobs:
   integration-test:
-    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v0.0.1-alpha.10
-    with:
-      working-directory: .
-      spread-jobs-include: "integration-test-ci:*"
+    uses: canonical/operator-workflows/.github/workflows/integration_test.yaml@main
     secrets: inherit
+    with:
+      working-directory: ./app/charm/
+      charm-directory: .
+      provider: microk8s
+      channel: 1.32-strict/stable
+      juju-channel: 3.6/stable
+      modules: '["test_charm"]'
 
   required_status_checks:
     needs: [integration-test]

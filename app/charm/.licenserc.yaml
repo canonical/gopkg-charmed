@@ -1,0 +1,44 @@
+# Configuration for the license-header check (apache/skywalking-eyes),
+# run by operator-workflows' "Check license headers" job.
+#
+# Based on the operator-workflows default, with two deliberate changes:
+# - lib/** is ignored entirely: vendored charm libraries are maintained
+#   upstream and fetched verbatim via `charmcraft fetch-lib`; their headers
+#   are inconsistent (Apache boilerplate, short form, or none) and must not
+#   be edited locally.
+# - spdx-id is BSD-2-Clause to match this repository's LICENSE, not the
+#   default's Apache-2.0.
+header:
+  - license:
+      spdx-id: BSD-2-Clause
+      copyright-owner: Canonical Ltd.
+      content: |
+        Copyright 2026 Canonical Ltd.
+        See LICENSE file for licensing details.
+      pattern: |
+        Copyright \d{4} Canonical Ltd.
+        See LICENSE file for licensing details.
+    paths:
+      - '**'
+    paths-ignore:
+      - '.github/**'
+      - '**/*.cfg'
+      - '**/*.conf'
+      - '**/*.ini'
+      - '**/*.j2'
+      - '**/*.json'
+      - '**/*.md'
+      - '**/*.rule'
+      - '**/*.tmpl'
+      - '**/*.txt'
+      - '**/*.xml'
+      - '**/.gitignore'
+      - '**/.flake8'
+      - 'CODEOWNERS'
+      - 'LICENSE'
+      - 'pyproject.toml'
+      - 'trivy.yaml'
+      - '.trivyignore'
+      - '.licenserc.yaml'
+      - 'lib/**'
+    comment: on-failure

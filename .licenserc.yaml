@@ -1,0 +1,44 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# License-header check config (apache/skywalking-eyes), read from the repo
+# root by operator-workflows' "Check license headers" job. Modeled on
+# canonical/haproxy-operator's .licenserc.yaml, adapted for this repo:
+# - spdx-id BSD-2-Clause (this repo's LICENSE), not Apache-2.0
+# - lib/** ignored: vendored charm libraries are fetched verbatim and their
+#   upstream headers are inconsistent
+# - **/*.go and app/snapcraft.yaml ignored: source imported from upstream
+#   niemeyer/gopkg carries its notice in the root LICENSE, not per-file
+header:
+  - license:
+      spdx-id: BSD-2-Clause
+      copyright-owner: Canonical Ltd.
+      content: |
+        Copyright 2026 Canonical Ltd.
+        See LICENSE file for licensing details.
+      pattern: |
+        Copyright \d{4} Canonical Ltd.
+        See LICENSE file for licensing details.
+    paths:
+      - '**'
+    paths-ignore:
+      - '.github/**'
+      - '**/*.json'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.rst'
+      - '**/*.j2'
+      - '**/.gitignore'
+      - '.licenserc.yaml'
+      - 'CODEOWNERS'
+      - 'LICENSE'
+      - '**/LICENSE'
+      - '**/pyproject.toml'
+      - 'lib/**'
+      - '**/lib/**'
+      - 'docs/**'
+      - '**/*.go'
+      - 'app/go.mod'
+      - 'app/go.sum'
+      - 'app/snapcraft.yaml'
+    comment: on-failure

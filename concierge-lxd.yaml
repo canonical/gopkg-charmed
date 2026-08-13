@@ -1,3 +1,6 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+#
 # Concierge provisioning config for LXD + Juju integration tests.
 # See: CICD_SYSTEM.md §7.2 for the monorepo example.
 

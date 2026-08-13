@@ -1,0 +1,15 @@
+version: 1
+rocks:
+  - name: gopkg
+    rockcraft-yaml: app/rockcraft.yaml
+    platforms:
+      - arch: amd64
+      - arch: arm64
+charms:
+  - name: gopkg
+    charmcraft-yaml: app/charm/charmcraft.yaml
+    channel: latest/edge
+    resources:
+      app-image:
+        type: oci-image
+        rock: gopkg

@@ -1,0 +1,28 @@
+name: Integration Tests
+
+on:
+  pull_request:
+  schedule:
+    # Weekly on Saturday at 3pm UTC
+    - cron: "0 15 * * SAT"
+
+jobs:
+  integration-test:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@v0.0.1-alpha.10
+    with:
+      working-directory: .
+      spread-jobs-include: "integration-test-ci:*"
+    secrets: inherit
+
+  required_status_checks:
+    needs: [integration-test]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate integration test status
+        run: |
+          if [[ "${{ needs.integration-test.result }}" == "success" || "${{ needs.integration-test.result }}" == "skipped" ]]; then
+            exit 0
+          else
+            exit 1
+          fi

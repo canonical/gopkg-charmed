@@ -33,7 +33,18 @@ async def model_fixture(ops_test: pytest_operator.plugin.OpsTest) -> juju.model.
 @pytest_asyncio.fixture(scope="module", name="app")
 async def app_fixture(model: juju.model.Model) -> juju.application.Application:
     """The deployed gopkg application."""
-    charm_file = os.environ.get("CHARM_FILE") or next(iter(glob.glob("gopkg_*.charm")))
+    charm_file = os.environ.get("CHARM_FILE")
+    if not charm_file:
+        matches = list(glob.glob("gopkg_*.charm"))
+        if matches:
+            charm_file = matches[0]
+
+    if not charm_file:
+        raise FileNotFoundError(
+            "No charm file found. Set CHARM_FILE environment variable or "
+            "run `charmcraft pack` to generate gopkg_*.charm in the working directory."
+        )
+
     app_image = os.environ.get("APP_IMAGE", "localhost:32000/gopkg:0.1")
     application = await model.deploy(
         f"./{charm_file}",

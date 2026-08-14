@@ -1,0 +1,29 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+#
+# Concierge provisioning config for LXD + Juju integration tests.
+# See: CICD_SYSTEM.md §7.2 for the monorepo example.
+
+juju:
+  channel: 3/stable
+  model-defaults:
+    test-mode: "true"
+    automatically-retry-hooks: "false"
+
+providers:
+  lxd:
+    enable: true
+    bootstrap: false
+  microk8s:
+    enable: true
+    bootstrap: true
+    addons:
+      - dns
+      - hostpath-storage
+      - registry
+
+host:
+  snaps:
+    charmcraft:
+      channel: latest/stable
+      classic: true

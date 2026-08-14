@@ -1,0 +1,24 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+project: gopkg-charmed
+path: /home/ubuntu/proj
+version: 1
+
+backends:
+  integration-test:
+    type: integration-test
+    systems:
+      - ubuntu-24.04
+
+environment:
+  CONCIERGE: concierge-lxd.yaml
+
+integration-suites:
+  app/charm/tests/integration/:
+    summary: gopkg charm pytest-operator integration tests
+    working-dir: app/charm/
+    auto-discover: true
+    backends:
+      - integration-test
+    pytest-arguments-template: |
+      --keep-models

@@ -1,0 +1,30 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# Go application tests, following the pattern of canonical/aproxy:
+# formatting gate + race-detector tests, plus vet and build.
+name: Go tests
+
+on:
+  pull_request:
+
+jobs:
+  go-test:
+    name: Go build and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: app/go.mod
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Build
+        run: go build ./...
+      - name: Unit tests (race detector)
+        run: go test -race ./...

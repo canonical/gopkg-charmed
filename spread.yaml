@@ -15,6 +15,7 @@ environment:
 
 integration-suites:
   app/charm/tests/integration/:
+    summary: gopkg charm pytest-operator integration tests
     working-dir: app/charm/
     auto-discover: true
     backends:

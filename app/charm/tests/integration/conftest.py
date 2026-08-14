@@ -35,9 +35,14 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
     """The deployed gopkg application."""
     charm_file = os.environ.get("CHARM_FILE")
     if not charm_file:
-        matches = list(glob.glob("gopkg_*.charm"))
-        if matches:
-            charm_file = matches[0]
+        # charm-ci builds the charm in a separate phase and places it in the
+        # project tree, not necessarily the tox working directory - search
+        # here first, then recursively from the repository root.
+        for pattern in ("gopkg_*.charm", "../../gopkg_*.charm", "../../**/gopkg_*.charm"):
+            matches = sorted(glob.glob(pattern, recursive=True))
+            if matches:
+                charm_file = matches[0]
+                break
 
     if not charm_file:
         raise FileNotFoundError(

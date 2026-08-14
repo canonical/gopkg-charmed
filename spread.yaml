@@ -1,7 +1,7 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 project: gopkg-charmed
-path: /root/proj
+path: /home/ubuntu/proj
 version: 1
 
 backends:

@@ -61,5 +61,20 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
         application_name="gopkg",
         resources={"app-image": app_image},
     )
-    await model.wait_for_idle(apps=[application.name], status="active", timeout=15 * 60)
+    try:
+        await model.wait_for_idle(apps=[application.name], status="active", timeout=15 * 60)
+    except Exception:
+        # Surface the real cause in CI logs: spread destroys the model after
+        # the run, so this is the only chance to see the hook traceback.
+        import subprocess
+
+        log = subprocess.run(
+            ["juju", "debug-log", "-m", model.name, "--replay", "--no-tail"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        print("==== juju debug-log (tail) ====")
+        print(log.stdout[-8000:])
+        raise
     return application

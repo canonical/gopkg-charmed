@@ -13,6 +13,7 @@ README deployment guide). Configuration via environment variables:
 
 import glob
 import os
+import platform
 
 # python-libjuju types, not ops.model: pytest-operator's ops_test.model is a
 # juju.model.Model (which has deploy/wait_for_idle); the similarly named
@@ -51,6 +52,10 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
         )
 
     app_image = os.environ.get("APP_IMAGE", "localhost:32000/gopkg:0.1")
+    # Fresh per-run models default to amd64 pods; match the actual host so
+    # the pod can schedule on arm64 dev VMs and amd64 CI runners alike.
+    arch = {"aarch64": "arm64", "x86_64": "amd64"}.get(platform.machine(), "amd64")
+    await model.set_constraints({"arch": arch})
     application = await model.deploy(
         f"./{charm_file}",
         application_name="gopkg",

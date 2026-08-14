@@ -19,8 +19,6 @@ import platform
 import subprocess
 from pathlib import Path
 
-import yaml
-
 # python-libjuju types, not ops.model: pytest-operator's ops_test.model is a
 # juju.model.Model (which has deploy/wait_for_idle); the similarly named
 # charm-side ops.model.Model does not.
@@ -28,6 +26,7 @@ import juju.application
 import juju.model
 import pytest_asyncio
 import pytest_operator.plugin
+import yaml
 
 _log = logging.getLogger(__name__)
 

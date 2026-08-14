@@ -21,8 +21,4 @@ integration-suites:
     backends:
       - integration-test
     pytest-arguments-template: |
-      --juju-model testing
-      --no-juju-teardown
-      --tb native
-      -v
-      -s
+      --keep-models

@@ -36,8 +36,7 @@ links:
     - https://github.com/canonical/gopkg
   issues:
     - https://github.com/canonical/gopkg/issues
-  documentation:
-    - https://github.com/canonical/gopkg#readme
+  documentation: https://github.com/canonical/gopkg#readme
   contact:
     - minh.nguyen@canonical.com
 

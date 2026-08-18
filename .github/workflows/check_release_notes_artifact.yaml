@@ -1,12 +1,18 @@
-name: 'Check for release notes artifact'
+name: "Check for release notes artifact"
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
 
 jobs:
   check-change-artifacts:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-release-note') }}
     uses: canonical/release-notes-automation/.github/workflows/pr-compliance.yml@main
     secrets: inherit
     with:
       change-artifact-dir: docs/release-notes/artifacts
-

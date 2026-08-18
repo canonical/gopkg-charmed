@@ -11,6 +11,9 @@ type: charm
 
 base: ubuntu@24.04
 
+title: |
+  gopkg.in 12-Factor Operator
+
 # the platforms this charm should be built on and run on.
 # you can check your architecture with `dpkg --print-architecture`
 platforms:
@@ -20,11 +23,23 @@ platforms:
   # s390x:
 
 # (Required)
-summary: A very short one-line summary of the Go application.
+summary: A 12-Factor charm for the gopkg.in versioned import-path service.
 
 # (Required)
 description: |
-  A comprehensive overview of your Go application.
+  Deploy and operate gopkg.in on Kubernetes with a 12-Factor workflow.
+  This charm uses the Go framework extension and manages the gopkg.in
+  workload with Juju-native configuration and integrations.
+
+links:
+  source:
+    - https://github.com/canonical/gopkg
+  issues:
+    - https://github.com/canonical/gopkg/issues
+  documentation:
+    - https://github.com/canonical/gopkg#readme
+  contact:
+    - minh.nguyen@canonical.com
 
 extensions:
   - go-framework

@@ -72,7 +72,7 @@ host):
 
 ```bash
 multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
-multipass mount /path/to/gopkg charm-dev:/home/ubuntu/gopkg
+multipass mount /path/to/gopkg-charmed charm-dev:/home/ubuntu/gopkg-charmed
 multipass shell charm-dev
 ```
 
@@ -88,6 +88,7 @@ Notes:
 ### 1. One-time toolchain setup (inside the VM)
 
 ```bash
+sudo snap install curl
 sudo snap install rockcraft --classic
 sudo snap install charmcraft --classic
 sudo snap install juju
@@ -113,7 +114,7 @@ juju bootstrap microk8s dev
 machine (`dpkg --print-architecture`), then:
 
 ```bash
-cd ~/gopkg/app
+cd ~/gopkg-charmed/app
 ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
 rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
   oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
@@ -121,7 +122,7 @@ rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
 ```
 
 The first pack takes several minutes (downloads the build base into LXD);
-subsequent packs are fast. Verify the push:
+subsequent packs are fast. Verify the push from the same VM shell:
 `curl http://localhost:32000/v2/gopkg/tags/list`.
 
 ### 3. Build the charm
@@ -132,22 +133,22 @@ the build machine (a mismatch fails with "No build matches the current
 execution environment"), then:
 
 ```bash
-cd ~/gopkg/app/charm
+cd ~/gopkg-charmed/app/charm
 CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 ```
 
 ### 4. Deploy
 
 ```bash
-juju add-model gopkg
+juju add-model gopkg-charmed
 juju set-model-constraints arch=$(dpkg --print-architecture)
 # ^ REQUIRED: without it Juju defaults pods to an amd64 nodeSelector, which can
 #   never schedule on an arm64 node — pods stay Pending with no events.
 #   Constraints bind at deploy time; set them BEFORE deploying.
 
-juju deploy ./gopkg_*.charm gopkg --resource app-image=localhost:32000/gopkg:0.1
+juju deploy ./gopkg-charmed_*.charm gopkg-charmed --resource app-image=localhost:32000/gopkg:0.1
 juju deploy nginx-ingress-integrator --channel=latest/stable --trust
-juju integrate nginx-ingress-integrator gopkg
+juju integrate nginx-ingress-integrator gopkg-charmed
 
 # rewrite-enabled=false is CRITICAL: the default rewrites every request path
 # to "/", so the app answers its root redirect (307) for every URL.
@@ -160,7 +161,7 @@ juju status --watch 2s    # first deploy: 5-15 min to active/idle is normal
 Two hostname settings exist — do not conflate them:
 - `nginx-ingress-integrator service-hostname` — which `Host:` the ingress
   **routes** to the app.
-- `gopkg hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
+- `gopkg-charmed hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
   `go-import` meta tags.
 
 ### 5. Verify
@@ -176,7 +177,7 @@ curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
 # expect: HTML containing the go-import meta tag
 
 # Config change without rebuild (delivered as APP_HOSTNAME):
-juju config gopkg hostname=staging.example.com
+juju config gopkg-charmed hostname=staging.example.com
 ```
 
 ### Troubleshooting
@@ -190,4 +191,4 @@ juju config gopkg hostname=staging.example.com
 | Integrator `blocked`: "service-hostname is not set" | its config, not the app's | `juju config nginx-ingress-integrator service-hostname=…` |
 | Every URL answers 307 → `https://labix.org/gopkg.in` | ingress path rewrite | `juju config nginx-ingress-integrator rewrite-enabled=false` |
 | curl prints nothing but exit 0 | body without trailing newline | add `-w '\n%{http_code}\n'` |
-| `kubectl describe pod -n gopkg gopkg-0` | — | names the exact scheduling blocker |
+| `kubectl describe pod -n gopkg-charmed gopkg-charmed-0` | — | names the exact scheduling blocker |

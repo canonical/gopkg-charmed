@@ -5,7 +5,7 @@
 # See https://juju.is/docs/sdk/charmcraft-config for guidance.
 # For questions or help, visit https://matrix.to/#/#12-factor-charms:ubuntu.com 
 
-name: gopkg
+name: gopkg-charmed
 
 type: charm
 

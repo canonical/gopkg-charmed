@@ -20,3 +20,31 @@ jobs:
       python-version: "3.12"
       with-uv: true
     secrets: inherit
+
+  publish-required-context:
+    name: Publish required status context
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ always() }}
+    permissions:
+      statuses: write
+    steps:
+      - name: Publish status for branch protection compatibility
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const result = '${{ needs.test.result }}';
+            const state = result === 'success' ? 'success' : 'failure';
+            const description =
+              state === 'success'
+                ? 'All required operator tests completed successfully.'
+                : 'One or more required operator tests failed.';
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state,
+              context: 'Tests / test / Required Test Status Checks',
+              description,
+            });

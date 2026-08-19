@@ -11,7 +11,6 @@ on:
 
 jobs:
   check-change-artifacts:
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-release-note') }}
     uses: canonical/release-notes-automation/.github/workflows/pr-compliance.yml@main
     secrets: inherit
     with:

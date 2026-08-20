@@ -22,7 +22,7 @@ module "gopkg_app" {
 
   model_uuid          = var.model_uuid
   gopkg_app_name      = "gopkg"
-  gopkg_charm_name    = "gopkg"
+  gopkg_charm_name    = "gopkg-charmed"
   gopkg_charm_channel = "latest/edge"
   gopkg_hostname      = "gopkg.example.com"
   gopkg_app_image     = "ghcr.io/canonical/gopkg@sha256:replace-me"

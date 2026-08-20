@@ -17,7 +17,7 @@ variable "gopkg_app_name" {
 variable "gopkg_charm_name" {
   description = "Charm name to deploy for gopkg."
   type        = string
-  default     = "gopkg"
+  default     = "gopkg-charmed"
 }
 
 variable "gopkg_charm_channel" {
@@ -58,6 +58,7 @@ variable "gopkg_hostname" {
 variable "gopkg_app_image" {
   description = "OCI image reference for the charm app-image resource (prefer digest pinning)."
   type        = string
+  default     = "ghcr.io/minulo/gopkg:latest"
 
   validation {
     condition     = length(trimspace(var.gopkg_app_image)) > 0

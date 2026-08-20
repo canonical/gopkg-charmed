@@ -1,3 +1,6 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
 output "model_uuid" {
   description = "Model UUID used for deployment."
   value       = var.model_uuid

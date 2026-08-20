@@ -28,7 +28,7 @@ from charm import GopkgCharm  # noqa: E402
 # the packed charm; the source charmcraft.yaml does not contain them. The
 # Context must therefore be built with metadata mirroring the packed shape.
 CHARM_META = {
-    "name": "gopkg",
+    "name": "gopkg-charmed",
     "summary": "gopkg.in versioned-import-path service.",
     "description": "Charmed gopkg.in vanity import redirector.",
     "containers": {"app": {"resource": "app-image"}},

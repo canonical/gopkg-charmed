@@ -8,7 +8,7 @@ rocks:
       - arch: amd64
       - arch: arm64
 charms:
-  - name: gopkg
+  - name: gopkg-charmed
     charmcraft-yaml: app/charm/charmcraft.yaml
     channel: latest/edge
     resources:

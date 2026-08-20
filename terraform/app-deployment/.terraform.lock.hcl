@@ -1,3 +1,6 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 

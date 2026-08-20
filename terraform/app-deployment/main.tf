@@ -1,3 +1,6 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
 resource "juju_application" "gopkg" {
   name       = var.gopkg_app_name
   model_uuid = var.model_uuid

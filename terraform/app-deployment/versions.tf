@@ -2,7 +2,7 @@
 # See LICENSE file for licensing details.
 
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.15.8"
 
   required_providers {
     juju = {

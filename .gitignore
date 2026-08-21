@@ -15,3 +15,9 @@ PLAN-Factor-III-Config.md
 12-Factor-Plan.md
 .fuse_hidden*
 CONTRIBUTING-Compliance-Plan.md
+
+# Terraform local artifacts
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log

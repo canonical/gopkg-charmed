@@ -1,0 +1,24 @@
+repos:
+  - repo: local
+    hooks:
+      - id: docs-spelling
+        name: Docs spelling (Vale)
+        entry: make -C docs spelling
+        language: system
+        pass_filenames: false
+        files: ^docs/.*\.(rst|md|txt)$
+
+      - id: docs-woke
+        name: Docs inclusive language
+        entry: make -C docs woke
+        language: system
+        pass_filenames: false
+        files: ^docs/.*\.(rst|md|txt)$
+
+      - id: docs-linkcheck
+        name: Docs link check (manual)
+        entry: make -C docs linkcheck
+        language: system
+        pass_filenames: false
+        files: ^docs/.*\.(rst|md|txt)$
+        stages: [manual]

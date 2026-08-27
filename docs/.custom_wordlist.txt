@@ -52,6 +52,7 @@ VMs
 WCAG
 whitespace
 whitespaces
+walkthroughs
 wordlist
 xetex
 xindy
@@ -82,6 +83,7 @@ rediraffe
 rerediraffe
 retrigger(ing)?
 Diátaxis
+Diataxis
 preconfigured
 venv
 rtd

@@ -12,6 +12,10 @@ on:
       - ".github/workflows/tutorial-integration-smoke.yml"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   tutorial-smoke:
     uses: canonical/charm-ci/.github/workflows/integration-test.yml@0eef5b8cbef3ee74907850f790cab64bcf0499e5 # v1.0.0
@@ -21,5 +25,8 @@ jobs:
       actions: read
     with:
       working-directory: .
+      # Force per-run artifact download path so tests consume fresh build outputs.
+      # This avoids registry/cache reuse in build-artifacts for tutorial smoke.
+      upload-image: artifact
       spread-jobs-include: "integration-test-ci:*"
     secrets: inherit

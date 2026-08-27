@@ -1,7 +1,7 @@
+#!/usr/bin/env bash
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-#!/usr/bin/env bash
 set -euo pipefail
 
 # Run the full charm integration suite locally on Linux amd64/arm64.
@@ -63,11 +63,15 @@ echo "==> Building charm"
 pushd "$CHARM_DIR" >/dev/null
 CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 
-CHARM_FILE="$(ls -1 gopkg-charmed_*.charm | head -n1)"
-if [[ -z "$CHARM_FILE" ]]; then
+shopt -s nullglob
+charm_files=(gopkg-charmed_*.charm)
+shopt -u nullglob
+
+if [[ ${#charm_files[@]} -eq 0 ]]; then
   echo "No packed charm found in $CHARM_DIR"
   exit 1
 fi
+CHARM_FILE="${charm_files[0]}"
 
 echo "==> Running full Juju integration suite"
 echo "Using CHARM_FILE=$CHARM_FILE"

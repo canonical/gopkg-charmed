@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Added charm-specific docs and hardened docs CI workflows
+    author: minulo
+    type: minor
+    description: Added beginner-focused charm documentation across tutorial, how-to, reference, and explanation sections; introduced tutorial-linked integration smoke checks; and updated removed-URL validation to handle base branches without docs scaffolding.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/23"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

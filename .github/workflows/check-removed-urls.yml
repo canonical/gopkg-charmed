@@ -37,27 +37,44 @@ jobs:
 
       - name: Build docs for PR and base
         run: |
-          for dir in compare base; do
-            pushd ${dir}/docs
+          pushd compare/docs
+          make html
+          popd
+
+          if [ -f "base/docs/Makefile" ]; then
+            pushd base/docs
             make html
             popd
-          done
+          else
+            echo "Base branch does not have docs Makefile; treating base URL set as empty."
+          fi
 
       - name: Generate URL lists
         run: |
-          for dir in compare base; do
-            build_dir="${dir}/docs/_build"
-            urls_file="${dir}/docs/urls.txt"
+          compare_build_dir="compare/docs/_build"
+          compare_urls_file="compare/docs/urls.txt"
 
-            if [ ! -d "${build_dir}" ]; then
-              echo "Expected docs build directory not found: ${build_dir}"
-              exit 1
-            fi
+          if [ ! -d "${compare_build_dir}" ]; then
+            echo "Expected docs build directory not found: ${compare_build_dir}"
+            exit 1
+          fi
 
-            find "${build_dir}" -name '*.html' \
-              | sed "s|^${build_dir}||;s|^/html||;s|/index.html$|/|;s|.html$||" \
-              | sort > "${urls_file}"
-          done
+          find "${compare_build_dir}" -name '*.html' \
+            | sed "s|^${compare_build_dir}||;s|^/html||;s|/index.html$|/|;s|.html$||" \
+            | sort > "${compare_urls_file}"
+
+          base_build_dir="base/docs/_build"
+          base_urls_file="base/docs/urls.txt"
+
+          if [ -d "${base_build_dir}" ]; then
+            find "${base_build_dir}" -name '*.html' \
+              | sed "s|^${base_build_dir}||;s|^/html||;s|/index.html$|/|;s|.html$||" \
+              | sort > "${base_urls_file}"
+          else
+            echo "No base docs build directory found; writing empty base URL set."
+            mkdir -p base/docs
+            : > "${base_urls_file}"
+          fi
 
       - name: Compare URLs
         run: python3 sphinx-stack/docs/_dev/check_removed_urls.py

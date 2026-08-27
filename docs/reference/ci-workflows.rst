@@ -34,9 +34,31 @@ Purpose:
 - validate that the documented deploy-and-verify flow remains aligned with
   deployable charm behavior
 
+Where it comes from:
+
+- The workflow file lives in this repository:
+  ``.github/workflows/tutorial-integration-smoke.yml``
+- The job itself reuses Canonical's shared integration workflow:
+  ``canonical/charm-ci/.github/workflows/integration-test.yml`` pinned to a
+  specific commit for reproducibility.
+
 Current behavior:
 
 - triggers only on docs tutorial/how-to/reference changes and related
   integration test files
 - executes the charm integration test suite through the existing charm-ci
   reusable workflow
+
+Automatic vs manual linkage
+---------------------------
+
+The linkage is path-trigger based, not content-aware parsing.
+
+- Automatic part:
+  if a pull request changes files matching ``on.pull_request.paths`` in
+  ``tutorial-integration-smoke.yml``, the workflow runs automatically.
+- Manual part:
+  if you move tutorial files to new paths or introduce new docs locations that
+  should trigger integration smoke, you must update the ``paths`` list in the
+  workflow file.
+

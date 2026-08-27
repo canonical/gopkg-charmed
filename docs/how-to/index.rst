@@ -9,5 +9,6 @@ Use these guides when you already know your goal and want concise steps.
 	:maxdepth: 1
 
 	deploy-locally-with-microk8s
+	run-full-juju-integration-suite-locally
 	configure-hostname-and-check-go-import
 	troubleshoot-deployment

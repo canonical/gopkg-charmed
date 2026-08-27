@@ -36,6 +36,13 @@ uncomment(ing)?
 utils
 uv
 VMs
+<<<<<<< HEAD
+=======
+WCAG
+whitespace
+whitespaces
+walkthroughs
+>>>>>>> 7e99ea9 (Fix documentation spellcheck wordlist)
 wordlist
 xetex
 xindy
@@ -56,8 +63,9 @@ docstrings?
 Makefiles?
 rediraffe
 rerediraffe
-Di[áa]taxis
-walkthroughs?
+retrigger(ing)?
+Diátaxis
+Diataxis
 preconfigured
 venv
 rtd

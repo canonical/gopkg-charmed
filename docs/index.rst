@@ -1,5 +1,5 @@
-gopkg-charmed documentation
-===========================
+gopkg charm
+===========
 
 This documentation covers how to build, deploy, and operate ``gopkg-charmed``,
 the Kubernetes charm for the `gopkg.in <https://gopkg.in>`_ service.

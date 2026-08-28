@@ -16,9 +16,9 @@ material.
 How this documentation is organized
 -----------------------------------
 
-The structure follows Diataxis:
+The structure follows a four-part documentation framework:
 
-- Tutorials for end-to-end walkthroughs
+- Tutorials for end-to-end guided examples
 - How-to guides for practical tasks
 - Reference for configuration and interfaces
 - Explanation for architecture and design context

@@ -1,4 +1,4 @@
-name: Automatic doc checks
+name: RTD workflows
 
 on:
   push:
@@ -19,8 +19,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  documentation-checks:
-    uses: canonical/documentation-workflows/.github/workflows/documentation-checks.yaml@main
-    with:
-      working-directory: docs
-      fetch-depth: 0
+  rtd-workflows:
+    uses: canonical/operator-workflows/.github/workflows/docs_rtd.yaml@main

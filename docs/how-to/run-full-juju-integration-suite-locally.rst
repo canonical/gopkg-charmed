@@ -3,10 +3,11 @@
 Run the full Juju integration suite locally
 ===========================================
 
-This guide runs the full charm integration suite locally on both ``amd64`` and
-``arm64``.
+This guide runs the full charm integration suite locally on Linux ``amd64`` and
+Linux ``arm64``.
 
 If you are on macOS, run these steps inside a Linux VM (for example Multipass).
+For a complete first-time setup path, see :ref:`set-up-a-local-linux-environment`.
 
 Prerequisites
 -------------
@@ -44,7 +45,23 @@ This script will:
 4. ensure Juju controller availability
 5. build and push the architecture-matching rock
 6. build charm
-7. run ``tox -e integration`` with ``CHARM_FILE`` and ``APP_IMAGE``
+7. run the integration tox environment with ``CHARM_FILE`` and ``APP_IMAGE``
+
+What this guide validates
+------------------------
+
+This is an end-to-end deployment validation path. It verifies that:
+
+- the packed rock and charm artifacts can be built for your architecture
+- Juju can deploy the charm with the local image resource
+- integration tests can reach active status and validate service behavior
+
+If this command fails on macOS directly, that is expected: the suite requires
+Linux tools and a Linux Juju/MicroK8s environment.
+
+If ``rockcraft pack`` fails with a ``PermissionError`` under
+``app/charm/.tox/.../python3.12``, remove local virtualenv artifacts and retry.
+See :ref:`set-up-a-local-linux-environment` for the cleanup command.
 
 Manual path (if you need fine-grained control)
 -----------------------------------------------
@@ -53,6 +70,9 @@ Manual path (if you need fine-grained control)
 
    sudo microk8s enable hostpath-storage registry ingress
    microk8s status --wait-ready
+    microk8s kubectl rollout status deployment/registry \
+       -n container-registry --timeout=5m
+    curl --fail http://127.0.0.1:32000/v2/
    juju bootstrap microk8s dev
 
    cd app
@@ -64,4 +84,5 @@ Manual path (if you need fine-grained control)
    cd charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
    CHARM_FILE=$(ls -1 gopkg-charmed_*.charm | head -n1)
-   CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 tox -e integration
+    CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
+       tox --workdir ~/.cache/gopkg-charm-tox -e integration

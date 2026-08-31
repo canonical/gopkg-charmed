@@ -35,9 +35,15 @@ Alternatively, clone the repository inside the VM:
 .. code-block:: bash
 
    git clone https://github.com/canonical/gopkg-charmed.git gopkg-charm
-   cd gopkg-charm
 
-For the remaining steps, run commands from the repository root.
+Whichever option you chose, enter and verify the repository before continuing:
+
+.. code-block:: bash
+
+   cd ~/gopkg-charm
+   git rev-parse --show-toplevel
+
+The final command should return ``/home/ubuntu/gopkg-charm``.
 
 Step 3: install required tools
 ------------------------------
@@ -99,6 +105,7 @@ Step 5: verify the repository and tools
 
 .. code-block:: bash
 
+   cd ~/gopkg-charm
    command -v juju
    command -v charmcraft
    command -v rockcraft

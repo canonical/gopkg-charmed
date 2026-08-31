@@ -1,0 +1,16 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+summary: Execute the Kubernetes deployment tutorial
+
+prepare: |
+  opcli install concierge
+  opcli install charmcraft
+  opcli install rockcraft
+  opcli env provision -c "${SPREAD_PATH}/concierge-lxd.yaml"
+  chown -R ubuntu:ubuntu /home/ubuntu "${SPREAD_PATH}"
+  ln -sfn "${SPREAD_PATH}" /home/ubuntu/gopkg-charm
+
+execute: |
+  opcli tutorial expand -- "${SPREAD_PATH}/${TUTORIAL}" > /tmp/tutorial-script.sh
+  runuser -l ubuntu -s /bin/bash -c 'set -euxo pipefail; . "$1"' _ /tmp/tutorial-script.sh

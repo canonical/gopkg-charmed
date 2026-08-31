@@ -33,8 +33,7 @@ copyright = f"{datetime.date.today().year}"
 version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
 # Sidebar documentation title
 # To disable the title, set it to an empty string.
-# Repo-specific title override kept in the content layer for docs review.
-html_title = "gopkg charm documentation"
+html_title = project + " documentation"
 
 # Documentation website URL
 ogp_site_url = f"https://canonical.com/juju/docs/gopkg-charm/{version}/"

@@ -51,9 +51,7 @@ async def _ensure_ingress_configured(model: juju.model.Model, ingress_host: str)
             trust=True,
         )
 
-    relation_exists = any(
-        relation.matches(ingress_name, app_name) for relation in model.relations
-    )
+    relation_exists = any(relation.matches(ingress_name, app_name) for relation in model.relations)
     if not relation_exists:
         await model.integrate(ingress_name, app_name)
 
@@ -69,15 +67,15 @@ async def _ensure_ingress_configured(model: juju.model.Model, ingress_host: str)
     await model.wait_for_idle(apps=[app_name, ingress_name], status="active", timeout=15 * 60)
 
 
-async def test_deploy_locally_how_to_flow(
+async def test_how_to_guides_flow(
     app: juju.application.Application,
     model: juju.model.Model,
     setup_how_to_contract: dict[str, str],
 ) -> None:
     """
     arrange: given setup-guide prerequisites and a deployed gopkg app
-    act: when ingress is configured per deploy-locally how-to
-    assert: app stays active and ingress-routed health checks succeed.
+    act: when ingress and hostname are configured per the how-to guides
+    assert: routing, metadata, settings, and the local helper contract work.
     """
     assert app.status == "active"
     await _ensure_ingress_configured(model, setup_how_to_contract["ingress_host"])
@@ -89,18 +87,6 @@ async def test_deploy_locally_how_to_flow(
     )
     assert health.status_code == 200
     assert health.text == "ok"
-
-
-async def test_configure_hostname_how_to_flow(
-    model: juju.model.Model,
-    setup_how_to_contract: dict[str, str],
-) -> None:
-    """
-    arrange: given configured ingress host routing
-    act: when hostname is changed as documented in configure-hostname how-to
-    assert: go-import metadata reflects the new hostname.
-    """
-    await _ensure_ingress_configured(model, setup_how_to_contract["ingress_host"])
 
     app = model.applications["gopkg-charmed"]
     await app.set_config({"hostname": "staging.example.com"})
@@ -115,38 +101,18 @@ async def test_configure_hostname_how_to_flow(
     assert "go-import" in go_get.text
     assert "staging.example.com" in go_get.text
 
-
-async def test_troubleshoot_how_to_settings(
-    model: juju.model.Model,
-    setup_how_to_contract: dict[str, str],
-) -> None:
-    """
-    arrange: given ingress configured through the setup and deploy paths
-    act: when reading current ingress settings
-    assert: troubleshooting target settings match documented values.
-    """
-    await _ensure_ingress_configured(model, setup_how_to_contract["ingress_host"])
-
     ingress = model.applications["nginx-ingress-integrator"]
     config = await ingress.get_config()
     assert config["service-hostname"]["value"] == setup_how_to_contract["ingress_host"]
     assert config["path-routes"]["value"] == "/"
     assert config["rewrite-enabled"]["value"] is False
 
-
-async def test_run_full_suite_how_to_script_contract(
-    setup_how_to_contract: dict[str, str],
-) -> None:
-    """
-    arrange: given setup-how-to prerequisites contract
-    act: when checking local helper script expectations
-    assert: script contains the end-to-end integration entrypoint.
-    """
-    del setup_how_to_contract
-
     script = Path(__file__).resolve().parent / "run_full_local_suite.sh"
     content = script.read_text(encoding="utf-8")
     assert 'tox --workdir "$TOX_WORK_DIR" -e integration' in content
+    assert "id -nG | grep -qw snap_microk8s" in content
     assert "microk8s status --wait-ready" in content
+    assert "microk8s kubectl rollout status deployment/registry" in content
+    assert "curl --fail --silent --show-error http://127.0.0.1:32000/v2/" in content
     assert "rockcraft pack" in content
     assert '[[ ! -d "$REPO_ROOT/.git"' in content

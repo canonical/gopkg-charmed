@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths:
       - "docs/tutorials/**"
-      - "docs/how-to/**"
-      - "docs/reference/**"
-      - "app/charm/tests/integration/test_tutorial_deploy_flow.py"
-      - "app/charm/tests/integration/conftest.py"
+      - "tests/spread/tutorial/**"
+      - "app/rockcraft.yaml"
+      - "app/charm/charmcraft.yaml"
+      - "artifacts.yaml"
+      - "concierge-lxd.yaml"
+      - "spread.yaml"
       - ".github/workflows/tutorial-integration-smoke.yml"
   workflow_dispatch:
 
@@ -18,15 +20,11 @@ concurrency:
 
 jobs:
   tutorial-smoke:
-    uses: canonical/charm-ci/.github/workflows/integration-test.yml@0eef5b8cbef3ee74907850f790cab64bcf0499e5 # v1.0.0
+    uses: canonical/charm-ci/.github/workflows/doc-test.yml@0eef5b8cbef3ee74907850f790cab64bcf0499e5 # v1.0.0
     permissions:
       contents: read
-      packages: write
       actions: read
     with:
       working-directory: .
-      # Force per-run artifact download path so tests consume fresh build outputs.
-      # This avoids registry/cache reuse in build-artifacts for tutorial smoke.
-      upload-image: artifact
-      spread-jobs-include: "integration-test-ci:*"
+      spread-jobs-include: "docs-ci:*"
     secrets: inherit

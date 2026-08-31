@@ -47,9 +47,13 @@ image push.
 
 Bootstrap Juju only after these checks pass:
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    juju bootstrap microk8s dev
+
+.. SPREAD SKIP END
 
 Step 1: confirm architecture
 ----------------------------
@@ -69,9 +73,9 @@ From the repository root:
 
 .. code-block:: bash
 
-   cd app
+   cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
-    curl --fail http://127.0.0.1:32000/v2/
+   curl --fail http://127.0.0.1:32000/v2/
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
@@ -87,7 +91,7 @@ Step 3: build the charm
 
 .. code-block:: bash
 
-   cd app/charm
+   cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 
 Step 4: deploy to a new model
@@ -102,6 +106,7 @@ Deploy the charm and ingress integrator:
 
 .. code-block:: bash
 
+   cd ~/gopkg-charm/app/charm
    juju deploy ./gopkg-charmed_*.charm gopkg-charmed \
      --resource app-image=localhost:32000/gopkg:0.1
    juju deploy nginx-ingress-integrator --channel=latest/stable --trust
@@ -129,9 +134,20 @@ Configure ingress:
 
 Wait for active status:
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    juju status --watch 2s
+
+.. SPREAD SKIP END
+
+.. SPREAD
+   juju wait-for application gopkg-charmed \
+     --query='status=="active"' --timeout=15m
+    juju wait-for application nginx-ingress-integrator \
+       --query='status=="active"' --timeout=15m
+.. SPREAD END
 
 Step 5: verify the deployment
 -----------------------------
@@ -140,17 +156,19 @@ Run a health check through ingress:
 
 .. code-block:: bash
 
-    curl -sw '\nHTTP %{http_code}\n' http://${INGRESS_HOST}/health-check \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1
+   curl --fail --silent --show-error \
+     http://${INGRESS_HOST}/health-check \
+     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep -Fx ok
 
-Expected output includes ``ok`` and ``HTTP 200``.
+Expected output is ``ok``.
 
 Verify go-import metadata:
 
 .. code-block:: bash
 
-    curl -s "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1
+   curl --fail --silent --show-error \
+     "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep go-import
 
 Expected output contains a ``go-import`` meta tag.
 
@@ -163,12 +181,18 @@ Update charm config and confirm it applies without rebuild:
 
    juju config gopkg-charmed hostname=staging.example.com
 
+.. SPREAD
+   juju wait-for application gopkg-charmed \
+     --query='status=="active"' --timeout=15m
+.. SPREAD END
+
 Then query again:
 
 .. code-block:: bash
 
-    curl -s "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1
+   curl --fail --silent --show-error \
+     "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep staging.example.com
 
 You should see output reflecting the new hostname value.
 

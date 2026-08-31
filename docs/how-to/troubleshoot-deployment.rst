@@ -136,8 +136,8 @@ Fix:
 
 .. code-block:: bash
 
-    cd ~/gopkg-charm
-    rm -rf app/charm/.tox app/charm/.venv
+   cd ~/gopkg-charm
+   rm -rf app/charm/.tox app/charm/.venv
 
 Do not copy Python environments between operating systems. Recreate them with
 ``tox`` inside the Linux environment after removing the incompatible files.
@@ -154,7 +154,8 @@ Fix:
 
 .. code-block:: bash
 
-    tox --workdir ~/.cache/gopkg-charm-tox -e integration
+   cd ~/gopkg-charm/app/charm
+   tox --workdir ~/.cache/gopkg-charm-tox -e integration
 
 This creates the virtual environment on the VM filesystem instead of the
 mounted host filesystem.

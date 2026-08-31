@@ -20,6 +20,7 @@ Run these checks before opening a pull request:
 
 .. code-block:: bash
 
+   cd ~/gopkg-charm
    make -C docs install
    make -C docs html
    make -C docs spelling
@@ -28,9 +29,13 @@ Run these checks before opening a pull request:
 Tutorial alignment with integration tests
 -----------------------------------------
 
-Tutorial deployment instructions are validated by integration smoke checks in
-CI through ``tutorial-integration-smoke.yml`` and tutorial-focused integration
-tests.
+The tutorial smoke workflow uses ``opcli tutorial expand`` from
+``canonical/charm-ci`` to extract shell commands directly from the tutorial's
+RST code blocks. Spread runs the generated script in a provisioned Ubuntu
+environment. Changing an executable tutorial command therefore changes the CI
+test automatically.
 
-If you change deployment commands in tutorials, update the associated
-integration test intent and assertions so docs and deploy reality stay aligned.
+Wrap interactive commands or commands already performed by the CI provisioner
+in ``SPREAD SKIP`` markers. Use an invisible ``SPREAD`` block for a finite CI
+equivalent when needed. Keep verification commands self-checking with nonzero
+exit statuses on failure.

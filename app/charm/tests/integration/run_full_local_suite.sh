@@ -13,7 +13,7 @@ if [[ "$(uname -s)" != "Linux" ]]; then
   exit 1
 fi
 
-for cmd in dpkg rockcraft charmcraft juju microk8s tox; do
+for cmd in curl dpkg rockcraft charmcraft juju microk8s tox; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "Missing required command: $cmd"
     exit 1
@@ -39,11 +39,20 @@ if [[ ! -d "$REPO_ROOT/.git" || ! -f "$APP_DIR/rockcraft.yaml" || ! -f "$CHARM_D
   exit 1
 fi
 
+if ! id -nG | grep -qw snap_microk8s; then
+  echo "The current user is not active in the snap_microk8s group."
+  echo "Reconnect to the VM or run: newgrp snap_microk8s"
+  exit 1
+fi
+
 echo "==> Ensuring MicroK8s is ready"
 microk8s status --wait-ready >/dev/null
 
 echo "==> Ensuring required MicroK8s add-ons"
 sudo microk8s enable hostpath-storage registry ingress >/dev/null
+microk8s kubectl rollout status deployment/registry \
+  -n container-registry --timeout=5m
+curl --fail --silent --show-error http://127.0.0.1:32000/v2/ >/dev/null
 
 echo "==> Ensuring Juju controller exists"
 if ! juju controllers >/dev/null 2>&1; then

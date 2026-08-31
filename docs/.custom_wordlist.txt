@@ -8,6 +8,10 @@ dvipng
 fonts
 freefont
 github
+gopkg
+gopkg-charmed
+gopkg\.in
+GPG
 gyre
 https
 html

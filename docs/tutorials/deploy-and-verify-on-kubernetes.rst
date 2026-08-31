@@ -21,41 +21,31 @@ At the end of this tutorial, you will have:
 Prerequisites
 -------------
 
-You need:
+Complete :ref:`set-up-a-local-linux-environment`. That guide creates the Linux
+environment, makes the repository available by mount or clone, and installs
+the required tools.
 
-- a Linux environment (native Linux host, Multipass VM, or equivalent)
-- architecture: ``amd64`` or ``arm64``
-- internet access for package downloads
-
-If you are on macOS, create a Linux VM first (example):
+Enter the repository root before continuing:
 
 .. code-block:: bash
 
-   multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
-   multipass mount /path/to/gopkg-charm charm-dev:/home/ubuntu/gopkg-charm
-   multipass shell charm-dev
+   cd ~/gopkg-charm
 
-Then run the rest of this tutorial inside the VM.
-
-Install required tooling in that Linux environment:
+Confirm that MicroK8s access and the local registry are ready:
 
 .. code-block:: bash
 
-   sudo snap install rockcraft --classic
-   sudo snap install charmcraft --classic
-   sudo snap install juju
-   sudo snap install microk8s --channel 1.31-strict/stable
-   lxd init --auto
-   sudo adduser $USER snap_microk8s
-
-Log out and back in, then enable MicroK8s add-ons:
-
-.. code-block:: bash
-
-   sudo microk8s enable hostpath-storage registry ingress
+   id -nG | grep -qw snap_microk8s
    microk8s status --wait-ready
+   microk8s kubectl rollout status deployment/registry \
+     -n container-registry --timeout=5m
+   curl --fail http://127.0.0.1:32000/v2/
 
-Bootstrap Juju:
+The last command should return ``{}``. If it cannot connect, return to the
+add-on step in :ref:`set-up-a-local-linux-environment`; do not continue to the
+image push.
+
+Bootstrap Juju only after these checks pass:
 
 .. code-block:: bash
 
@@ -81,6 +71,7 @@ From the repository root:
 
    cd app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
+    curl --fail http://127.0.0.1:32000/v2/
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
@@ -116,12 +107,23 @@ Deploy the charm and ingress integrator:
    juju deploy nginx-ingress-integrator --channel=latest/stable --trust
    juju integrate nginx-ingress-integrator gopkg-charmed
 
+Choose an ingress hostname:
+
+.. code-block:: bash
+
+   export INGRESS_HOST=gopkg.example.com
+
+``gopkg.example.com`` is a safe documentation hostname. It does not create DNS
+records by itself. For this local tutorial, requests are pinned to
+``127.0.0.1`` with ``--resolve`` so the workflow is copy-paste runnable on a
+fresh Ubuntu environment.
+
 Configure ingress:
 
 .. code-block:: bash
 
    juju config nginx-ingress-integrator \
-     service-hostname=gopkg.example.com \
+      service-hostname=${INGRESS_HOST} \
      path-routes=/ \
      rewrite-enabled=false
 
@@ -138,8 +140,8 @@ Run a health check through ingress:
 
 .. code-block:: bash
 
-   curl -sw '\nHTTP %{http_code}\n' http://gopkg.example.com/health-check \
-     --resolve gopkg.example.com:80:127.0.0.1
+    curl -sw '\nHTTP %{http_code}\n' http://${INGRESS_HOST}/health-check \
+       --resolve ${INGRESS_HOST}:80:127.0.0.1
 
 Expected output includes ``ok`` and ``HTTP 200``.
 
@@ -147,8 +149,8 @@ Verify go-import metadata:
 
 .. code-block:: bash
 
-   curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
-     --resolve gopkg.example.com:80:127.0.0.1
+    curl -s "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+       --resolve ${INGRESS_HOST}:80:127.0.0.1
 
 Expected output contains a ``go-import`` meta tag.
 
@@ -165,8 +167,8 @@ Then query again:
 
 .. code-block:: bash
 
-   curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
-     --resolve gopkg.example.com:80:127.0.0.1
+    curl -s "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+       --resolve ${INGRESS_HOST}:80:127.0.0.1
 
 You should see output reflecting the new hostname value.
 

@@ -30,33 +30,35 @@ Workflow: ``.github/workflows/tutorial-integration-smoke.yml``
 
 Purpose:
 
-- run integration tests when tutorial or deployment docs change
-- validate that the documented deploy-and-verify flow remains aligned with
-  deployable charm behavior
+- execute the tutorial's literal shell commands when the tutorial or its
+  deployment inputs change
+- validate the complete build, deploy, integrate, configure, and verify flow
+  in a provisioned Ubuntu environment
 
 Where it comes from:
 
 - The workflow file lives in this repository:
   ``.github/workflows/tutorial-integration-smoke.yml``
-- The job itself reuses Canonical's shared integration workflow:
-  ``canonical/charm-ci/.github/workflows/integration-test.yml`` pinned to a
+- The job itself reuses Canonical's shared documentation test workflow:
+  ``canonical/charm-ci/.github/workflows/doc-test.yml`` pinned to a
   specific commit for reproducibility.
 
 Current behavior:
 
-- triggers only on docs tutorial/how-to/reference changes and related
-  integration test files
-- executes the charm integration test suite through the existing charm-ci
-  reusable workflow
+- triggers on tutorial, Spread task, artifact recipe, provisioning, and
+  workflow changes
+- uses ``opcli tutorial expand`` to extract commands directly from the RST
+- executes the generated shell script through the ``docs-ci`` Spread backend
+- provisions MicroK8s and Juju, then builds the rock and charm from source
 
 Automatic vs manual linkage
 ---------------------------
 
-The linkage is path-trigger based, not content-aware parsing.
+Command synchronization is content-aware; workflow triggering is path-based.
 
 - Automatic part:
-  if a pull request changes files matching ``on.pull_request.paths`` in
-  ``tutorial-integration-smoke.yml``, the workflow runs automatically.
+  commands are extracted from the tutorial, so edits to its executable code
+  blocks change the tested script without requiring duplicate test changes.
 - Manual part:
   if you move tutorial files to new paths or introduce new docs locations that
   should trigger integration smoke, you must update the ``paths`` list in the

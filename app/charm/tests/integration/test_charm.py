@@ -8,27 +8,17 @@ import juju.model
 import requests
 
 
-async def test_active_after_deploy(app: juju.application.Application) -> None:
-    """
-    arrange: given the packed gopkg charm and rock image
-    act: when the charm is deployed with the app-image resource
-    assert: the application reaches active status (asserted by the app
-        fixture's wait_for_idle) and reports exactly one unit.
-    """
-    assert app.status == "active"
-
-    assert len(app.units) == 1
-
-
-async def test_health_check_endpoint(
+async def test_deploy_and_health_check(
     app: juju.application.Application, model: juju.model.Model
 ) -> None:
     """
-    arrange: given an active gopkg deployment
-    act: when the /health-check endpoint is requested on the unit address
-        at the default APP_PORT
-    assert: the application answers 200 with the body "ok".
+    arrange: given the packed gopkg charm and rock image
+    act: when the charm is deployed and its health endpoint is requested
+    assert: one unit is active and answers 200 with the body "ok".
     """
+    assert app.status == "active"
+    assert len(app.units) == 1
+
     status = await model.get_status()
     unit_status = status.applications[app.name].units[f"{app.name}/0"]
     address = unit_status.address

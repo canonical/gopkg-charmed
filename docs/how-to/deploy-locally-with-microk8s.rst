@@ -47,7 +47,7 @@ Deployment steps
 
 .. code-block:: bash
 
-   cd app
+   cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
@@ -57,13 +57,14 @@ Deployment steps
 
 .. code-block:: bash
 
-   cd app/charm
+   cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 
 6. Deploy app and ingress.
 
 .. code-block:: bash
 
+   cd ~/gopkg-charm/app/charm
    juju deploy ./gopkg-charmed_*.charm gopkg-charmed \
      --resource app-image=localhost:32000/gopkg:0.1
    juju deploy nginx-ingress-integrator --channel=latest/stable --trust

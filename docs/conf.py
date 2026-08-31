@@ -29,6 +29,8 @@ author = "Canonical Ltd."
 # The year in the copyright statement
 copyright = f"{datetime.date.today().year}"
 
+# Version
+version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
 # Sidebar documentation title
 # To disable the title, set it to an empty string.
 html_title = project + " documentation"

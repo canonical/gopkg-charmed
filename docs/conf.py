@@ -21,7 +21,7 @@ import textwrap
 
 # Project name
 # Official project name in Charmhub and repository naming.
-project = "gopkg-charmed"
+project = "gopkg charm"
 
 # Author name; used in the default copyright statement in the page footer
 author = "Canonical Ltd."

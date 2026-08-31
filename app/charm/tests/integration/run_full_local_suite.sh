@@ -32,6 +32,12 @@ APP_DIR="$REPO_ROOT/app"
 CHARM_DIR="$REPO_ROOT/app/charm"
 ROCK_FILE="$APP_DIR/gopkg_0.1_${ARCH}.rock"
 APP_IMAGE="localhost:32000/gopkg:0.1"
+TOX_WORK_DIR="${TOX_WORK_DIR:-$HOME/.cache/gopkg-charm-tox}"
+
+if [[ ! -d "$REPO_ROOT/.git" || ! -f "$APP_DIR/rockcraft.yaml" || ! -f "$CHARM_DIR/charmcraft.yaml" ]]; then
+  echo "Repository setup is incomplete. Mount or clone gopkg-charmed and run this script from that checkout."
+  exit 1
+fi
 
 echo "==> Ensuring MicroK8s is ready"
 microk8s status --wait-ready >/dev/null
@@ -76,7 +82,8 @@ CHARM_FILE="${charm_files[0]}"
 echo "==> Running full Juju integration suite"
 echo "Using CHARM_FILE=$CHARM_FILE"
 echo "Using APP_IMAGE=$APP_IMAGE"
-CHARM_FILE="$CHARM_FILE" APP_IMAGE="$APP_IMAGE" tox -e integration
+CHARM_FILE="$CHARM_FILE" APP_IMAGE="$APP_IMAGE" \
+  tox --workdir "$TOX_WORK_DIR" -e integration
 popd >/dev/null
 
 echo "==> Full local Juju integration suite completed"

@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Added the publish-facing documentation set and aligned documentation policy checks
+    author: minulo
+    type: minor
+    description: Added and organized the end-user documentation set for gopkg-charmed (tutorial, how-to, reference, explanation, and release-notes sections), aligned Read the Docs and documentation-check workflows with repository standards, and kept Sphinx project metadata consistent by deriving the sidebar title from the project variable instead of a hardcoded name.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/27"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: true

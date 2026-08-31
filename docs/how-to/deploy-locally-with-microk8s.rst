@@ -6,6 +6,9 @@ Deploy locally with MicroK8s and Juju
 This guide provides a practical local deployment path for ``amd64`` and
 ``arm64`` machines.
 
+For first-time environment preparation, start with
+:ref:`set-up-a-local-linux-environment`.
+
 Before you start
 ----------------
 

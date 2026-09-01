@@ -19,11 +19,13 @@ https
 html
 io
 Intersphinx
+integrator('s)?
 Kompare
 lang
 LaTeX
 latexmk
 LLMs?
+loopback
 Multipass
 npm
 otf
@@ -38,6 +40,7 @@ readthedocs
 redeclare
 rst
 sitemapindex
+subpath
 subproject
 subprojects
 SCons

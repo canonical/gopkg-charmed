@@ -2,6 +2,7 @@
 # See LICENSE file for licensing details.
 
 summary: Execute documentation commands - deployment tutorial
+kill-timeout: 30m
 
 prepare: |
   opcli install concierge

@@ -36,7 +36,7 @@ version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
 html_title = project + " documentation"
 
 # Documentation website URL
-ogp_site_url = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
+ogp_site_url = f"https://canonical.com/juju/docs/gopkg-charm/{version}/"
 
 # Preview name of the documentation website
 ogp_site_name = project

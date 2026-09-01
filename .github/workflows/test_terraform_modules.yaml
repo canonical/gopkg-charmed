@@ -1,0 +1,50 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+name: Terraform modules tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/test_terraform_modules.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Validate terraform configuration files
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIR: 'terraform'
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4.0.1
+
+      - name: Run terraform fmt
+        run: terraform fmt -check -recursive
+        working-directory: ${{ env.WORKING_DIR }}
+
+      - name: Setup Tflint
+        uses: terraform-linters/setup-tflint@v6.3.0
+        with:
+          tflint_wrapper_enabled: true
+
+      - name: Run tflint
+        run: |
+          tflint --version
+          tflint --init
+          tflint -f compact --recursive
+        working-directory: ${{ env.WORKING_DIR }}
+
+  terraform-tests:
+    uses: canonical/operator-workflows/.github/workflows/terraform_modules_test.yaml@main
+    secrets: inherit
+    with:
+      k8s-controller: true
+      terraform-directories: '["terraform", "terraform/product"]'

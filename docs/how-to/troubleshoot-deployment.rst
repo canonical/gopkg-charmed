@@ -11,8 +11,8 @@ Juju cannot access MicroK8s
 
 Symptom:
 
-- ``juju bootstrap microk8s dev`` reports ``Insufficient permissions to
-   access MicroK8s``.
+- ``juju bootstrap microk8s dev`` reports
+   ``Insufficient permissions to access MicroK8s``.
 
 Cause:
 

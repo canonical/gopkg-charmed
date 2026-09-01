@@ -28,9 +28,7 @@ integration-suites:
       --keep-models
 
 suites:
-  tests/spread/tutorial/:
-    summary: Kubernetes deployment tutorial smoke test
+  tests/spread/documentation/:
+    summary: Executable documentation command tests
     backends:
       - docs
-    environment:
-      TUTORIAL: docs/tutorials/deploy-and-verify-on-kubernetes.rst

@@ -28,30 +28,41 @@ Change hostname config
 
 Wait until the application is active again:
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    juju status --watch 2s
+
+.. SPREAD SKIP END
+
+.. SPREAD
+   juju wait-for application gopkg-charmed \
+     --query='status=="active"' --timeout=15m
+.. SPREAD END
 
 Verify health endpoint
 ----------------------
 
 .. code-block:: bash
 
-    curl -sw '\nHTTP %{http_code}\n' http://${INGRESS_HOST}/health-check \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1
+    curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+       --retry-all-errors \
+     http://${INGRESS_HOST}/health-check \
+     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep -Fx ok
 
-Expected output includes:
-
-- ``ok``
-- ``HTTP 200``
+Expected output is ``ok``.
 
 Verify go-import metadata
 -------------------------
 
 .. code-block:: bash
 
-    curl -s "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1
+    curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+       --retry-all-errors \
+     "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+       --resolve ${INGRESS_HOST}:80:127.0.0.1 | \
+       grep 'go-import.*staging.example.com'
 
 Expected output contains a ``go-import`` meta tag and should reflect the
 configured hostname.

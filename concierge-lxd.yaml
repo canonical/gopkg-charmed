@@ -21,6 +21,7 @@ providers:
       - dns
       - hostpath-storage
       - registry
+      - ingress
 
 host:
   snaps:

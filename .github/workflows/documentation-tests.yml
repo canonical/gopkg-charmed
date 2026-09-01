@@ -1,17 +1,18 @@
-name: Tutorial integration smoke
+name: Documentation tests
 
 on:
   pull_request:
     branches: [main]
     paths:
+      - "docs/how-to/**"
       - "docs/tutorials/**"
-      - "tests/spread/tutorial/**"
+      - "tests/spread/documentation/**"
       - "app/rockcraft.yaml"
       - "app/charm/charmcraft.yaml"
       - "artifacts.yaml"
       - "concierge-lxd.yaml"
       - "spread.yaml"
-      - ".github/workflows/tutorial-integration-smoke.yml"
+      - ".github/workflows/documentation-tests.yml"
   workflow_dispatch:
 
 concurrency:
@@ -19,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tutorial-smoke:
+  documentation-tests:
     uses: canonical/charm-ci/.github/workflows/doc-test.yml@0eef5b8cbef3ee74907850f790cab64bcf0499e5 # v1.0.0
     permissions:
       contents: read

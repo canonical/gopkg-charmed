@@ -26,14 +26,18 @@ Run these checks before opening a pull request:
    make -C docs spelling
    make -C docs woke
 
-Tutorial alignment with integration tests
------------------------------------------
+Documentation command tests
+---------------------------
 
-The tutorial smoke workflow uses ``opcli tutorial expand`` from
-``canonical/charm-ci`` to extract shell commands directly from the tutorial's
-RST code blocks. Spread runs the generated script in a provisioned Ubuntu
-environment. Changing an executable tutorial command therefore changes the CI
-test automatically.
+The documentation test workflow uses ``opcli tutorial expand`` from
+``canonical/charm-ci`` to extract shell commands directly from tutorial and
+how-to RST code blocks. Spread runs each generated script in a provisioned
+Ubuntu environment. Changing an executable documentation command therefore
+changes the CI test automatically.
+
+Related how-to guides can form one scenario. Keep them in dependency order;
+for example, the hostname scenario extracts environment setup, local
+deployment, and hostname configuration commands into one shell script.
 
 Wrap interactive commands or commands already performed by the CI provisioner
 in ``SPREAD SKIP`` markers. Use an invisible ``SPREAD`` block for a finite CI

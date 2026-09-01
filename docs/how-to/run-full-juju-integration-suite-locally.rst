@@ -49,7 +49,7 @@ This script will:
 7. run the integration tox environment with ``CHARM_FILE`` and ``APP_IMAGE``
 
 What this guide validates
-------------------------
+-------------------------
 
 This is an end-to-end deployment validation path. It verifies that:
 

@@ -10,10 +10,14 @@ If you are on macOS, run everything inside a Linux VM (for example Multipass).
 Step 1: create and enter a VM
 -----------------------------
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
    multipass shell charm-dev
+
+.. SPREAD SKIP END
 
 Step 2: make the repository available
 -------------------------------------
@@ -22,6 +26,8 @@ Choose one of these options.
 
 To mount an existing checkout from the host, leave the VM, run this command on
 the host, and then enter the VM again:
+
+.. SPREAD SKIP
 
 .. code-block:: bash
 
@@ -36,6 +42,8 @@ Alternatively, clone the repository inside the VM:
 
    git clone https://github.com/canonical/gopkg-charmed.git gopkg-charm
 
+.. SPREAD SKIP END
+
 Whichever option you chose, enter and verify the repository before continuing:
 
 .. code-block:: bash
@@ -48,6 +56,8 @@ The final command should return ``/home/ubuntu/gopkg-charm``.
 Step 3: install required tools
 ------------------------------
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    sudo apt update
@@ -59,13 +69,19 @@ Step 3: install required tools
    sudo adduser $USER snap_microk8s
    lxd init --auto
 
+.. SPREAD SKIP END
+
 Log out of the VM and back in so ``snap_microk8s`` group membership applies:
+
+.. SPREAD SKIP
 
 .. code-block:: bash
 
    exit
    multipass shell charm-dev
    id -nG | grep -qw snap_microk8s
+
+.. SPREAD SKIP END
 
 The final command must exit successfully before you continue. Alternatively,
 run ``newgrp snap_microk8s`` to open a shell with the new group membership.

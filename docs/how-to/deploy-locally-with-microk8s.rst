@@ -32,9 +32,16 @@ Deployment steps
 
 2. Bootstrap Juju and create a model.
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    juju bootstrap microk8s dev
+
+.. SPREAD SKIP END
+
+.. code-block:: bash
+
    juju add-model gopkg-charmed
 
 3. Pin model architecture to the machine architecture.
@@ -76,6 +83,17 @@ Deployment steps
 
 7. Wait for active status.
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    juju status --watch 2s
+
+.. SPREAD SKIP END
+
+.. SPREAD
+    juju wait-for application gopkg-charmed \
+       --query='status=="active"' --timeout=15m
+    juju wait-for application nginx-ingress-integrator \
+       --query='status=="active"' --timeout=15m
+.. SPREAD END

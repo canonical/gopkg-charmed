@@ -1,0 +1,26 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+summary: Execute documentation commands - configure hostname how-to
+
+prepare: |
+  opcli install concierge
+  opcli install charmcraft
+  opcli install rockcraft
+  opcli env provision -c "${SPREAD_PATH}/concierge-lxd.yaml"
+  chown -R ubuntu:ubuntu /home/ubuntu "${SPREAD_PATH}"
+  ln -sfn "${SPREAD_PATH}" /home/ubuntu/gopkg-charm
+
+execute: |
+  script=/tmp/documentation-commands.sh
+  : > "${script}"
+  for document in \
+    docs/how-to/set-up-a-local-linux-environment.rst \
+    docs/how-to/deploy-locally-with-microk8s.rst \
+    docs/how-to/configure-hostname-and-check-go-import.rst
+  do
+    opcli tutorial expand -- "${SPREAD_PATH}/${document}" >> "${script}"
+    printf '\n' >> "${script}"
+  done
+  runuser -l ubuntu -s /bin/bash -c \
+    'set -euxo pipefail; . "$1"' _ "${script}"

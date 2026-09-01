@@ -1,4 +1,5 @@
 .. _run-full-juju-integration-suite-locally:
+.. _full-integration-suite-local:
 
 Run the full Juju integration suite locally
 ===========================================
@@ -6,11 +7,14 @@ Run the full Juju integration suite locally
 This guide runs the full charm integration suite locally on Linux ``amd64`` and
 Linux ``arm64``.
 
-If you are on macOS, run these steps inside a Linux VM (for example Multipass).
-For a complete first-time setup path, see :ref:`set-up-a-local-linux-environment`.
-
 Prerequisites
 -------------
+
+If this is your first local test run, complete :ref:`Set up a local Linux
+environment <set-up-a-local-linux-environment>` before continuing. That setup
+is required unless you already have the tools and MicroK8s environment listed
+below. If you are on macOS, perform the setup and this guide inside a Linux VM,
+such as Multipass.
 
 You need these tools inside Linux:
 

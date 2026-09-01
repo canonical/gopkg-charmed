@@ -17,10 +17,13 @@ https
 html
 io
 Intersphinx
+integrator('s)?
+Kompare
 lang
 LaTeX
 latexmk
 LLMs?
+loopback
 Multipass
 npm
 otf
@@ -31,6 +34,11 @@ pymarkdownlnt
 Rockcraft
 readthedocs
 rst
+sitemapindex
+subpath
+subproject
+subprojects
+SCons
 SVG
 tex
 texlive
@@ -40,13 +48,10 @@ uncomment(ing)?
 utils
 uv
 VMs
-<<<<<<< HEAD
-=======
 WCAG
 whitespace
 whitespaces
 walkthroughs
->>>>>>> 7e99ea9 (Fix documentation spellcheck wordlist)
 wordlist
 xetex
 xindy

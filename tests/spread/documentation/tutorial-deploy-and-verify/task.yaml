@@ -1,7 +1,7 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-summary: Execute the Kubernetes deployment tutorial
+summary: Execute documentation commands - deployment tutorial
 
 prepare: |
   opcli install concierge
@@ -12,5 +12,9 @@ prepare: |
   ln -sfn "${SPREAD_PATH}" /home/ubuntu/gopkg-charm
 
 execute: |
-  opcli tutorial expand -- "${SPREAD_PATH}/${TUTORIAL}" > /tmp/tutorial-script.sh
-  runuser -l ubuntu -s /bin/bash -c 'set -euxo pipefail; . "$1"' _ /tmp/tutorial-script.sh
+  script=/tmp/documentation-commands.sh
+  opcli tutorial expand -- \
+    "${SPREAD_PATH}/docs/tutorials/deploy-and-verify-on-kubernetes.rst" \
+    > "${script}"
+  runuser -l ubuntu -s /bin/bash -c \
+    'set -euxo pipefail; . "$1"' _ "${script}"

@@ -145,8 +145,8 @@ Wait for active status:
 .. SPREAD
    juju wait-for application gopkg-charmed \
      --query='status=="active"' --timeout=15m
-    juju wait-for application nginx-ingress-integrator \
-       --query='status=="active"' --timeout=15m
+   juju wait-for application nginx-ingress-integrator \
+     --query='status=="active"' --timeout=15m
 .. SPREAD END
 
 Step 5: verify the deployment

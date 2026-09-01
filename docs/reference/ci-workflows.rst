@@ -1,7 +1,7 @@
 .. _ci-workflows:
 
-CI workflows for documentation and tutorial validation
-======================================================
+CI workflows for documentation validation
+=========================================
 
 Automatic docs checks
 ---------------------
@@ -16,40 +16,42 @@ Purpose:
 Check removed URLs
 ------------------
 
-Workflow: ``.github/workflows/check-removed-urls.yml``
+Workflow: ``.github/workflows/automatic-doc-checks.yml``
 
 Purpose:
 
 - detect removed documentation URLs in pull requests to ``main``
 - protect release-path documentation links from accidental breakage
 
-Tutorial integration smoke
---------------------------
+Documentation tests
+-------------------
 
-Workflow: ``.github/workflows/tutorial-integration-smoke.yml``
+Workflow: ``.github/workflows/documentation-tests.yml``
 
 Purpose:
 
-- execute the tutorial's literal shell commands when the tutorial or its
-  deployment inputs change
+- execute literal shell commands from tutorials and how-to guides when their
+  content or deployment inputs change
 - validate the complete build, deploy, integrate, configure, and verify flow
   in a provisioned Ubuntu environment
 
 Where it comes from:
 
 - The workflow file lives in this repository:
-  ``.github/workflows/tutorial-integration-smoke.yml``
+  ``.github/workflows/documentation-tests.yml``
 - The job itself reuses Canonical's shared documentation test workflow:
   ``canonical/charm-ci/.github/workflows/doc-test.yml`` pinned to a
   specific commit for reproducibility.
 
 Current behavior:
 
-- triggers on tutorial, Spread task, artifact recipe, provisioning, and
-  workflow changes
+- triggers on tutorial, how-to, Spread task, artifact recipe, provisioning,
+  and workflow changes
 - uses ``opcli tutorial expand`` to extract commands directly from the RST
 - executes the generated shell script through the ``docs-ci`` Spread backend
 - provisions MicroK8s and Juju, then builds the rock and charm from source
+- composes dependent how-to guides in prerequisite order; the hostname test
+  extracts setup, deployment, and hostname configuration commands
 
 Automatic vs manual linkage
 ---------------------------
@@ -57,10 +59,9 @@ Automatic vs manual linkage
 Command synchronization is content-aware; workflow triggering is path-based.
 
 - Automatic part:
-  commands are extracted from the tutorial, so edits to its executable code
-  blocks change the tested script without requiring duplicate test changes.
+  commands are extracted from tutorials and how-to guides, so edits to their
+  executable code blocks change the tested scripts without duplicate tests.
 - Manual part:
-  if you move tutorial files to new paths or introduce new docs locations that
-  should trigger integration smoke, you must update the ``paths`` list in the
-  workflow file.
+  if you move documentation files to new paths, you must update the Spread
+  task inputs and the workflow's ``paths`` list.
 

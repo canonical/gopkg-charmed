@@ -16,6 +16,10 @@ PLAN-Factor-III-Config.md
 .fuse_hidden*
 CONTRIBUTING-Compliance-Plan.md
 
+# Local scratch files (never commit)
+temp.txt
+context.md
+
 # Terraform local artifacts
 **/.terraform/
 *.tfstate

@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Added Terraform modules for deploying gopkg with Juju
+    author: minulo
+    type: minor
+    description: Added a base Terraform module at terraform/ that deploys the gopkg-charmed application on its own, exposing the charm's requires and provides relation endpoint names so calling modules can build integrations without hardcoding them. Added a product module at terraform/product/ that composes the base module with an optional nginx-ingress-integrator deployment, preconfigured with the path routing and disabled rewriting that gopkg's versioned import paths require, plus optional integrations to existing Loki, Prometheus, and Grafana offers. Neither module creates a Juju model or pins a charm revision, so both stay reusable across environments. Replaces the previous terraform/app-deployment module, whose hostname, container image, and ingress deployment were environment-specific and are now supplied by the caller. Added a CI workflow that checks formatting, lints, and runs the Terraform test suites for both modules against a Juju controller.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/32"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

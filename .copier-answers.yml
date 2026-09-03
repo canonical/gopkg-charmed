@@ -1,0 +1,26 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 72d7f78
+_src_path: /tmp/platform-engineering-documentation-files
+author: Canonical Ltd.
+discourse: ''
+display_contributors: false
+github_url: https://github.com/canonical/gopkg-charmed
+html_favicon: ''
+license_name: BSD-2-Clause
+license_url: https://github.com/canonical/gopkg-charmed/blob/main/LICENSE
+linkcheck_timeout: 30
+llms_txt_description: This is the documentation for gopkg-charmed, a Kubernetes charm
+    that deploys and operates the gopkg.in versioned import-path service with a 12-factor
+    workflow.
+matrix: ''
+mattermost: ''
+new_domain: ''
+ogp_image: https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg
+old_domain: ''
+product_page: github.com/canonical/gopkg-charmed
+product_tag: ''
+project: gopkg-charmed
+repo_default_branch: main
+repo_folder: /docs/
+rtd_slug: ''
+source_edit_link: ''

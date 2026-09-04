@@ -22,21 +22,13 @@ Service.
 
 An incoming request follows this path:
 
-.. code-block:: text
+.. mermaid::
 
-   Client requests http://gopkg.example.com/yaml.v2
-                         |
-                         v
-   DNS resolves the hostname to the ingress controller
-                         |
-                         v
-   The ingress controller matches the hostname and path
-                         |
-                         v
-   A Kubernetes Service forwards the request to gopkg-charmed
-                         |
-                         v
-   The gopkg.in workload handles /yaml.v2
+  flowchart TD
+    dns[DNS] -. Resolves host .-> client[Client]
+    client -->|GET /yaml.v2| ingress[Ingress controller]
+    ingress --> service[Kubernetes Service]
+    service --> app[gopkg.in]
 
 The same ingress endpoint can serve several applications. The controller uses
 the request's hostname and path to select the correct backend.

@@ -84,7 +84,11 @@ Verify image push:
 
 .. code-block:: bash
 
-   curl http://localhost:32000/v2/gopkg/tags/list
+   curl --fail --silent --show-error \
+     http://localhost:32000/v2/gopkg/tags/list | grep -F '"0.1"'
+
+Expected output contains ``"0.1"``. The command exits with a failure if the
+registry does not contain the image tag.
 
 Step 3: build the charm
 -----------------------
@@ -93,6 +97,9 @@ Step 3: build the charm
 
    cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
+   ls -1 gopkg-charmed_*.charm
+
+The final command must print the path to the packed charm.
 
 Step 4: deploy to a new model
 -----------------------------
@@ -202,6 +209,6 @@ If the change is not immediately visible, wait for ``juju status`` to return
 What to read next
 -----------------
 
-- :ref:`deploy-locally-with-microk8s`
-- :ref:`configure-hostname-and-check-go-import`
-- :ref:`troubleshoot-deployment`
+- :ref:`Deploy locally with MicroK8s and Juju <deploy-locally-with-microk8s>`
+- :ref:`Configure hostname and verify go-import metadata <configure-hostname-and-check-go-import>`
+- :ref:`Troubleshoot deployment <troubleshoot-deployment>`

@@ -3,8 +3,9 @@
 Configure hostname and verify go-import metadata
 ================================================
 
-This guide explains how to change the charm hostname config and verify that
-the application serves expected import metadata.
+Correct hostname metadata lets Go clients discover source through the stable
+``gopkg.in`` import path. Set the ingress and workload hostname values, then
+query a package path to verify the generated ``go-import`` metadata.
 
 Prerequisites
 -------------

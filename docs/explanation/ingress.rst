@@ -8,9 +8,7 @@ only by other workloads in the cluster. Ingress provides a controlled route
 from an external hostname, such as ``gopkg.example.com``, to that internal
 service.
 
-This page explains the parts involved, how a request reaches the application,
-and what must be configured for local and production deployments. For a full
-copy-paste deployment, follow :ref:`deploy-and-verify-on-kubernetes`.
+For a complete deployment, follow :ref:`deploy-and-verify-on-kubernetes`.
 
 What Ingress solves
 -------------------

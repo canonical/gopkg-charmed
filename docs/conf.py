@@ -293,6 +293,6 @@ rst_prolog = """
 
 # Configuration for Intersphinx projects
 #
-# intersphinx_mapping = {
-#     "snap": ("https://snapcraft.io/docs/", None),
-# }
+intersphinx_mapping = {
+    "juju": ("https://documentation.ubuntu.com/juju/3.6/", None),
+}

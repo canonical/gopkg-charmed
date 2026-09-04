@@ -9,8 +9,8 @@ This guide provides a practical local deployment path for ``amd64`` and
 For first-time environment preparation, start with
 :ref:`set-up-a-local-linux-environment`.
 
-Before you start
-----------------
+Prerequisites
+-------------
 
 Make sure your Linux environment has these tools installed:
 

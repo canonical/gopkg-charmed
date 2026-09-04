@@ -67,27 +67,28 @@ the standard Go and Git clients perform the download.
 
 Here is that example from import statement to downloaded source:
 
-.. code-block:: text
+.. mermaid::
 
-     Go source code
-         import "gopkg.in/yaml.v2"
-                             |
-                             v
-     Go discovery request
-         https://gopkg.in/yaml.v2?go-get=1
-                             |
-                             v
-     gopkg.in maps the path to its GitHub repository
-         https://github.com/go-yaml/yaml
-                             |
-                             v
-     gopkg.in inspects the repository tags and selects the latest v2 release
-                             |
-                             v
-     The Go tool fetches through gopkg.in, which proxies the Git data from GitHub
-                             |
-                             v
-     The downloaded yaml package becomes available to the importing Go code
+     flowchart TD
+     source["Go import<br/>gopkg.in/yaml.v2"]
+     repository["Map to GitHub<br/>go-yaml/yaml"]
+     version["Select v2 tag"]
+     package["Fetch package"]
+
+     source -->|?go-get=1| repository --> version --> package
+
+What ``?go-get=1`` means
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``?`` starts the query part of the URL. ``go-get`` is the parameter name,
+and ``1`` tells gopkg.in that the Go command is discovering where to fetch the
+package source. The Go command adds this parameter automatically; it does not
+appear in an ``import`` statement.
+
+For this request, gopkg.in returns a small HTML page containing ``go-import``
+and ``go-source`` metadata instead of the normal package page. The metadata
+identifies the Git import root and source location that the Go command should
+use.
 
 The ``go-import`` response tells the Go tool that ``gopkg.in/yaml.v2`` is a
 Git import root. The service then makes the selected GitHub version available

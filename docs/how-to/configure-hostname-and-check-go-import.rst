@@ -6,8 +6,11 @@ Configure hostname and verify go-import metadata
 This guide explains how to change the charm hostname config and verify that
 the application serves expected import metadata.
 
-If this is your first run on a machine, complete
-:ref:`set-up-a-local-linux-environment` first.
+Prerequisites
+-------------
+
+Complete :ref:`set-up-a-local-linux-environment`, then
+:ref:`Deploy locally with MicroK8s and Juju <deploy-locally-with-microk8s>`.
 
 Set an ingress host for local checks
 ------------------------------------

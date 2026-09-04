@@ -8,10 +8,10 @@ Use this path for changes under ``docs/``. You can build and check the
 documentation on Linux or macOS without installing Juju, MicroK8s, Rockcraft,
 or Charmcraft.
 
-Prepare the documentation environment
--------------------------------------
+Prerequisites
+-------------
 
-You need Git, Python 3 with ``venv``, and Make. On Ubuntu, install them with:
+You need Git, Make, and Python 3 with ``venv``. On Ubuntu, run:
 
 .. code-block:: bash
 
@@ -28,42 +28,31 @@ pinned documentation dependencies:
    cd gopkg-charm
    make -C docs install
 
-The final command creates ``docs/.venv``. It does not modify your global Python
-environment.
+This creates an isolated environment in ``docs/.venv``.
 
 Understand the documentation layout
 -----------------------------------
 
-The documentation follows the Diataxis structure:
+Choose the directory that matches the reader's need:
 
-- ``docs/tutorials/`` teaches through a complete learning experience.
+- ``docs/tutorials/`` provides guided learning.
 - ``docs/how-to/`` gives goal-oriented procedures.
-- ``docs/reference/`` records facts, interfaces, and supported settings.
-- ``docs/explanation/`` provides background and design context.
-- ``docs/contribute/`` helps contributors work on this repository.
-
-Choose the section based on what the reader is trying to accomplish, not on
-which source file or component the page describes.
+- ``docs/reference/`` records facts and settings.
+- ``docs/explanation/`` explains concepts and design.
+- ``docs/contribute/`` supports contributors.
 
 Preview your change
 -------------------
 
-Build the site once:
+Build and preview the site:
 
 .. code-block:: bash
 
    cd ~/gopkg-charm
    make -C docs html
-
-The build succeeds without warnings and writes the rendered site to
-``docs/_build/``. To rebuild and serve the site while editing, run:
-
-.. code-block:: bash
-
    make -C docs run
 
-Open ``http://127.0.0.1:8000`` and stop the server with ``Ctrl+C`` when you are
-finished.
+Open ``http://127.0.0.1:8000``. Stop the preview with ``Ctrl+C``.
 
 Run documentation checks
 ------------------------
@@ -78,46 +67,26 @@ Before opening a pull request, run:
    make -C docs spelling
    make -C docs woke
 
-These commands check the Sphinx build, style, spelling, and inclusive language.
-Run ``make -C docs linkcheck`` as well when you add or change links.
+Run ``make -C docs linkcheck`` when you add or change links.
 
 Test executable documentation
 -----------------------------
 
-Commands in ``docs/tutorials/`` and ``docs/how-to/`` are part of the tested
-product experience. The **Documentation tests** workflow extracts shell code
-blocks with ``opcli tutorial expand`` and executes them through Spread in a
-provisioned Ubuntu environment.
+The **Documentation tests** workflow extracts shell commands from tutorials and
+how-to guides and runs them in Ubuntu with Spread.
 
 When you edit an executable command:
 
-1. Keep the command complete and safe to copy and paste.
-2. Add a verification command whose exit status is nonzero when the expected
-   result is missing.
-3. Keep commands in dependency order when a scenario combines multiple guides.
-4. Use ``SPREAD SKIP`` only for interactive commands or setup already performed
-   by the CI provisioner.
-5. Use an invisible ``SPREAD`` block when CI needs a finite equivalent for an
-   interactive command.
+1. Keep it complete and safe to copy.
+2. Add a check that fails when the expected result is missing.
+3. Use ``SPREAD SKIP`` for interactive or pre-provisioned steps.
+4. Use an invisible ``SPREAD`` block for a finite CI alternative.
 
-The scenarios live in ``tests/spread/documentation/``. If you move a tested
-page, update its Spread task and the path filters in
-``.github/workflows/documentation-tests.yml``.
+Scenarios live in ``tests/spread/documentation/``. When moving a tested page,
+update its task and ``.github/workflows/documentation-tests.yml``.
 
 You do not need a local Juju environment for prose-only changes. If your new
 command builds, deploys, or changes the running service, also follow
 :ref:`improve-code` and validate the affected runtime path.
-
-Before you open a pull request
-------------------------------
-
-Confirm that:
-
-- the page is in the correct Diataxis section
-- a new page appears in the appropriate ``index.rst`` toctree
-- commands state where they run and include an expected result
-- local documentation checks pass
-- the **Documentation tests** workflow passes for executable tutorial or
-  how-to changes
 
 See :ref:`ci-workflows` for the complete CI behavior.

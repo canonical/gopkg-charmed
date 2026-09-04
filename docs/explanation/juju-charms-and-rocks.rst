@@ -111,7 +111,7 @@ Kubernetes rather than replacing it:
 - Juju manages applications and their relationships.
 - The charm translates Juju operations into application-specific changes.
 
-Several Juju terms appear throughout this documentation:
+Key Juju terms:
 
 **Controller**
   The Juju control plane. It receives commands, stores the desired state, and

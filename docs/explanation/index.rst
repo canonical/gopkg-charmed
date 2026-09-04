@@ -3,16 +3,12 @@
 Explanation
 ===========
 
-Use this section to understand the main technologies and networking concepts
-behind ``gopkg-charmed``.
+Understand how ``gopkg-charmed`` is packaged, operated, and exposed:
 
-Start with the page that matches what you need:
-
-- :doc:`Juju, charms, and rocks <juju-charms-and-rocks>` introduces the
-	packaging and orchestration concepts used by this project. Start here if
-	Juju is new to you.
-- :doc:`Ingress <ingress>` explains how requests enter the Kubernetes cluster,
-	how Juju configures routing, and how to set up local and production access.
+- Learn the packaging and orchestration concepts in :doc:`Juju, charms, and
+  rocks <juju-charms-and-rocks>`.
+- Follow request routing from the client to the workload in
+  :doc:`Ingress <ingress>`.
 
 .. vale off
 

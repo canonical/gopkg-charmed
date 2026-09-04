@@ -3,7 +3,7 @@
 How-to guides
 =============
 
-Use these guides when you already know your goal and want concise steps.
+Choose a deployment, configuration, testing, or recovery task.
 
 .. toctree::
    :maxdepth: 1

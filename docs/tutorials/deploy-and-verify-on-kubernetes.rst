@@ -3,11 +3,9 @@
 Deploy and verify gopkg-charmed on Kubernetes
 =============================================
 
-This tutorial is for someone who has never worked with this project before.
-You will build the artifacts, deploy the charm with Juju, and verify that the
-service is healthy.
-
-This guide is platform-agnostic and supports both ``amd64`` and ``arm64``.
+An end-to-end deployment shows how the Go service, rock, charm, Juju, and
+ingress work together. Build the artifacts, deploy them on Kubernetes, and
+verify the service on ``amd64`` or ``arm64``.
 
 What you will build
 -------------------

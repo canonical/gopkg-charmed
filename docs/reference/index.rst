@@ -3,8 +3,8 @@
 Reference
 =========
 
-This section contains factual details for configuration, interfaces, and CI
-validation behavior.
+Find configuration options, supported platforms, prerequisites, and CI
+behavior.
 
 .. toctree::
 	:maxdepth: 1

@@ -4,8 +4,9 @@
 Run the full Juju integration suite locally
 ===========================================
 
-This guide runs the full charm integration suite locally on Linux ``amd64`` and
-Linux ``arm64``.
+The full suite catches failures across packaging, deployment, and service
+behavior. Run one script to build the rock and charm, deploy them with Juju,
+and execute the integration tests on Linux ``amd64`` or ``arm64``.
 
 Prerequisites
 -------------

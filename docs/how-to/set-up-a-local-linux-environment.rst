@@ -3,7 +3,9 @@
 Set up a local Linux environment
 ================================
 
-Use this guide before running tutorials or integration tests from scratch.
+A consistent Ubuntu environment keeps local builds and tests aligned with CI.
+Prepare a native or virtual machine with the tools needed to build, deploy, and
+test ``gopkg-charmed``.
 
 Prerequisites
 -------------

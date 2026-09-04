@@ -3,8 +3,7 @@
 Tutorials
 =========
 
-Start here if you are new to the project. The tutorial is designed for first
-time operators and walks through a complete deployment and verification flow.
+Build, deploy, and verify ``gopkg-charmed`` from start to finish.
 
 .. toctree::
 	:maxdepth: 1

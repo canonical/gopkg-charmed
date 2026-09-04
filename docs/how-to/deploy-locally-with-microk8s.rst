@@ -3,8 +3,9 @@
 Deploy locally with MicroK8s and Juju
 =====================================
 
-This guide provides a practical local deployment path for ``amd64`` and
-``arm64`` machines.
+A local deployment verifies that the rock and charm work together before they
+reach a shared environment. Build the artifacts, deploy them to MicroK8s with
+Juju, and expose the service through ingress.
 
 For first-time environment preparation, start with
 :ref:`set-up-a-local-linux-environment`.

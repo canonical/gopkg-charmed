@@ -117,21 +117,13 @@ The charm can be deployed to Kubernetes environments supported by Juju, from
 Kubernetes offerings. It gives operators a consistent Juju interface while
 preserving the import-path behavior expected by existing Go consumers.
 
-In this documentation
----------------------
+Find your task
+--------------
 
-Use the navigation sections below to find task-oriented guides and reference
-material.
-
-How this documentation is organized
------------------------------------
-
-The structure follows a four-part documentation framework:
-
-- Tutorials for end-to-end guided examples
-- How-to guides for practical tasks
-- Reference for configuration and interfaces
-- Explanation for architecture and design context
+- New to the project? Start with :doc:`tutorials/index`.
+- Working toward a specific goal? Use :doc:`how-to/index`.
+- Looking for configuration or supported platforms? See :doc:`reference/index`.
+- Exploring architecture and design? Read :doc:`explanation/index`.
 
 Project and community
 ---------------------

@@ -62,13 +62,13 @@ html_context = {
     # 'product_tag': '_static/tag.png',
     # Your Discourse instance URL
     # TODO: Change to your Discourse instance URL or leave empty.
-    "discourse": "",
+    "discourse": "https://discourse.charmhub.io",
     # Your Mattermost channel URL
     # TODO: Change to your Mattermost channel URL or leave empty.
     "mattermost": "",
     # Your Matrix channel URL
     # TODO: Change to your Matrix channel URL or leave empty.
-    "matrix": "",
+    "matrix": "https://matrix.to/#/#charmhub-charmdev:ubuntu.com",
     # Your documentation GitHub repository URL If set, links for viewing the
     # documentation source files and creating GitHub issues are added at the bottom of
     # each page.
@@ -105,9 +105,9 @@ html_context = {
 # - https://launchpad.net/example
 # - https://git.launchpad.net/example
 #
-# html_theme_options = {
-# 'source_edit_link': 'https://github.com/canonical/sphinx-stack',
-# }
+html_theme_options = {
+    'source_edit_link': 'https://github.com/canonical/gopkg-charmed',
+}
 
 # Project slug
 # TODO: If your documentation is hosted on https://documentation.ubuntu.com/,
@@ -140,8 +140,8 @@ sitemap_excludes = [
 # Template and asset locations #
 ################################
 
-# html_static_path = ["_static"]
-# templates_path = ["_templates"]
+html_static_path = ["_static"]
+templates_path = ["_templates"]
 
 #############
 # Redirects #
@@ -256,6 +256,7 @@ html_css_files = [
 # Adds custom JavaScript files, located remotely or in 'html_static_path'.
 html_js_files = [
     "https://assets.ubuntu.com/v1/287a5e8f-bundle.js",
+    "js/overwrite_links.js",
 ]
 
 # Appends extra markup to the end of every document written in reST

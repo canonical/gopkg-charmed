@@ -1,27 +1,12 @@
-build/
-venv/
-.venv/
-__pycache__/
-*.py[cod]
+# Editors
 .idea
 .vscode
-*.rock
-*.charm
+
+# Python virtual environments
+venv/
+.venv/
+
+# Build artifacts in app/ (no nested .gitignore there); app/charm/, docs/ and
+# terraform/ carry their own .gitignore for their generated files.
 app/gopkg
-.tox/
-.coverage
-12-Factor-Compliance.md
-PLAN-Factor-III-Config.md
-12-Factor-Plan.md
-.fuse_hidden*
-CONTRIBUTING-Compliance-Plan.md
-
-# Local scratch files (never commit)
-temp.txt
-context.md
-
-# Terraform local artifacts
-**/.terraform/
-*.tfstate
-*.tfstate.*
-crash.log
+*.rock

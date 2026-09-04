@@ -5,10 +5,41 @@ Set up a local Linux environment
 
 Use this guide before running tutorials or integration tests from scratch.
 
-If you are on macOS, run everything inside a Linux VM (for example Multipass).
+Prerequisites
+-------------
+
+The repository's documented and CI-tested environment for the complete code
+test path is:
+
+- Ubuntu 24.04 LTS, either on a native Linux host or in a virtual machine
+- an ``amd64`` or ``arm64`` processor architecture
+- network access for APT, snaps, Go modules, charm dependencies, and OCI images
+
+The rock and charm both declare Ubuntu 24.04 LTS build bases and ``amd64`` and
+``arm64`` platforms. The integration runner rejects non-Linux systems and
+architectures other than ``amd64`` and ``arm64``.
+
+For a virtual machine, this repository uses and has tested the following
+allocation:
+
+- 4 virtual CPUs
+- 8 GB of memory
+- 50 GB of disk space
+
+These values are the project's tested profile, not claimed minimums. The
+repository's deployment testing found that 4 GB of memory can leave the Juju
+controller without enough capacity to schedule the charm workloads.
+
+On macOS, use Multipass to create the Ubuntu VM. Current Multipass support
+requires macOS 14 or later and supports Intel and Apple-silicon Macs.
+See the `Multipass installation guide
+<https://canonical.com/multipass/docs/latest/how-to-guides/install-multipass/>`_
+before continuing.
 
 Step 1: create and enter a VM
 -----------------------------
+
+Skip this step on a native Ubuntu 24.04 LTS host.
 
 .. SPREAD SKIP
 
@@ -61,7 +92,8 @@ Step 3: install required tools
 .. code-block:: bash
 
    sudo apt update
-   sudo apt install --yes git python3.12-venv tox
+   sudo apt install --yes curl git python3.12-venv tox
+   sudo snap install go --classic
    sudo snap install rockcraft --classic
    sudo snap install charmcraft --classic
    sudo snap install juju
@@ -122,10 +154,14 @@ Step 5: verify the repository and tools
 .. code-block:: bash
 
    cd ~/gopkg-charm
+   command -v curl
+   command -v go
    command -v juju
    command -v charmcraft
    command -v rockcraft
    command -v microk8s
+   command -v tox
+   command -v lxd
    id -nG | grep -qw snap_microk8s
    dpkg --print-architecture
    git rev-parse --show-toplevel
@@ -138,4 +174,4 @@ Next steps
 ----------
 
 - For deployment flow: :ref:`deploy-and-verify-on-kubernetes`
-- For full integration tests: :ref:`run-full-juju-integration-suite-locally`
+- For full integration tests: :ref:`full-integration-suite-local`

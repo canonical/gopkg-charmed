@@ -104,6 +104,7 @@ exit                   # re-enter with `multipass shell charm-dev` to pick up th
 > shell and swallows every line after it. Log out and back in instead, then:
 
 ```bash
+microk8s status --wait-ready
 sudo microk8s enable dns hostpath-storage registry ingress
 microk8s status --wait-ready
 mkdir -p ~/.local/share

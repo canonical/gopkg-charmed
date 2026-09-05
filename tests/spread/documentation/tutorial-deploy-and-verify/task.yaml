@@ -1,0 +1,33 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+summary: Execute documentation commands - deployment tutorial, from a bare system
+
+kill-timeout: 60m
+
+# Cold start: no concierge, no pre-installed tools. The documentation's own
+# commands install everything, so the test fails when the guide would fail.
+# The prepare step only equalizes the CI machine with the guide's target
+# environment (a fresh VM):
+#   - GitHub runners ship Docker, whose iptables FORWARD policy cuts off
+#     network for the LXD build instances rockcraft and charmcraft launch.
+#     Allow lxdbr0 traffic exactly as charm-ci's build workflow does; the
+#     guard makes this a no-op on machines without Docker.
+#   - The chown and symlink stand in for the guide's `multipass mount`
+#     step, which the guide marks SPREAD SKIP.
+prepare: |
+  if iptables -nL DOCKER-USER > /dev/null 2>&1; then
+    iptables -I DOCKER-USER -i lxdbr0 -j ACCEPT
+    iptables -I DOCKER-USER -o lxdbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+  fi
+  if ip6tables -nL DOCKER-USER > /dev/null 2>&1; then
+    ip6tables -I DOCKER-USER -i lxdbr0 -j ACCEPT
+    ip6tables -I DOCKER-USER -o lxdbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+  fi
+  chown -R ubuntu:ubuntu /home/ubuntu "${SPREAD_PATH}"
+  ln -sfn "${SPREAD_PATH}" /home/ubuntu/gopkg-charm
+
+execute: |
+  "${SPREAD_PATH}/tests/spread/documentation/run-docs.sh" \
+    docs/how-to/set-up-a-local-linux-environment.rst \
+    docs/tutorials/deploy-and-verify-on-kubernetes.rst

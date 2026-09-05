@@ -228,7 +228,7 @@ type SearchResults struct {
 
 var regexpPackageName = regexp.MustCompile(`<h2 id="pkg-overview">package ([\p{L}_][\p{L}\p{Nd}_]*)</h2>`)
 
-func renderPackagePage(resp http.ResponseWriter, req *http.Request, repo *Repo) {
+func renderPackagePage(resp http.ResponseWriter, _ *http.Request, repo *Repo) {
 	data := &packageData{
 		Repo:     repo,
 		Hostname: *hostnameFlag,

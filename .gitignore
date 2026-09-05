@@ -2,6 +2,9 @@
 .idea
 .vscode
 
+# Local agent tooling
+/.agents/
+
 # Python virtual environments
 venv/
 .venv/

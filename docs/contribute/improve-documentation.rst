@@ -1,6 +1,9 @@
 .. _improve-documentation-and-tutorial-tests:
 .. _improve-documentation:
 
+.. meta::
+   :description: Build, preview, and validate gopkg-charmed documentation and executable examples locally.
+
 Improve the documentation
 =========================
 
@@ -73,17 +76,25 @@ Test executable documentation
 -----------------------------
 
 The **Documentation tests** workflow extracts shell commands from tutorials and
-how-to guides and runs them in Ubuntu with Spread.
+how-to guides and runs them on a bare Ubuntu system with Spread. The guides'
+own commands install the tools and provision the environment, so the test
+covers the same path a reader follows.
 
 When you edit an executable command:
 
 1. Keep it complete and safe to copy.
 2. Add a check that fails when the expected result is missing.
-3. Use ``SPREAD SKIP`` for interactive or pre-provisioned steps.
+3. Use ``SPREAD SKIP`` only for genuinely interactive steps, such as entering
+   a Multipass VM or watching ``juju status``.
 4. Use an invisible ``SPREAD`` block for a finite CI alternative.
+5. Where the reader must log out and back in, emit the sentinel line
+   ``# spread-session-break`` from an invisible ``SPREAD`` block; the test
+   harness starts a fresh login shell there.
 
-Scenarios live in ``tests/spread/documentation/``. When moving a tested page,
-update its task and ``.github/workflows/documentation-tests.yml``.
+Scenarios live in ``tests/spread/documentation/``; each task runs its guides
+in prerequisite order through ``tests/spread/documentation/run-docs.sh``.
+When moving a tested page, update its task and
+``.github/workflows/documentation-tests.yml``.
 
 You do not need a local Juju environment for prose-only changes. If your new
 command builds, deploys, or changes the running service, also follow

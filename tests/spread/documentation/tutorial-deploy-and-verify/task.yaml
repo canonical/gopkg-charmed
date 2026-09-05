@@ -1,21 +1,20 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-summary: Execute documentation commands - deployment tutorial
-kill-timeout: 30m
+summary: Execute documentation commands - deployment tutorial, from a bare system
 
+kill-timeout: 45m
+
+# Cold start: no concierge, no pre-installed tools. The documentation's own
+# commands install everything, so the test fails when the guide would fail.
+# The prepare step only stands in for the guide's `multipass mount` step,
+# which the guide marks SPREAD SKIP: it places the repository at the path
+# the guide expects.
 prepare: |
-  opcli install concierge
-  opcli install charmcraft
-  opcli install rockcraft
-  opcli env provision -c "${SPREAD_PATH}/concierge-lxd.yaml"
   chown -R ubuntu:ubuntu /home/ubuntu "${SPREAD_PATH}"
   ln -sfn "${SPREAD_PATH}" /home/ubuntu/gopkg-charm
 
 execute: |
-  script=/tmp/documentation-commands.sh
-  opcli tutorial expand -- \
-    "${SPREAD_PATH}/docs/tutorials/deploy-and-verify-on-kubernetes.rst" \
-    > "${script}"
-  runuser -l ubuntu -s /bin/bash -c \
-    'set -euxo pipefail; . "$1"' _ "${script}"
+  "${SPREAD_PATH}/tests/spread/documentation/run-docs.sh" \
+    docs/how-to/set-up-a-local-linux-environment.rst \
+    docs/tutorials/deploy-and-verify-on-kubernetes.rst

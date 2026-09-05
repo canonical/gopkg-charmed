@@ -1,5 +1,8 @@
 .. _platforms-and-prerequisites:
 
+.. meta::
+   :description: Reference supported architectures, required charm deployment tools, MicroK8s add-ons, and Juju model constraints.
+
 Platforms and prerequisites
 ===========================
 
@@ -22,8 +25,8 @@ Required tooling for charm deployment
 
 - ``rockcraft``
 - ``charmcraft``
-- ``juju``
-- ``microk8s``
+- ``juju`` from channel ``3/stable``
+- ``microk8s`` from channel ``1.31-strict/stable``
 - ``lxd`` initialized with ``lxd init --auto``
 
 MicroK8s add-ons
@@ -31,6 +34,7 @@ MicroK8s add-ons
 
 Enable these add-ons before deploying:
 
+- ``dns``
 - ``hostpath-storage``
 - ``registry``
 - ``ingress``

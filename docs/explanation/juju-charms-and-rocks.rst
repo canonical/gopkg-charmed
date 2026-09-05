@@ -1,5 +1,8 @@
 .. _juju-charms-and-rocks:
 
+.. meta::
+  :description: Understand how rocks package gopkg.in, charms define operations, and Juju runs the application on Kubernetes.
+
 Juju, charms, and rocks
 =======================
 

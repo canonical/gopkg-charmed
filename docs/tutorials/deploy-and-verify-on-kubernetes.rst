@@ -1,5 +1,8 @@
 .. _deploy-and-verify-on-kubernetes:
 
+.. meta::
+   :description: Build the gopkg-charmed rock and charm, deploy them on Kubernetes with Juju, and verify ingress and go-import metadata.
+
 Deploy and verify gopkg-charmed on Kubernetes
 =============================================
 
@@ -45,13 +48,9 @@ image push.
 
 Bootstrap Juju only after these checks pass:
 
-.. SPREAD SKIP
-
 .. code-block:: bash
 
    juju bootstrap microk8s dev
-
-.. SPREAD SKIP END
 
 Step 1: confirm architecture
 ----------------------------
@@ -74,7 +73,7 @@ From the repository root:
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
    curl --fail http://127.0.0.1:32000/v2/
-   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
 

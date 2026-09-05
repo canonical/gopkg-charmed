@@ -1,5 +1,8 @@
 .. _explanation:
 
+.. meta::
+	:description: Understand how rocks, charms, Juju, and ingress package, operate, and expose gopkg-charmed.
+
 Explanation
 ===========
 

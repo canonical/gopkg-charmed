@@ -17,6 +17,9 @@ providers:
   microk8s:
     enable: true
     bootstrap: true
+    # Same channel the documentation instructs readers to install
+    # (docs/how-to/set-up-a-local-linux-environment.rst, Step 3).
+    channel: 1.31-strict/stable
     addons:
       - dns
       - hostpath-storage

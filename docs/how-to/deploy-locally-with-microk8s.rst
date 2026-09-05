@@ -1,5 +1,8 @@
 .. _deploy-locally-with-microk8s:
 
+.. meta::
+   :description: Build and deploy the gopkg-charmed rock and charm locally with MicroK8s, Juju, and ingress.
+
 Deploy locally with MicroK8s and Juju
 =====================================
 
@@ -28,18 +31,14 @@ Deployment steps
 
 .. code-block:: bash
 
-   sudo microk8s enable hostpath-storage registry ingress
+   sudo microk8s enable dns hostpath-storage registry ingress
    microk8s status --wait-ready
 
 2. Bootstrap Juju and create a model.
 
-.. SPREAD SKIP
-
 .. code-block:: bash
 
    juju bootstrap microk8s dev
-
-.. SPREAD SKIP END
 
 .. code-block:: bash
 
@@ -57,7 +56,7 @@ Deployment steps
 
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
-   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
 

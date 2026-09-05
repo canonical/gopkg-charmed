@@ -1,5 +1,8 @@
 .. _release_notes_release_notes_0001:
 
+.. meta::
+	:description: Review the initial publish-facing documentation baseline and validation updates for gopkg-charmed.
+
 gopkg-charmed release notes - initial documentation baseline
 ============================================================
 

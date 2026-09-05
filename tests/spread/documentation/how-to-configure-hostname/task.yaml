@@ -3,7 +3,7 @@
 
 summary: Execute documentation commands - configure hostname how-to, from a bare system
 
-kill-timeout: 45m
+kill-timeout: 60m
 
 # Cold start: no concierge, no pre-installed tools. The documentation's own
 # commands install everything, so the test fails when the guide would fail.

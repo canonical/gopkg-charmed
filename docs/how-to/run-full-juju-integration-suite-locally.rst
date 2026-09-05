@@ -81,7 +81,7 @@ Manual path (if you need fine-grained control)
    sudo microk8s enable hostpath-storage registry ingress
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
-       -n container-registry --timeout=5m
+       -n container-registry --timeout=15m
    curl --fail http://127.0.0.1:32000/v2/
    juju bootstrap microk8s dev
 

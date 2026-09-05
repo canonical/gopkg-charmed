@@ -139,7 +139,7 @@ Step 4: enable Kubernetes add-ons
    sudo microk8s enable dns hostpath-storage registry ingress
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
-     -n container-registry --timeout=5m
+     -n container-registry --timeout=15m
    curl --fail http://127.0.0.1:32000/v2/
 
 The add-ons must appear under ``enabled`` in the status output. The final

@@ -52,7 +52,7 @@ Fix:
 
     sudo microk8s enable hostpath-storage registry ingress
     microk8s kubectl rollout status deployment/registry \
-       -n container-registry --timeout=5m
+       -n container-registry --timeout=15m
     curl --fail http://127.0.0.1:32000/v2/
 
 The last command should return ``{}``. You can then retry the image push; the

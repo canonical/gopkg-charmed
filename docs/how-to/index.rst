@@ -1,5 +1,8 @@
 .. _how-to-guides:
 
+.. meta::
+   :description: Deploy, configure, test, and troubleshoot gopkg-charmed with task-focused procedures.
+
 How-to guides
 =============
 

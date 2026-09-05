@@ -1,5 +1,8 @@
 .. _ingress:
 
+.. meta::
+  :description: Understand how ingress routes external requests to gopkg-charmed on Kubernetes and how DNS, Services, and TLS fit together.
+
 Ingress
 =======
 

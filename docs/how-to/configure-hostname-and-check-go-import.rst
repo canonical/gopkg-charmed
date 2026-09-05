@@ -1,5 +1,8 @@
 .. _configure-hostname-and-check-go-import:
 
+.. meta::
+   :description: Configure ingress and workload hostname values, then verify the go-import metadata served to Go clients.
+
 Configure hostname and verify go-import metadata
 ================================================
 

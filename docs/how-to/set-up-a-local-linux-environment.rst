@@ -1,5 +1,8 @@
 .. _set-up-a-local-linux-environment:
 
+.. meta::
+   :description: Prepare an Ubuntu environment with the tools and resources required to build, deploy, and test gopkg-charmed.
+
 Set up a local Linux environment
 ================================
 
@@ -89,23 +92,20 @@ The final command should return ``/home/ubuntu/gopkg-charm``.
 Step 3: install required tools
 ------------------------------
 
-.. SPREAD SKIP
-
 .. code-block:: bash
 
    sudo apt update
    sudo apt install --yes curl git python3.12-venv tox
    sudo snap install go --classic
+   sudo snap install lxd
    sudo snap install rockcraft --classic
    sudo snap install charmcraft --classic
-   sudo snap install juju
+   sudo snap install juju --channel 3/stable
    sudo snap install microk8s --channel 1.31-strict/stable
    sudo adduser $USER snap_microk8s
-   lxd init --auto
+   sudo adduser $USER lxd
 
-.. SPREAD SKIP END
-
-Log out of the VM and back in so ``snap_microk8s`` group membership applies:
+Log out of the VM and back in so the new group memberships apply:
 
 .. SPREAD SKIP
 
@@ -113,11 +113,22 @@ Log out of the VM and back in so ``snap_microk8s`` group membership applies:
 
    exit
    multipass shell charm-dev
-   id -nG | grep -qw snap_microk8s
 
 .. SPREAD SKIP END
 
-The final command must exit successfully before you continue. Alternatively,
+.. SPREAD
+   # spread-session-break
+.. SPREAD END
+
+Confirm the new group memberships in the new session, then initialize LXD:
+
+.. code-block:: bash
+
+   id -nG | grep -qw snap_microk8s
+   id -nG | grep -qw lxd
+   lxd init --auto
+
+The commands must exit successfully before you continue. Alternatively,
 run ``newgrp snap_microk8s`` to open a shell with the new group membership.
 
 Step 4: enable Kubernetes add-ons
@@ -125,7 +136,7 @@ Step 4: enable Kubernetes add-ons
 
 .. code-block:: bash
 
-   sudo microk8s enable hostpath-storage registry ingress
+   sudo microk8s enable dns hostpath-storage registry ingress
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
      -n container-registry --timeout=5m
@@ -165,6 +176,7 @@ Step 5: verify the repository and tools
    command -v tox
    command -v lxd
    id -nG | grep -qw snap_microk8s
+   id -nG | grep -qw lxd
    dpkg --print-architecture
    git rev-parse --show-toplevel
    test -f app/rockcraft.yaml

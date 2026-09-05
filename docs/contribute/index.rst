@@ -1,5 +1,8 @@
 .. _contribute:
 
+.. meta::
+	:description: Choose the documentation or code contribution workflow for gopkg-charmed.
+
 Contribute
 ==========
 

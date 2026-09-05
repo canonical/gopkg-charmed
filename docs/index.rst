@@ -1,3 +1,6 @@
+.. meta::
+    :description: Operate the gopkg.in versioned Go import service on Kubernetes with the gopkg-charmed Juju charm.
+
 gopkg charm
 ===========
 

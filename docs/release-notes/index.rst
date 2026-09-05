@@ -1,5 +1,8 @@
 .. _release_notes_index:
 
+.. meta::
+	:description: Review user-visible changes, compatibility notes, and operational updates for gopkg-charmed releases.
+
 Release notes
 =============
 

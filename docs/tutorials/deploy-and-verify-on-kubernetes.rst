@@ -190,18 +190,23 @@ Update charm config and confirm it applies without rebuild:
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
-Then query again:
+The charm delivers the new value by restarting the workload in place, so
+the old hostname can be served for a few more seconds. Query again until
+the new value appears (the loop gives up after two minutes):
 
 .. code-block:: bash
 
-   curl --fail --silent --show-error \
-     "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep staging.example.com
+   timeout 120 bash -c '
+     until curl --fail --silent --show-error \
+         "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+         --resolve "${INGRESS_HOST}:80:127.0.0.1" \
+         | grep staging.example.com; do
+       sleep 5
+     done
+   '
 
-You should see output reflecting the new hostname value.
-
-If the change is not immediately visible, wait for ``juju status`` to return
-``active`` and run the request again.
+The output shows the ``go-import`` meta tag reflecting the new hostname
+value.
 
 What to read next
 -----------------

@@ -63,13 +63,20 @@ Expected output is ``ok``.
 Verify go-import metadata
 -------------------------
 
+The charm delivers the new hostname by restarting the workload in place,
+so the old value can be served for a few more seconds. Query until the
+new value appears (the loop gives up after two minutes):
+
 .. code-block:: bash
 
-    curl --fail --silent --show-error --retry 30 --retry-delay 2 \
-       --retry-all-errors \
-     "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-       --resolve ${INGRESS_HOST}:80:127.0.0.1 | \
-       grep 'go-import.*staging.example.com'
+   timeout 120 bash -c '
+     until curl --fail --silent --show-error \
+         "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
+         --resolve "${INGRESS_HOST}:80:127.0.0.1" \
+         | grep "go-import.*staging.example.com"; do
+       sleep 5
+     done
+   '
 
-Expected output contains a ``go-import`` meta tag and should reflect the
-configured hostname.
+The output contains a ``go-import`` meta tag reflecting the configured
+hostname.

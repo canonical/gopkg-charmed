@@ -134,12 +134,22 @@ run ``newgrp snap_microk8s`` to open a shell with the new group membership.
 Step 4: enable Kubernetes add-ons
 ---------------------------------
 
+Wait for MicroK8s to finish starting, then enable one add-on at a time.
+MicroK8s deprecates enabling several add-ons in a single command, and the
+registry needs the storage add-on to be running before it can claim a volume.
+
 .. code-block:: bash
 
-   sudo microk8s enable dns hostpath-storage registry ingress
-   microk8s status --wait-ready
+   microk8s status --wait-ready --timeout 300
+   sudo microk8s enable dns
+   sudo microk8s enable hostpath-storage
+   microk8s kubectl rollout status deployment/hostpath-provisioner \
+     -n kube-system --timeout=10m
+   sudo microk8s enable registry
+   sudo microk8s enable ingress
+   microk8s status --wait-ready --timeout 300
    microk8s kubectl rollout status deployment/registry \
-     -n container-registry --timeout=5m
+     -n container-registry --timeout=10m
    curl --fail http://127.0.0.1:32000/v2/
 
 The add-ons must appear under ``enabled`` in the status output. The final

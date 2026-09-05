@@ -19,3 +19,10 @@ execute: |
     docs/how-to/set-up-a-local-linux-environment.rst \
     docs/how-to/deploy-locally-with-microk8s.rst \
     docs/how-to/configure-hostname-and-check-go-import.rst
+
+# Cluster state when a documentation command fails, so add-on and pod
+# problems are visible in the CI log.
+debug: |
+  microk8s kubectl get nodes -o wide || true
+  microk8s kubectl get pods --all-namespaces -o wide || true
+  microk8s kubectl describe pods -n container-registry || true

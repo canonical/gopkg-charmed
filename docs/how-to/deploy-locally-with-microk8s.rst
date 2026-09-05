@@ -27,12 +27,22 @@ Make sure your Linux environment has these tools installed:
 Deployment steps
 ----------------
 
-1. Enable required MicroK8s add-ons.
+1. Enable required MicroK8s add-ons. Wait for MicroK8s to become ready first,
+   and enable one add-on at a time, because the registry needs the storage
+   add-on to be running before it can claim a volume.
 
 .. code-block:: bash
 
-   sudo microk8s enable dns hostpath-storage registry ingress
-   microk8s status --wait-ready
+   microk8s status --wait-ready --timeout 300
+   sudo microk8s enable dns
+   sudo microk8s enable hostpath-storage
+   microk8s kubectl rollout status deployment/hostpath-provisioner \
+     -n kube-system --timeout=10m
+   sudo microk8s enable registry
+   sudo microk8s enable ingress
+   microk8s status --wait-ready --timeout 300
+   microk8s kubectl rollout status deployment/registry \
+     -n container-registry --timeout=10m
 
 2. Bootstrap Juju and create a model.
 

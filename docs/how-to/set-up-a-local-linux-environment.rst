@@ -136,6 +136,7 @@ Step 4: enable Kubernetes add-ons
 
 .. code-block:: bash
 
+   microk8s status --wait-ready
    sudo microk8s enable dns hostpath-storage registry ingress
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \

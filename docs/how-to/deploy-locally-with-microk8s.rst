@@ -31,6 +31,7 @@ Deployment steps
 
 .. code-block:: bash
 
+   microk8s status --wait-ready
    sudo microk8s enable dns hostpath-storage registry ingress
    microk8s status --wait-ready
 

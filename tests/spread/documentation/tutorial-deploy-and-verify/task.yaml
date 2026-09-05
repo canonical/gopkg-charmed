@@ -19,7 +19,7 @@ execute: |
     docs/how-to/set-up-a-local-linux-environment.rst \
     docs/tutorials/deploy-and-verify-on-kubernetes.rst
 
-# Cluster state when a documentation command fails, so add-on and pod
+# Dump cluster state when a documentation command fails, so add-on and pod
 # problems are visible in the CI log.
 debug: |
   microk8s kubectl get nodes -o wide || true

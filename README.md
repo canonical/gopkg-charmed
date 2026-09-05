@@ -94,7 +94,7 @@ sudo snap install lxd
 sudo snap install rockcraft --classic
 sudo snap install charmcraft --classic
 sudo snap install juju --channel 3/stable
-sudo snap install microk8s --channel 1.31-strict/stable
+sudo snap install microk8s --channel 1.36-strict/stable
 lxd init --auto        # rockcraft/charmcraft build inside LXD; init is required once
 sudo adduser $USER snap_microk8s
 exit                   # re-enter with `multipass shell charm-dev` to pick up the group

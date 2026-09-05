@@ -26,7 +26,7 @@ Required tooling for charm deployment
 - ``rockcraft``
 - ``charmcraft``
 - ``juju`` from channel ``3/stable``
-- ``microk8s`` from channel ``1.31-strict/stable``
+- ``microk8s`` from channel ``1.36-strict/stable``
 - ``lxd`` initialized with ``lxd init --auto``
 
 MicroK8s add-ons

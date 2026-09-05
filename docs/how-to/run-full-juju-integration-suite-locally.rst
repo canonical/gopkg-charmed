@@ -1,6 +1,9 @@
 .. _run-full-juju-integration-suite-locally:
 .. _full-integration-suite-local:
 
+.. meta::
+   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-charmed integration suite locally.
+
 Run the full Juju integration suite locally
 ===========================================
 
@@ -84,7 +87,7 @@ Manual path (if you need fine-grained control)
 
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
-   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
 

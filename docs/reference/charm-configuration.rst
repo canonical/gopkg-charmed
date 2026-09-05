@@ -1,5 +1,8 @@
 .. _charm-configuration:
 
+.. meta::
+   :description: Reference the gopkg-charmed hostname option, default value, workload mapping, and update behavior.
+
 Charm configuration
 ===================
 

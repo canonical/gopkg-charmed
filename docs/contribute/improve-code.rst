@@ -1,5 +1,8 @@
 .. _improve-code:
 
+.. meta::
+   :description: Set up and run Go, charm, and Juju integration tests for code changes to gopkg-charmed.
+
 Improve the code
 ================
 

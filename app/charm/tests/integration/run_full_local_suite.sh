@@ -70,6 +70,7 @@ fi
 
 echo "==> Pushing rock to local registry"
 rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+  --dest-no-creds \
   "oci-archive:$ROCK_FILE" \
   "docker://$APP_IMAGE"
 popd >/dev/null

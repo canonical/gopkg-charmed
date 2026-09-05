@@ -1,5 +1,8 @@
 .. _troubleshoot-deployment:
 
+.. meta::
+   :description: Diagnose and fix common MicroK8s, Juju, rock, charm, ingress, architecture, and registry deployment failures.
+
 Troubleshoot deployment issues
 ==============================
 

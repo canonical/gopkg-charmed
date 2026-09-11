@@ -51,7 +51,9 @@ with a release-note artifact instead:
 
 The "Check for release notes artifact" workflow enforces this on every pull
 request. Rendered release notes are published in the
-[documentation](docs/release-notes/index.rst).
+[documentation](docs/release-notes/index.rst): each release is a page
+`docs/release-notes/release-notes-<NNNN>.rst` with the anchor
+`release_notes_release_notes_<NNNN>`, listed under "Releases" in that index.
 
 ## Submissions
 

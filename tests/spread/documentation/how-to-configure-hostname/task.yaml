@@ -3,9 +3,10 @@
 
 summary: Execute documentation commands - configure hostname how-to, from a bare system
 
-# A green run takes 20-40 min depending on the runner; the tutorial's
-# build retries can add two failed packs (~10 min each) on top.
-kill-timeout: 90m
+# A green run takes 20-40 min, and over an hour when the runner's network
+# is degraded; the tutorial's build retries can add up to four failed packs
+# (1-10 min each) on top.
+kill-timeout: 120m
 
 # Cold start: no concierge, no pre-installed tools. The documentation's own
 # commands install everything, so the test fails when the guide would fail.

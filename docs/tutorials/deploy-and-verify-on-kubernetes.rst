@@ -74,10 +74,10 @@ From the repository root, build the rock:
 
 .. SPREAD
    cd ~/gopkg-charm/app
-   for attempt in 1 2 3; do
+   for attempt in 1 2 3 4 5; do
      ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack && break
-     [ "${attempt}" -lt 3 ] || exit 1
-     sleep 30
+     [ "${attempt}" -lt 5 ] || exit 1
+     sleep 60
    done
 .. SPREAD END
 
@@ -118,10 +118,10 @@ Build the charm
 
 .. SPREAD
    cd ~/gopkg-charm/app/charm
-   for attempt in 1 2 3; do
+   for attempt in 1 2 3 4 5; do
      CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack && break
-     [ "${attempt}" -lt 3 ] || exit 1
-     sleep 30
+     [ "${attempt}" -lt 5 ] || exit 1
+     sleep 60
    done
 .. SPREAD END
 

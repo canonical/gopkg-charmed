@@ -1,6 +1,6 @@
 // Replaces rtd-address with new-address in links
 
-const rtd_address = 'canonical-gopkg.readthedocs-hosted.com';
+const rtd_address = 'canonical-gopkg-charm.readthedocs-hosted.com';
 const new_address = 'canonical.com/juju/docs/gopkg-charm';
 const new_path = '/' + new_address.split('/').slice(1).join('/');
 

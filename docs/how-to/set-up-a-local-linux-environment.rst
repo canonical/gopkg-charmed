@@ -7,44 +7,29 @@ Set up a local Linux environment
 ================================
 
 A consistent Ubuntu environment keeps local builds and tests aligned with CI.
-Prepare a native or virtual machine with the tools needed to build, deploy, and
-test ``gopkg-charmed``.
+Prepare a virtual machine with the tools needed to build, deploy, and test
+``gopkg-charmed``.
 
 Prerequisites
 -------------
 
-The repository's documented and CI-tested environment for the complete code
-test path is:
+You will need a workstation, for example a laptop, with AMD64 or ARM64
+architecture. Your workstation should have at least 4 CPU cores, 8 GB of RAM,
+50 GB of disk space, and network access for APT, snaps, Go modules, charm
+dependencies, and OCI images.
 
-- Ubuntu 24.04 LTS, either on a native Linux host or in a virtual machine
-- an ``amd64`` or ``arm64`` processor architecture
-- network access for APT, snaps, Go modules, charm dependencies, and OCI images
-
-The rock and charm both declare Ubuntu 24.04 LTS build bases and ``amd64`` and
-``arm64`` platforms. The integration runner rejects non-Linux systems and
-architectures other than ``amd64`` and ``arm64``.
-
-For a virtual machine, this repository uses and has tested the following
-allocation:
-
-- 4 virtual CPUs
-- 8 GB of memory
-- 50 GB of disk space
-
-These values are the project's tested profile, not claimed minimums. The
-repository's deployment testing found that 4 GB of memory can leave the Juju
-controller without enough capacity to schedule the charm workloads.
-
-On macOS, use Multipass to create the Ubuntu VM. Current Multipass support
-requires macOS 14 or later and supports Intel and Apple-silicon Macs.
-See the `Multipass installation guide
+This guide uses `Multipass <https://canonical.com/multipass>`_ to create an
+Ubuntu 24.04 LTS virtual machine. Multipass runs on Linux, macOS, and Windows,
+so the same steps apply on every host. Install it by following the `Multipass
+installation guide
 <https://canonical.com/multipass/docs/latest/how-to-guides/install-multipass/>`_
-before continuing.
+before continuing. If your workstation already runs Ubuntu 24.04 LTS, you can
+skip the virtual machine and run the remaining steps directly on it.
 
-Step 1: create and enter a VM
------------------------------
+Create and enter a VM
+---------------------
 
-Skip this step on a native Ubuntu 24.04 LTS host.
+Skip this section if your workstation already runs Ubuntu 24.04 LTS.
 
 .. SPREAD SKIP
 
@@ -55,8 +40,8 @@ Skip this step on a native Ubuntu 24.04 LTS host.
 
 .. SPREAD SKIP END
 
-Step 2: make the repository available
--------------------------------------
+Make the repository available
+-----------------------------
 
 Choose one of these options.
 
@@ -89,8 +74,8 @@ Whichever option you chose, enter and verify the repository before continuing:
 
 The final command should return ``/home/ubuntu/gopkg-charm``.
 
-Step 3: install required tools
-------------------------------
+Install required tools
+----------------------
 
 .. code-block:: bash
 
@@ -131,8 +116,8 @@ Confirm the new group memberships in the new session, then initialize LXD:
 The commands must exit successfully before you continue. Alternatively,
 run ``newgrp snap_microk8s`` to open a shell with the new group membership.
 
-Step 4: enable Kubernetes add-ons
----------------------------------
+Enable Kubernetes add-ons
+-------------------------
 
 .. code-block:: bash
 
@@ -162,8 +147,8 @@ This prevents ``rockcraft pack`` errors caused by incompatible interpreter
 files entering Rockcraft's build instance. A repository cloned inside the VM
 does not need this cleanup unless it contains copied environments.
 
-Step 5: verify the repository and tools
----------------------------------------
+Verify the repository and tools
+-------------------------------
 
 .. code-block:: bash
 
@@ -183,7 +168,7 @@ Step 5: verify the repository and tools
    test -f app/rockcraft.yaml
    test -f app/charm/charmcraft.yaml
 
-Expected architecture is ``amd64`` or ``arm64``.
+The architecture command prints ``amd64`` or ``arm64``.
 
 Next steps
 ----------

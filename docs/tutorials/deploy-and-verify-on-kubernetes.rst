@@ -18,10 +18,11 @@ What you'll do
 3. Deploy to a new model
 4. Verify the deployment
 5. Test runtime configuration
+6. Clean up
 
-At the end, you will have a running ``gopkg-charmed`` application in a Juju
-model, an ingress integration for external routing, and a verified health
-endpoint and go-import metadata endpoint.
+Along the way, you will have a running ``gopkg-charmed`` application in a
+Juju model, an ingress integration for external routing, and a verified
+health endpoint and go-import metadata endpoint.
 
 Prerequisites
 -------------
@@ -243,6 +244,41 @@ the new value appears (the loop gives up after two minutes):
 
 The output shows the ``go-import`` meta tag reflecting the new hostname
 value.
+
+Clean up
+--------
+
+.. SPREAD
+   # spread-teardown
+.. SPREAD END
+
+The how-to guides listed in the next section continue from the deployment
+you just verified, so follow them first if you plan to. When you are done,
+destroy the model to remove both applications and their storage:
+
+.. code-block:: bash
+
+   juju destroy-model gopkg-charmed --destroy-storage --no-prompt
+
+If you no longer need the Juju controller either, remove it as well:
+
+.. code-block:: bash
+
+   juju destroy-controller dev --destroy-all-models --destroy-storage --no-prompt
+
+Both commands wait until the resources are gone and fail if they cannot
+remove them.
+
+If you created a Multipass VM for this tutorial, delete it from the host once
+you no longer need it:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   multipass delete --purge charm-dev
+
+.. SPREAD SKIP END
 
 What to read next
 -----------------

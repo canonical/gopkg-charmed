@@ -11,6 +11,14 @@
 # `# spread-session-break` from an invisible `.. SPREAD` block. Every
 # sentinel starts a fresh login shell here, mirroring the re-login.
 #
+# A page that ends by undoing its own work (the tutorial's clean-up
+# section) marks the start of those commands with the sentinel line
+# `# spread-teardown`, again from an invisible `.. SPREAD` block. Pages
+# later in a chain continue from the state the earlier ones leave behind,
+# so the sentinel and everything after it are dropped from every page
+# except the last one given: a chain that ends with the tutorial runs its
+# clean-up, and a chain that continues into the how-to guides does not.
+#
 # Usage: run-docs.sh <page.rst> [<page.rst> ...]
 # Pages are paths relative to the repository root, in prerequisite order.
 set -euo pipefail
@@ -43,8 +51,15 @@ diagnose() {
 
 script=/tmp/documentation-commands.sh
 : > "${script}"
+last="${!#}"
 for document in "$@"; do
-  opcli tutorial expand -- "${SPREAD_PATH}/${document}" >> "${script}"
+  if [ "${document}" = "${last}" ]; then
+    opcli tutorial expand -- "${SPREAD_PATH}/${document}" \
+      | awk '!/^# spread-teardown$/ { print }' >> "${script}"
+  else
+    opcli tutorial expand -- "${SPREAD_PATH}/${document}" \
+      | awk '/^# spread-teardown$/ { skip = 1 } !skip { print }' >> "${script}"
+  fi
   printf '\n' >> "${script}"
 done
 

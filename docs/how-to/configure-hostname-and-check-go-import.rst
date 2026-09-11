@@ -11,8 +11,8 @@ Correct hostname metadata lets Go clients discover source through the stable
 query a package path to verify the generated ``go-import`` metadata.
 
 These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
-are deployed and integrated, as they are at the end of
-:ref:`deploy-and-verify-on-kubernetes`.
+are deployed and integrated, as they are after the deployment steps of
+:ref:`deploy-and-verify-on-kubernetes` and before its clean-up section.
 
 Set an ingress host for local checks
 ------------------------------------

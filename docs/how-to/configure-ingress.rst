@@ -12,9 +12,9 @@ integrator, keep the workload hostname in step with them, then point DNS at
 the ingress controller and terminate TLS there for production.
 
 These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
-are deployed and integrated, as they are at the end of
-:ref:`deploy-and-verify-on-kubernetes`. For how the components fit together,
-read :ref:`Ingress <ingress>`.
+are deployed and integrated, as they are after the deployment steps of
+:ref:`deploy-and-verify-on-kubernetes` and before its clean-up section. For
+how the components fit together, read :ref:`Ingress <ingress>`.
 
 Set the routing hostname and paths
 ----------------------------------

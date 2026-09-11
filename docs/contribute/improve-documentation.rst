@@ -89,6 +89,11 @@ When you edit an executable command:
 5. Where the reader must log out and back in, emit the sentinel line
    ``# spread-session-break`` from an invisible ``SPREAD`` block; the test
    harness starts a fresh login shell there.
+6. Where a page ends by undoing its own work, such as the tutorial's clean-up
+   section, emit the sentinel line ``# spread-teardown`` from an invisible
+   ``SPREAD`` block just before those commands. The harness runs them only
+   when the page is the last in its chain, because later pages continue from
+   the state the earlier ones leave behind.
 
 Scenarios live in ``tests/spread/documentation/``; each task runs its guides
 in prerequisite order through ``tests/spread/documentation/run-docs.sh``.

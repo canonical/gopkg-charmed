@@ -45,6 +45,9 @@ Current behavior:
   guide and the tutorial, and the second test continues with the ingress
   and hostname how-to guides against the deployment the tutorial leaves
   behind
+- runs a page's clean-up commands, marked by the ``# spread-teardown``
+  sentinel, only when that page is last in its chain, so the tutorial test
+  destroys what it created and the how-to test keeps the deployment
 - starts a fresh login shell at each ``# spread-session-break`` sentinel a
   guide emits, mirroring the reader logging out and back in
 

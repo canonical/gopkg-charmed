@@ -67,11 +67,17 @@ an application. It describes the application to Juju and includes code that
 responds to events such as deployment, configuration changes, integration
 with another application, and removal.
 
-The ``gopkg-charmed`` charm tells Juju how to run the gopkg rock. For example,
-it passes the configured ``hostname`` value to the Go process as
-``APP_HOSTNAME``. It also exposes the information needed to integrate the
-application with an ingress charm, which makes the HTTP service reachable
-from outside the Kubernetes cluster.
+The ``gopkg-charmed`` charm tells Juju how to run the gopkg rock. In
+particular, it provides:
+
+- deployment of the OCI-packaged Go workload on Kubernetes
+- runtime configuration of the hostname rendered in import metadata and
+  links, passed to the Go process as ``APP_HOSTNAME``
+- integration with an ingress charm for external HTTP routing and TLS
+  termination
+- a health endpoint for Kubernetes and operational checks
+- Juju status and lifecycle handling through the Canonical 12-factor charm
+  framework described below
 
 The charm package and the rock are separate artifacts:
 
@@ -114,31 +120,18 @@ Kubernetes rather than replacing it:
 - Juju manages applications and their relationships.
 - The charm translates Juju operations into application-specific changes.
 
-Key Juju terms:
-
-**Controller**
-  The Juju control plane. It receives commands, stores the desired state, and
-  coordinates work on the target cloud. ``juju bootstrap`` creates one.
-
-**Model**
-  A workspace inside a controller. It groups applications that belong
-  together. ``juju add-model gopkg-charmed`` creates the model used by the
-  tutorial.
-
-**Application**
-  A deployed charm managed by Juju. ``gopkg-charmed`` and
-  ``nginx-ingress-integrator`` are two separate applications in the same
-  model.
-
-**Unit**
-  One running instance of an application. For this Kubernetes charm, a unit
-  corresponds to a Kubernetes pod containing the charm and workload
-  containers.
-
-**Integration**
-  A declared connection between two applications. The command
-  ``juju integrate nginx-ingress-integrator gopkg-charmed`` lets the charms
-  exchange the information required to route requests to the Go service.
+A few Juju terms recur in these guides. The *controller*, created by
+``juju bootstrap``, is the control plane that stores the desired state and
+coordinates work on the cloud. A *model* is a workspace inside a controller
+that groups related applications; on Kubernetes it corresponds to a
+namespace, and ``juju add-model gopkg-charmed`` creates the one the tutorial
+uses. ``gopkg-charmed`` and ``nginx-ingress-integrator`` are two separate
+*applications* in that model, each running as one or more *units*; for a
+Kubernetes charm, a unit is a pod that holds the charm and workload
+containers. An *integration*, such as
+``juju integrate nginx-ingress-integrator gopkg-charmed``, is a declared
+connection through which two applications exchange the data they need. The
+Juju documentation defines each term in depth.
 
 Learn more from the official documentation:
 
@@ -161,17 +154,6 @@ The complete path from source code to a running service is:
 7. The charm configures and starts the application from the rock.
 8. When an operator changes configuration or adds an integration, Juju sends
    that event to the charm. The charm updates the workload accordingly.
-
-In commands, the central part of that flow looks like this:
-
-.. code-block:: text
-
-   rockcraft pack        -> build the application image
-   charmcraft pack       -> build the operations package
-   juju deploy           -> create and operate the application
-   juju config           -> change application configuration
-   juju integrate        -> connect applications
-   juju status           -> show their current state
 
 The tools produce or manage different things. Rockcraft does not deploy the
 application, Charmcraft does not run it, and Juju does not compile it. Keeping

@@ -6,51 +6,37 @@
 CI workflows for documentation validation
 =========================================
 
-Automatic docs checks
----------------------
+Automatic doc checks
+--------------------
 
 Workflow: ``.github/workflows/automatic-doc-checks.yml``
 
-Purpose:
-
-- run documentation checks when docs-related files change
-- avoid unnecessary CI usage for unrelated code changes
-
-Check removed URLs
-------------------
-
-Workflow: ``.github/workflows/automatic-doc-checks.yml``
-
-Purpose:
-
-- detect removed documentation URLs in pull requests to ``main``
-- protect release-path documentation links from accidental breakage
+This workflow runs when documentation-related files change, so unrelated code
+changes do not consume documentation CI time. It has two intents: it runs the
+documentation checks (build, spelling, style, inclusive language, and links),
+and it detects documentation URLs removed by a pull request to ``main``, so
+release-path links cannot break by accident.
 
 Documentation tests
 -------------------
 
 Workflow: ``.github/workflows/documentation-tests.yml``
 
-Purpose:
+This workflow executes the literal shell commands from the tutorial and the
+how-to guides on a bare Ubuntu system whenever their content or their
+deployment inputs change. It validates the complete environment setup, build,
+deploy, integrate, configure, and verify flow using only the commands the
+guides themselves contain.
 
-- execute literal shell commands from tutorials and how-to guides when their
-  content or deployment inputs change
-- validate the complete environment setup, build, deploy, integrate,
-  configure, and verify flow on a bare Ubuntu system, using only the
-  commands the guides themselves contain
-
-Where it comes from:
-
-- The workflow file lives in this repository:
-  ``.github/workflows/documentation-tests.yml``
-- The job itself reuses Canonical's shared documentation test workflow:
-  ``canonical/charm-ci/.github/workflows/doc-test.yml`` pinned to a
-  specific commit for reproducibility.
+The workflow file lives in this repository and reuses Canonical's shared
+documentation test workflow,
+``canonical/charm-ci/.github/workflows/doc-test.yml``, pinned to a specific
+commit for reproducibility.
 
 Current behavior:
 
-- triggers on tutorial, how-to, Spread task, artifact recipe, provisioning,
-  and workflow changes
+- triggers on tutorial, how-to, Spread task, application source, artifact
+  recipe, provisioning, and workflow changes
 - uses ``opcli tutorial expand`` to extract commands directly from the RST
 - executes the generated shell script through the ``docs-ci`` Spread backend
 - starts from a bare system: the guides' own commands install the tools,
@@ -65,12 +51,8 @@ Current behavior:
 Automatic vs manual linkage
 ---------------------------
 
-Command synchronization is content-aware; workflow triggering is path-based.
-
-- Automatic part:
-  commands are extracted from tutorials and how-to guides, so edits to their
-  executable code blocks change the tested scripts without duplicate tests.
-- Manual part:
-  if you move documentation files to new paths, you must update the Spread
-  task inputs and the workflow's ``paths`` list.
-
+Command synchronization is content-aware, but workflow triggering is
+path-based. Commands are extracted from the guides at test time, so editing an
+executable code block changes the tested script without a duplicate test to
+maintain. Moving a documentation file to a new path, however, requires
+updating the Spread task inputs and the workflow's ``paths`` list by hand.

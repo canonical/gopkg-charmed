@@ -1,16 +1,13 @@
 .. _contribute:
 
 .. meta::
-	:description: Choose the documentation or code contribution workflow for gopkg-charmed.
+	:description: Learn how to contribute to the documentation or code for gopkg-charmed.
 
 Contribute
 ==========
 
 Contributions can change the documentation, the Go service, the charm, the
 rock, or several of these areas. Choose the path that matches your change.
-
-Choose a contribution path
---------------------------
 
 Use :ref:`improve-documentation` for prose, navigation, examples, tutorials,
 and how-to guides.

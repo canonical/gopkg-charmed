@@ -1,4 +1,3 @@
-.. _improve-documentation-and-tutorial-tests:
 .. _improve-documentation:
 
 .. meta::

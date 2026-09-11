@@ -8,36 +8,22 @@ Run the full Juju integration suite locally
 ===========================================
 
 The full suite catches failures across packaging, deployment, and service
-behavior. Run one script to build the rock and charm, deploy them with Juju,
-and execute the integration tests on Linux ``amd64`` or ``arm64``.
+behavior before they reach CI. It verifies that the rock and charm build for
+your architecture, that Juju can deploy the charm with the local image
+resource, and that the integration tests reach active status and validate
+service behavior. Run one script to build the rock and charm, deploy them
+with Juju, and execute the integration tests on Linux, on AMD64 or ARM64.
 
 Prerequisites
 -------------
 
-If this is your first local test run, complete :ref:`Set up a local Linux
-environment <set-up-a-local-linux-environment>` before continuing. That setup
-is required unless you already have the tools and MicroK8s environment listed
-below. If you are on macOS, perform the setup and this guide inside a Linux VM,
-such as Multipass.
+Complete :ref:`set-up-a-local-linux-environment`, which installs the tools
+this guide needs: ``microk8s``, ``juju``, ``rockcraft``, ``charmcraft``, and
+``tox``. The suite requires Linux; on macOS or Windows, run it inside the
+Multipass VM from that guide.
 
-You need these tools inside Linux:
-
-- ``microk8s``
-- ``juju``
-- ``rockcraft``
-- ``charmcraft``
-- ``tox``
-
-Quick architecture check:
-
-.. code-block:: bash
-
-   dpkg --print-architecture
-
-Expected: ``amd64`` or ``arm64``.
-
-Recommended one-command path
-----------------------------
+Run the suite with one command
+------------------------------
 
 From the repository root:
 
@@ -46,42 +32,28 @@ From the repository root:
    cd ~/gopkg-charm
    app/charm/tests/integration/run_full_local_suite.sh
 
-This script will:
-
-1. verify Linux and required commands
-2. detect architecture (``amd64`` or ``arm64``)
-3. ensure MicroK8s readiness and required add-ons
-4. ensure Juju controller availability
-5. build and push the architecture-matching rock
-6. build charm
-7. run the integration tox environment with ``CHARM_FILE`` and ``APP_IMAGE``
-
-What this guide validates
--------------------------
-
-This is an end-to-end deployment validation path. It verifies that:
-
-- the packed rock and charm artifacts can be built for your architecture
-- Juju can deploy the charm with the local image resource
-- integration tests can reach active status and validate service behavior
-
-If this command fails on macOS directly, that is expected: the suite requires
-Linux tools and a Linux Juju/MicroK8s environment.
+The script verifies the operating system and the required commands, detects
+the architecture, ensures MicroK8s readiness and the required add-ons,
+ensures that a Juju controller is available, builds and pushes the
+architecture-matching rock, builds the charm, and runs the integration tox
+environment with ``CHARM_FILE`` and ``APP_IMAGE`` set.
 
 If ``rockcraft pack`` fails with a ``PermissionError`` under
-``app/charm/.tox/.../python3.12``, remove local virtualenv artifacts and retry.
-See :ref:`set-up-a-local-linux-environment` for the cleanup command.
+``app/charm/.tox``, see :ref:`troubleshoot-deployment`.
 
-Manual path (if you need fine-grained control)
------------------------------------------------
+Run the suite manually
+----------------------
+
+Use the individual steps when you need fine-grained control, for example to
+rebuild only one artifact:
 
 .. code-block:: bash
 
    cd ~/gopkg-charm
-   sudo microk8s enable hostpath-storage registry ingress
    microk8s status --wait-ready
+   sudo microk8s enable dns hostpath-storage registry ingress
    microk8s kubectl rollout status deployment/registry \
-       -n container-registry --timeout=15m
+     -n container-registry --timeout=15m
    curl --fail http://127.0.0.1:32000/v2/
    juju bootstrap microk8s dev
 
@@ -94,5 +66,5 @@ Manual path (if you need fine-grained control)
    cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
    CHARM_FILE=$(ls -1 gopkg-charmed_*.charm | head -n1)
-    CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
-       tox --workdir ~/.cache/gopkg-charm-tox -e integration
+   CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
+     tox --workdir ~/.cache/gopkg-charm-tox -e integration

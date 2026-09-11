@@ -3,7 +3,9 @@
 
 summary: Execute documentation commands - deployment tutorial, from a bare system
 
-kill-timeout: 60m
+# A green run takes 20-40 min depending on the runner; the tutorial's
+# build retries can add two failed packs (~10 min each) on top.
+kill-timeout: 90m
 
 # Cold start: no concierge, no pre-installed tools. The documentation's own
 # commands install everything, so the test fails when the guide would fail.

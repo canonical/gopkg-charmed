@@ -61,12 +61,34 @@ Bootstrap Juju only after these checks pass:
 Build and publish the rock image
 --------------------------------
 
-From the repository root:
+From the repository root, build the rock:
+
+.. SPREAD SKIP
 
 .. code-block:: bash
 
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
+
+.. SPREAD SKIP END
+
+.. SPREAD
+   cd ~/gopkg-charm/app
+   for attempt in 1 2 3; do
+     ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack && break
+     [ "${attempt}" -lt 3 ] || exit 1
+     sleep 30
+   done
+.. SPREAD END
+
+The build fetches packages from the Ubuntu archive inside a build instance.
+If it fails with a network error, such as ``cannot talk to archive`` or
+``Failed to update packages``, run the same command again.
+
+Push the image to the local registry:
+
+.. code-block:: bash
+
    curl --fail http://127.0.0.1:32000/v2/
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
@@ -85,13 +107,32 @@ registry does not contain the image tag.
 Build the charm
 ---------------
 
+.. SPREAD SKIP
+
 .. code-block:: bash
 
    cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
+
+.. SPREAD SKIP END
+
+.. SPREAD
+   cd ~/gopkg-charm/app/charm
+   for attempt in 1 2 3; do
+     CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack && break
+     [ "${attempt}" -lt 3 ] || exit 1
+     sleep 30
+   done
+.. SPREAD END
+
+As with the rock, run the command again if it fails with a network error.
+Confirm that the charm was packed:
+
+.. code-block:: bash
+
    ls -1 gopkg-charmed_*.charm
 
-The final command must print the path to the packed charm.
+The command must print the path to the packed charm.
 
 Deploy to a new model
 ---------------------

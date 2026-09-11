@@ -12,6 +12,10 @@ on:
       - "concierge-lxd.yaml"
       - "spread.yaml"
       - ".github/workflows/documentation-tests.yml"
+  schedule:
+    # Weekly on Saturday at 3pm UTC, alongside the integration tests, so the
+    # long end-to-end run also catches tool and image drift between doc changes.
+    - cron: "0 15 * * SAT"
   workflow_dispatch:
 
 concurrency:

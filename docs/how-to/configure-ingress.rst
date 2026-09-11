@@ -127,11 +127,8 @@ implementation such as MetalLB.
 Enable HTTPS
 ------------
 
-TLS is normally terminated at the ingress controller. The client establishes
-HTTPS with the controller, and the controller forwards the request to the
-internal Service.
-
-The certificate must include the public hostname in its subject alternative
+TLS terminates at the ingress controller (see :ref:`Ingress <ingress>`), so
+the certificate must include the public hostname in its subject alternative
 names. Store the certificate and private key in a Kubernetes TLS secret in the
 same namespace as the Juju model, then configure the integrator with the secret
 name. For example, for the ``gopkg-charmed`` model namespace:

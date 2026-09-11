@@ -45,9 +45,10 @@ Confirm that MicroK8s access and the local registry are ready:
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
      -n container-registry --timeout=15m
-   curl --fail http://127.0.0.1:32000/v2/
+   curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+     --retry-all-errors http://127.0.0.1:32000/v2/
 
-The last command should return ``{}``. If it cannot connect, return to the
+The last command returns ``{}``. If it cannot connect, return to the
 add-on section in :ref:`set-up-a-local-linux-environment`; do not continue to the
 image push.
 

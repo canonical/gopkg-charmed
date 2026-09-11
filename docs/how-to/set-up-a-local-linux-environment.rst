@@ -127,11 +127,14 @@ Enable Kubernetes add-ons
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
      -n container-registry --timeout=15m
-   curl --fail http://127.0.0.1:32000/v2/
+   curl --fail --silent --show-error --retry 30 --retry-delay 2 \
+     --retry-all-errors http://127.0.0.1:32000/v2/
 
 The add-ons must appear under ``enabled`` in the status output. The final
-command should return ``{}``, confirming that the registry is accepting
-connections before you build or publish an image.
+command returns ``{}``, confirming that the registry is accepting connections
+before you build or publish an image. It retries for up to a minute because
+the registry can take a few seconds to accept connections after the
+deployment finishes rolling out.
 
 Optional: clean local-only Python artifacts
 -------------------------------------------

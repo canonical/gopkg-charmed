@@ -84,7 +84,7 @@ command-line tool used to build charms. Running ``charmcraft pack`` reads
 ``.charm`` file.
 
 This project uses a `Canonical 12-factor app charm
-<https://canonical.com/juju/docs/charmcraft/stable/howto/manage-web-app-charms/>`_.
+<https://canonical.com/juju/docs/charmcraft/4/howto/manage-web-app-charms/>`_.
 The
 `Twelve-Factor App <https://12factor.net/>`_ methodology describes practices
 for building portable services, including keeping configuration in the

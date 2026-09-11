@@ -229,7 +229,7 @@ private keys out of the repository and restrict access to the namespace.
 
 The integrator can also obtain TLS information through a certificate relation.
 See the `NGINX ingress integrator documentation
-<https://documentation.ubuntu.com/nginx-ingress-integrator-charm/>`_ when using
+<https://canonical.com/juju/docs/nginx-ingress-integrator-charm/latest/>`_ when using
 a certificate provider charm.
 
 Verify routing

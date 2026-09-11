@@ -5,8 +5,8 @@ gopkg charm
 ===========
 
 **gopkg-charmed operates the gopkg.in versioned Go import service on
-Kubernetes.** It is a `Juju <https://juju.is/>`_
-`charm <https://documentation.ubuntu.com/juju/3.6/reference/charm/>`_ that
+Kubernetes.** It is a `Juju <https://canonical.com/juju>`_
+`charm <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_ that
 packages the service, deploys it, configures its public hostname, and connects
 it to ingress.
 
@@ -112,10 +112,10 @@ charm provides:
   termination
 - a health endpoint for Kubernetes and operational checks
 - Juju status and lifecycle handling through the
-    `Canonical 12-factor charm framework <https://canonical.com/juju/docs/charmcraft/stable/howto/manage-web-app-charms/>`_
+    `Canonical 12-factor charm framework <https://canonical.com/juju/docs/charmcraft/4/howto/manage-web-app-charms/>`_
 
 The charm can be deployed to Kubernetes environments supported by Juju, from
-`MicroK8s <https://microk8s.io/>`_ for local development to
+`MicroK8s <https://canonical.com/microk8s>`_ for local development to
 `Charmed Kubernetes <https://ubuntu.com/kubernetes>`_ and public-cloud
 Kubernetes offerings. It gives operators a consistent Juju interface while
 preserving the import-path behavior expected by existing Go consumers.

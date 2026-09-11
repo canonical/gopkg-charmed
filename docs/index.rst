@@ -131,26 +131,17 @@ Find your task
 Project and community
 ---------------------
 
-The project source code and issue tracker are hosted on GitHub:
+``gopkg-charmed`` is an open source project that welcomes community
+contributions, suggestions, fixes, and constructive feedback.
 
-- https://github.com/canonical/gopkg-charmed
-
-Get involved
-~~~~~~~~~~~~
-
-Contributions are welcome. Start with repository contribution and compliance
-guides in the project root.
-
-Releases and support
-~~~~~~~~~~~~~~~~~~~~
-
-Release notes are published under the ``release-notes`` section in this
-documentation set.
-
-Governance and policies
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Governance and security policies live in the repository root files.
+- Source code and issue tracker: https://github.com/canonical/gopkg-charmed
+- Contribute: :ref:`contribute`, starting from the repository's
+  ``CONTRIBUTING.md``
+- Security policy: `SECURITY.md
+  <https://github.com/canonical/gopkg-charmed/blob/main/SECURITY.md>`_
+- Code of conduct: `Ubuntu Code of Conduct
+  <https://ubuntu.com/community/docs/ethos/code-of-conduct>`_
+- Release notes: :ref:`release_notes_index`
 
 .. toctree::
     :hidden:

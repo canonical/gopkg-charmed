@@ -110,19 +110,22 @@ html_theme_options = {
 }
 
 # Project slug
-# TODO: If your documentation is hosted on https://documentation.ubuntu.com/,
-#       uncomment and set to the RTD slug.
-# slug = ''
+slug = 'juju/docs/gopkg-charm'
 
 #######################
 # Sitemap configuration: https://sphinx-sitemap.readthedocs.io/
 #######################
 
-# Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
-html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
+# Canonical URL of the published documentation, so duplicate pages resolve to
+# one canonical location:
+html_baseurl = f"https://canonical.com/juju/docs/gopkg-charm/{version}/"
 
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 sitemap_url_scheme = "{link}"
+
+# Name the sitemap so it does not collide with the site's own sitemap.xml
+# when published under the Canonical domain:
+sitemap_filename = "doc-sitemap.xml"
 
 # Include `lastmod` dates in the sitemap:
 sitemap_show_lastmod = True
@@ -294,5 +297,5 @@ rst_prolog = """
 # Configuration for Intersphinx projects
 #
 intersphinx_mapping = {
-    "juju": ("https://documentation.ubuntu.com/juju/3.6/", None),
+    "juju": ("https://canonical.com/juju/docs/juju-cli/3.6/", None),
 }

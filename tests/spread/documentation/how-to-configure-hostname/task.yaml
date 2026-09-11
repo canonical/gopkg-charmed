@@ -31,4 +31,5 @@ execute: |
   "${SPREAD_PATH}/tests/spread/documentation/run-docs.sh" \
     docs/how-to/set-up-a-local-linux-environment.rst \
     docs/tutorials/deploy-and-verify-on-kubernetes.rst \
+    docs/how-to/configure-ingress.rst \
     docs/how-to/configure-hostname-and-check-go-import.rst

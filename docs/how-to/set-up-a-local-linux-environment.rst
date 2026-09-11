@@ -113,8 +113,9 @@ Confirm the new group memberships in the new session, then initialize LXD:
    id -nG | grep -qw lxd
    lxd init --auto
 
-The commands must exit successfully before you continue. Alternatively,
-run ``newgrp snap_microk8s`` to open a shell with the new group membership.
+The commands must exit successfully before you continue. In an interactive
+shell, ``newgrp snap_microk8s`` also applies the membership, but it opens a
+new shell: do not paste further commands after it.
 
 Enable Kubernetes add-ons
 -------------------------

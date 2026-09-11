@@ -1,43 +1,24 @@
 .. _charm-configuration:
 
 .. meta::
-   :description: Reference the gopkg-charmed hostname option, default value, workload mapping, and update behavior.
+   :description: Reference the gopkg-charmed hostname option, its default value, and how it maps to the workload.
 
 Charm configuration
 ===================
 
-gopkg-charmed config options
-----------------------------
-
-The charm currently exposes one application-specific option:
+The charm exposes one application-specific option. To change it and verify
+the result, follow :ref:`configure-hostname-and-check-go-import`.
 
 ``hostname``
   Type: string
 
   Default: ``gopkg.in``
 
-  Meaning: value passed to the workload as ``APP_HOSTNAME``. It controls
-  hostname rendering in package links and go-import metadata.
+  Value passed to the workload as ``APP_HOSTNAME``. It controls the hostname
+  rendered in package links and ``go-import`` metadata.
 
-Set configuration
------------------
-
-.. code-block:: bash
-
-   juju config gopkg-charmed hostname=staging.example.com
-
-Inspect configuration
----------------------
-
-.. code-block:: bash
-
-   juju config gopkg-charmed
-
-Ingress settings used with this charm
--------------------------------------
-
-When using ``nginx-ingress-integrator``, the most relevant settings are:
-
-- ``service-hostname``: hostname used for ingress routing
-- ``path-routes``: route mapping, typically ``/``
-- ``rewrite-enabled``: should be ``false`` for this workload
+Ingress routing is configured on the ``nginx-ingress-integrator`` charm, not
+on ``gopkg-charmed``. See :ref:`configure-ingress` for the settings this
+deployment uses and the `NGINX ingress integrator configuration reference
+<https://charmhub.io/nginx-ingress-integrator/configurations>`_ for every
+option.

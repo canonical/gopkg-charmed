@@ -56,8 +56,9 @@ Current behavior:
 - starts from a bare system: the guides' own commands install the tools,
   enable MicroK8s, bootstrap Juju, and build the rock and charm from source
 - composes guides in prerequisite order; both tests start with the setup
-  guide and the tutorial, and the second test continues with the hostname
-  how-to guide against the deployment the tutorial leaves behind
+  guide and the tutorial, and the second test continues with the ingress
+  and hostname how-to guides against the deployment the tutorial leaves
+  behind
 - starts a fresh login shell at each ``# spread-session-break`` sentinel a
   guide emits, mirroring the reader logging out and back in
 

@@ -13,5 +13,6 @@ Choose a configuration, testing, or troubleshooting task.
 
    set-up-a-local-linux-environment
    Run the full Juju integration suite locally <run-full-juju-integration-suite-locally>
+   configure-ingress
    configure-hostname-and-check-go-import
    troubleshoot-deployment

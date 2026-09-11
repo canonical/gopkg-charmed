@@ -24,8 +24,8 @@ Set an ingress host for local checks
 
 For local verification, requests are routed to ``127.0.0.1`` with ``--resolve``.
 
-Change hostname config
-----------------------
+Change the hostname configuration
+---------------------------------
 
 .. code-block:: bash
 
@@ -46,8 +46,17 @@ Wait until the application is active again:
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
-Verify health endpoint
-----------------------
+Inspect the configuration
+-------------------------
+
+Show every option with its current value:
+
+.. code-block:: bash
+
+   juju config gopkg-charmed
+
+Verify the health endpoint
+--------------------------
 
 .. code-block:: bash
 
@@ -58,8 +67,8 @@ Verify health endpoint
 
 Expected output is ``ok``.
 
-Verify go-import metadata
--------------------------
+Verify the go-import metadata
+-----------------------------
 
 The charm delivers the new hostname by restarting the workload in place,
 so the old value can be served for a few more seconds. Query until the

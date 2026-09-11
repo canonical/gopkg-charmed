@@ -6,9 +6,9 @@
 Improve the documentation
 =========================
 
-Use this path for changes under ``docs/``. You can build and check the
-documentation on Linux or macOS without installing Juju, MicroK8s, Rockcraft,
-or Charmcraft.
+Use this path for changes under ``docs/``. Building and checking the
+documentation requires only Git, Make, and Python, not the deployment tools
+(Juju, MicroK8s, Rockcraft, or Charmcraft).
 
 Prerequisites
 -------------
@@ -27,15 +27,16 @@ pinned documentation dependencies:
 
    cd ~
    git clone https://github.com/canonical/gopkg-charmed.git gopkg-charm
-   cd gopkg-charm
-   make -C docs install
+   cd gopkg-charm/docs
+   make install
 
 This creates an isolated environment in ``docs/.venv``.
 
 Understand the documentation layout
 -----------------------------------
 
-Choose the directory that matches the reader's need:
+The documentation follows `Diátaxis <https://diataxis.fr/>`_, which
+separates content by the reader's need. Choose the matching directory:
 
 - ``docs/tutorials/`` provides guided learning.
 - ``docs/how-to/`` gives goal-oriented procedures.
@@ -50,9 +51,9 @@ Build and preview the site:
 
 .. code-block:: bash
 
-   cd ~/gopkg-charm
-   make -C docs html
-   make -C docs run
+   cd ~/gopkg-charm/docs
+   make html
+   make run
 
 Open ``http://127.0.0.1:8000``. Stop the preview with ``Ctrl+C``.
 
@@ -63,13 +64,13 @@ Before opening a pull request, run:
 
 .. code-block:: bash
 
-   cd ~/gopkg-charm
-   make -C docs html
-   make -C docs vale
-   make -C docs spelling
-   make -C docs woke
+   cd ~/gopkg-charm/docs
+   make html
+   make vale
+   make spelling
+   make woke
 
-Run ``make -C docs linkcheck`` when you add or change links.
+Run ``make linkcheck`` when you add or change links.
 
 Test executable documentation
 -----------------------------

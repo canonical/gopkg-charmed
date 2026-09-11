@@ -11,8 +11,8 @@ Choose a configuration, testing, or troubleshooting task.
 .. toctree::
    :maxdepth: 1
 
-   set-up-a-local-linux-environment
+   Set up a local Linux environment <set-up-a-local-linux-environment>
    Run the full Juju integration suite locally <run-full-juju-integration-suite-locally>
-   configure-ingress
-   configure-hostname-and-check-go-import
-   troubleshoot-deployment
+   Configure ingress <configure-ingress>
+   Configure hostname <configure-hostname-and-check-go-import>
+   Troubleshoot deployment issues <troubleshoot-deployment>

@@ -1,10 +1,10 @@
 .. _configure-hostname-and-check-go-import:
 
 .. meta::
-   :description: Configure ingress and workload hostname values, then verify the go-import metadata served to Go clients.
+   :description: Set the ingress and workload hostname of gopkg-charmed, then verify the go-import metadata served to Go clients.
 
-Configure hostname and verify go-import metadata
-================================================
+How to configure hostname
+=========================
 
 Correct hostname metadata lets Go clients discover source through the stable
 ``gopkg.in`` import path. Set the ingress and workload hostname values, then

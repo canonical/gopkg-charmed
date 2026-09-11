@@ -284,5 +284,5 @@ What to read next
 -----------------
 
 - :ref:`Configure ingress <configure-ingress>`
-- :ref:`Configure hostname and verify go-import metadata <configure-hostname-and-check-go-import>`
+- :ref:`Configure hostname <configure-hostname-and-check-go-import>`
 - :ref:`Troubleshoot deployment <troubleshoot-deployment>`

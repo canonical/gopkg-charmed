@@ -3,8 +3,8 @@
 .. meta::
    :description: Prepare an Ubuntu environment with the tools and resources required to build, deploy, and test gopkg-charmed.
 
-Set up a local Linux environment
-================================
+How to set up a local Linux environment
+=======================================
 
 A consistent Ubuntu environment keeps local builds and tests aligned with CI.
 Prepare a virtual machine with the tools needed to build, deploy, and test

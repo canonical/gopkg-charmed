@@ -3,8 +3,8 @@
 .. meta::
    :description: Route external HTTP traffic to gopkg-charmed with the NGINX ingress integrator, match the workload hostname, add DNS, and enable HTTPS.
 
-Configure ingress
-=================
+How to configure ingress
+========================
 
 Ingress is what makes ``gopkg-charmed`` reachable from outside the Kubernetes
 cluster under a hostname you choose. Set the routing rules on the ingress

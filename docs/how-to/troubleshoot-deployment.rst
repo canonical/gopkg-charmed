@@ -3,8 +3,8 @@
 .. meta::
    :description: Diagnose and fix common MicroK8s, Juju, rock, charm, ingress, architecture, and registry deployment failures.
 
-Troubleshoot deployment issues
-==============================
+How to troubleshoot deployment issues
+=====================================
 
 Before troubleshooting, verify the baseline environment with
 :ref:`set-up-a-local-linux-environment`. Each entry below names the symptom,

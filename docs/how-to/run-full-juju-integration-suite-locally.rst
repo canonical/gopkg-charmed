@@ -4,8 +4,8 @@
 .. meta::
    :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-charmed integration suite locally.
 
-Run the full Juju integration suite locally
-===========================================
+How to run the full Juju integration suite locally
+==================================================
 
 The full suite catches failures across packaging, deployment, and service
 behavior before they reach CI. It verifies that the rock and charm build for

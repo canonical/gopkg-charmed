@@ -16,9 +16,23 @@ kill-timeout: 120m
 #     network for the LXD build instances rockcraft and charmcraft launch.
 #     Allow lxdbr0 traffic exactly as charm-ci's build workflow does; the
 #     guard makes this a no-op on machines without Docker.
+#   - GitHub runners live in Azure, whose route to archive.ubuntu.com is
+#     often too slow for chisel's 30-second metadata timeout inside the
+#     rockcraft and charmcraft build instances, while the runner's own apt
+#     already uses the azure.archive.ubuntu.com mirror. Point the archive
+#     names at that mirror in /etc/hosts: LXD's dnsmasq forwards container
+#     lookups to the host resolver, which answers from /etc/hosts, and the
+#     mirror serves requests for either Host name. The guard makes this a
+#     no-op on machines that do not use the Azure mirror.
 #   - The chown and symlink stand in for the guide's `multipass mount`
 #     step, which the guide marks SPREAD SKIP.
 prepare: |
+  if grep -qs azure.archive.ubuntu.com /etc/apt/apt-mirrors.txt; then
+    mirror="$(getent ahostsv4 azure.archive.ubuntu.com | awk 'NR == 1 { print $1 }')"
+    if [ -n "${mirror}" ]; then
+      printf '%s archive.ubuntu.com security.ubuntu.com\n' "${mirror}" >> /etc/hosts
+    fi
+  fi
   if iptables -nL DOCKER-USER > /dev/null 2>&1; then
     iptables -I DOCKER-USER -i lxdbr0 -j ACCEPT
     iptables -I DOCKER-USER -o lxdbr0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT

@@ -34,6 +34,10 @@ diagnose() {
       | tail -60 || true
     journalctl -u snap.microk8s.daemon-containerd --no-pager -n 50 || true
   fi
+  getent hosts archive.ubuntu.com || true
+  curl --silent --show-error --output /dev/null --max-time 15 \
+    --write-out 'archive.ubuntu.com InRelease: HTTP %{http_code} in %{time_total}s\n' \
+    http://archive.ubuntu.com/ubuntu/dists/noble/InRelease || true
   echo "===== END DOCS-TEST DIAGNOSTICS ====="
 }
 

@@ -172,7 +172,7 @@ Verify the repository and tools
    test -f app/rockcraft.yaml
    test -f app/charm/charmcraft.yaml
 
-The architecture command prints ``amd64`` or ``arm64``.
+The architecture command prints AMD64 or ARM64.
 
 Next steps
 ----------

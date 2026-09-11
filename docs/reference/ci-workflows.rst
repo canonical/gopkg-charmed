@@ -37,6 +37,9 @@ Current behavior:
 
 - triggers on tutorial, how-to, Spread task, application source, artifact
   recipe, provisioning, and workflow changes
+- also runs every Saturday at 15:00 UTC on ``main``, alongside the
+  integration tests, so drift in the tools and images the guides install is
+  caught between documentation changes
 - uses ``opcli tutorial expand`` to extract commands directly from the RST
 - executes the generated shell script through the ``docs-ci`` Spread backend
 - starts from a bare system: the guides' own commands install the tools,

@@ -44,16 +44,32 @@ with a release-note artifact instead:
 
 - Copy
   [`docs/release-notes/template/_change-artifact-template.yaml`](docs/release-notes/template/_change-artifact-template.yaml)
-  to `docs/release-notes/artifacts/pr-<number>.yaml`, where `<number>` is your
-  pull request number, and fill it in.
+  to `docs/release-notes/artifacts/pr<NNNN>.yaml`, where `<NNNN>` is your pull
+  request number padded to four digits (`pr0027.yaml` for PR #27), and fill it
+  in.
 - If your change is not user-relevant, add the `no-release-note` label to the
   pull request instead.
 
 The "Check for release notes artifact" workflow enforces this on every pull
-request. Rendered release notes are published in the
-[documentation](docs/release-notes/index.rst): each release is a page
-`docs/release-notes/release-notes-<NNNN>.rst` with the anchor
-`release_notes_release_notes_<NNNN>`, listed under "Releases" in that index.
+request.
+
+To publish the release notes for a release:
+
+1. Copy
+   [`docs/release-notes/template/_release-artifact-template.yaml`](docs/release-notes/template/_release-artifact-template.yaml)
+   to `docs/release-notes/releases/release<NNNN>.yaml`, where `<NNNN>` is the
+   next release number, and fill it in, listing the change artifacts the
+   release includes.
+2. Merge it to `main`. The "Create release notes" workflow renders
+   `docs/release-notes/release-notes-<NNNN>.md` from
+   `docs/release-notes/template/release-template.md.j2` and opens a pull
+   request with the page.
+3. In that pull request, complete the requirements table and the known
+   issues, and add the page to the "Releases" list and the toctree in
+   `docs/release-notes/index.rst`.
+
+The rendered pages are published in the
+[documentation](docs/release-notes/index.rst).
 
 ## Submissions
 

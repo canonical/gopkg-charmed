@@ -10,11 +10,9 @@ Correct hostname metadata lets Go clients discover source through the stable
 ``gopkg.in`` import path. Set the ingress and workload hostname values, then
 query a package path to verify the generated ``go-import`` metadata.
 
-Prerequisites
--------------
-
-Complete :ref:`set-up-a-local-linux-environment`, then
-:ref:`Deploy locally with MicroK8s and Juju <deploy-locally-with-microk8s>`.
+These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
+are deployed and integrated, as they are at the end of
+:ref:`deploy-and-verify-on-kubernetes`.
 
 Set an ingress host for local checks
 ------------------------------------

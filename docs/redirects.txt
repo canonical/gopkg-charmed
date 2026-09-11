@@ -7,4 +7,4 @@
 # a file that does exist in the source. Redirecting to a specific section is not supported.
 
 "contribute/improve-documentation-and-tutorial-tests.rst" "contribute/improve-documentation.rst"
-
+"how-to/deploy-locally-with-microk8s.rst" "tutorials/deploy-and-verify-on-kubernetes.rst"

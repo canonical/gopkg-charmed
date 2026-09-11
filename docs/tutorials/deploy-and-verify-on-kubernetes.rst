@@ -211,6 +211,5 @@ value.
 What to read next
 -----------------
 
-- :ref:`Deploy locally with MicroK8s and Juju <deploy-locally-with-microk8s>`
 - :ref:`Configure hostname and verify go-import metadata <configure-hostname-and-check-go-import>`
 - :ref:`Troubleshoot deployment <troubleshoot-deployment>`

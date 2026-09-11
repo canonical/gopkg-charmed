@@ -123,7 +123,7 @@ Key Juju terms:
 **Model**
   A workspace inside a controller. It groups applications that belong
   together. ``juju add-model gopkg-charmed`` creates the model used by the
-  local deployment guides.
+  tutorial.
 
 **Application**
   A deployed charm managed by Juju. ``gopkg-charmed`` and

@@ -1,178 +1,101 @@
 .. _juju-charms-and-rocks:
 
 .. meta::
-  :description: Understand how rocks package gopkg.in, charms define operations, and Juju runs the application on Kubernetes.
+  :description: Understand how the gopkg rock, the gopkg-charmed charm, and Juju fit together to run gopkg.in on Kubernetes.
 
 Juju, charms, and rocks
 =======================
 
-Running ``gopkg.in`` on Kubernetes involves three important pieces: a
-**rock**, a **charm**, and **Juju**. Each has a different job.
+Running ``gopkg.in`` on Kubernetes involves three pieces: a **rock**, a
+**charm**, and **Juju**. The rock contains the application, the charm contains
+the instructions for operating it, and Juju follows those instructions on a
+Kubernetes cluster. This page describes what each piece is for this project
+and where it lives in the repository; the linked upstream documentation
+covers the tools themselves.
 
-The shortest explanation is:
+Application
+-----------
 
-- The **rock** contains the application.
-- The **charm** contains instructions for operating the application.
-- **Juju** follows those instructions on a cloud, which is Kubernetes for
-  ``gopkg-charmed``.
+The application is the Go program that serves ``gopkg.in`` requests, with its
+source in ``app/*.go``. It is a plain HTTP server configured through
+environment variables such as ``APP_PORT`` and ``APP_HOSTNAME``. Kubernetes
+runs it from a container image, and that image is the rock.
 
-It may help to think of the rock as the packaged application, the charm as its
-operations manual, and Juju as the operator that follows the manual. The
-sections below explain where that comparison is useful and what each piece
-really does.
+Rock
+----
 
-The application comes first
----------------------------
+A **rock** is an Ubuntu-based container image. The rock for this project
+contains the compiled ``gopkg.in`` application and the files needed to start
+it. Its build recipe is ``app/rockcraft.yaml``. The recipe uses the Go
+framework extension, which supplies the standard build and runtime setup for
+a Go web application.
 
-The application is the Go program that serves ``gopkg.in`` requests. On its
-own, it can run as a normal process. It listens for HTTP requests and uses
-environment variables such as ``APP_PORT`` and ``APP_HOSTNAME``.
-
-Kubernetes does not run source code directly. It runs containers created from
-container images. The Go application must therefore be built and placed in a
-container image before Kubernetes can run it. That image is the rock.
-
-What is a rock?
----------------
-
-A **rock** is an Ubuntu-based container image. It follows the Open Container
-Initiative image standard, so Kubernetes and other standard container tools
-can run it.
-
-The rock for this project contains the compiled ``gopkg.in`` application and
-the files needed to start it. Its build recipe is ``app/rockcraft.yaml``. The
-recipe uses the Go framework extension, which supplies the standard build and
-runtime setup for a Go web application.
-
-`Rockcraft <https://ubuntu.com/containers/rockcraft/docs/latest/>`_ is the
-command-line tool that builds rocks. Running ``rockcraft pack`` reads
-``rockcraft.yaml`` and produces a ``.rock`` file. The resulting image can then
-be uploaded to a container registry, where Kubernetes can retrieve it.
-
-A rock does not decide when to deploy, how to react to configuration changes,
-or how to connect the application to other services. It only provides the
-runnable workload. Those operational decisions belong to the charm.
+The rock does not decide when to deploy ``gopkg.in``, how to react to
+configuration changes, or how to connect the application to other services.
+It only provides the runnable workload. Those operational decisions belong to
+the charm.
 
 Learn more from the official documentation:
 
-- `What rocks are <https://ubuntu.com/containers/rockcraft/docs/latest/explanation/rocks/>`_
-- `Create your first rock <https://ubuntu.com/containers/rockcraft/docs/latest/tutorial/hello-world/>`_
-- `Build a rock for a Go application <https://ubuntu.com/containers/rockcraft/docs/latest/tutorial/go/>`_
+- :ref:`What rocks are <rockcraft:explanation-rocks>`
+- :ref:`Go framework extension <rockcraft:reference-go-framework>`
+- :doc:`Build a rock for a Go application <rockcraft:tutorial/go>`
 
-What is a charm?
-----------------
+Charm
+-----
 
 A **charm** is a software package containing the knowledge needed to operate
-an application. It describes the application to Juju and includes code that
-responds to events such as deployment, configuration changes, integration
-with another application, and removal.
+an application. The ``gopkg-charmed`` charm tells Juju how to run the gopkg
+rock on Kubernetes: it deploys the workload, passes the configured hostname
+to the process as ``APP_HOSTNAME``, integrates with an ingress charm for
+external HTTP routing and TLS termination, and reports the workload's health
+through a health endpoint and Juju status. Its definition is
+``app/charm/charmcraft.yaml``, and its entry point is
+``app/charm/src/charm.py``.
 
-The ``gopkg-charmed`` charm tells Juju how to run the gopkg rock. In
-particular, it provides:
-
-- deployment of the OCI-packaged Go workload on Kubernetes
-- runtime configuration of the hostname rendered in import metadata and
-  links, passed to the Go process as ``APP_HOSTNAME``
-- integration with an ingress charm for external HTTP routing and TLS
-  termination
-- a health endpoint for Kubernetes and operational checks
-- Juju status and lifecycle handling through the Canonical 12-factor charm
-  framework described below
-
-The charm package and the rock are separate artifacts:
-
-- The **rock** answers the question, "What process runs in the container?"
-- The **charm** answers the question, "How should that process be operated?"
-
-`Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_ is the
-command-line tool used to build charms. Running ``charmcraft pack`` reads
-``app/charm/charmcraft.yaml`` and packages the charm code and metadata into a
-``.charm`` file.
-
-This project uses a `Canonical 12-factor app charm
-<https://canonical.com/juju/docs/charmcraft/4/howto/manage-web-app-charms/>`_.
-The
-`Twelve-Factor App <https://12factor.net/>`_ methodology describes practices
-for building portable services, including keeping configuration in the
-environment and separating build and run stages. Charmcraft's Go framework
-extension and the ``paas_charm`` library apply those patterns to common
-operations for a Go web service. As a result, the project-specific charm code
-can stay small while still handling the workload lifecycle through Juju.
+``gopkg-charmed`` is a 12-factor app charm. Charmcraft's Go framework
+extension and the ``paas_charm`` library implement the workload lifecycle, so
+the project-specific charm code stays small.
 
 Learn more from the official documentation:
 
-- `What a charm is <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_
-- `Charmcraft documentation <https://canonical.com/juju/docs/charmcraft/4/>`_
-- `Write your first Kubernetes charm for a Go application <https://canonical.com/juju/docs/charmcraft/4/tutorial/kubernetes-charm-go/>`_
+- :ref:`What a charm is <juju:charm>`
+- :ref:`Go framework extension <charmcraft:go-framework-extension>`
+- :doc:`Manage a 12-factor app charm <charmcraft:howto/manage-web-app-charms/index>`
+- :ref:`Write your first Kubernetes charm for a Go app <charmcraft:write-your-first-kubernetes-charm-for-a-go-app>`
 
-What is Juju?
--------------
+Juju
+----
 
-`Juju <https://canonical.com/juju/docs/juju-cli/3.6/>`_ is an application
-orchestration tool. You describe the result you want with commands such as
-``juju deploy``, ``juju config``, and ``juju integrate``. Juju then uses charms
-to create and operate the applications on the target cloud.
+**Juju** deploys and operates applications from charms. For this project the
+target cloud is a Kubernetes cluster, and the tutorial's deployment uses these
+Juju objects:
 
-For this project, the target cloud is a Kubernetes cluster. Juju works with
-Kubernetes rather than replacing it:
+- The :ref:`controller <juju:controller>` ``dev``, created by
+  ``juju bootstrap``, coordinates all work on the cluster.
+- The :ref:`model <juju:model>` ``gopkg-charmed`` groups the deployment; on
+  Kubernetes it is a namespace.
+- ``gopkg-charmed`` and ``nginx-ingress-integrator`` are two
+  :ref:`applications <juju:application>` in that model. Each runs as a
+  :ref:`unit <juju:unit>`, which for a Kubernetes charm is a pod holding the
+  charm and workload containers.
+- An :ref:`integration <juju:relation>` between the two applications carries
+  the routing data the ingress needs.
 
-- Kubernetes schedules containers and provides cluster resources.
-- Juju manages applications and their relationships.
-- The charm translates Juju operations into application-specific changes.
+Juju asks Kubernetes for the pods and containers; the charm configures and
+starts ``gopkg.in`` inside them.
 
-A few Juju terms recur in these guides. The *controller*, created by
-``juju bootstrap``, is the control plane that stores the desired state and
-coordinates work on the cloud. A *model* is a workspace inside a controller
-that groups related applications; on Kubernetes it corresponds to a
-namespace, and ``juju add-model gopkg-charmed`` creates the one the tutorial
-uses. ``gopkg-charmed`` and ``nginx-ingress-integrator`` are two separate
-*applications* in that model, each running as one or more *units*; for a
-Kubernetes charm, a unit is a pod that holds the charm and workload
-containers. An *integration*, such as
-``juju integrate nginx-ingress-integrator gopkg-charmed``, is a declared
-connection through which two applications exchange the data they need. The
-Juju documentation defines each term in depth.
+Putting it together
+-------------------
 
-Learn more from the official documentation:
+1. Rockcraft builds the gopkg rock from ``app/rockcraft.yaml``, and the rock
+   is pushed to a container registry.
+2. Charmcraft builds the ``gopkg-charmed`` charm from ``app/charm/``.
+3. Juju deploys the charm with the rock as its ``app-image`` resource, and
+   the charm starts ``gopkg.in`` in the workload container.
+4. Configuration changes and integrations reach the charm as Juju events, and
+   the charm updates the running workload.
 
-- `Get started with Juju <https://canonical.com/juju/docs/juju-cli/3.6/tutorial/>`_
-- `Juju documentation <https://canonical.com/juju/docs/juju-cli/3.6/>`_
-- `How Juju models applications <https://canonical.com/juju/docs/juju-cli/3.6/explanation/application-modelling/>`_
-
-How the pieces work together
-----------------------------
-
-The complete path from source code to a running service is:
-
-1. The Go compiler builds the ``gopkg.in`` application.
-2. Rockcraft packages the application as the gopkg rock.
-3. The rock is pushed to a container registry.
-4. Charmcraft packages the ``gopkg-charmed`` operations code as a charm.
-5. An operator asks Juju to deploy the charm and supplies the rock as its
-   application image.
-6. Juju asks Kubernetes to create the required pod and containers.
-7. The charm configures and starts the application from the rock.
-8. When an operator changes configuration or adds an integration, Juju sends
-   that event to the charm. The charm updates the workload accordingly.
-
-The tools produce or manage different things. Rockcraft does not deploy the
-application, Charmcraft does not run it, and Juju does not compile it. Keeping
-these responsibilities separate makes the same application image repeatable,
-the same operational behavior reusable, and the deployment manageable through
-one interface.
-
-How this maps to the repository
--------------------------------
-
-The relevant files are organized by responsibility:
-
-- ``app/*.go`` contains the application source code.
-- ``app/rockcraft.yaml`` describes how to build the rock.
-- ``app/charm/charmcraft.yaml`` describes the charm and its configuration.
-- ``app/charm/src/charm.py`` is the charm entry point.
-
-With these concepts in place, follow :ref:`deploy-and-verify-on-kubernetes` to
-build each artifact and see the complete deployment flow.
-
-Next, read :doc:`Ingress <ingress>` to understand how requests reach
-``gopkg-charmed`` from outside the Kubernetes cluster.
+Follow :ref:`deploy-and-verify-on-kubernetes` to build each artifact and see
+the complete deployment flow, then read :doc:`Ingress <ingress>` to
+understand how requests reach ``gopkg-charmed`` from outside the cluster.

@@ -8,21 +8,26 @@ Deploy and verify gopkg-charmed on Kubernetes
 
 An end-to-end deployment shows how the Go service, rock, charm, Juju, and
 ingress work together. Build the artifacts, deploy them on Kubernetes, and
-verify the service on ``amd64`` or ``arm64``.
+verify the service on AMD64 or ARM64.
 
-What you will build
--------------------
+What you'll do
+--------------
 
-At the end of this tutorial, you will have:
+1. Build and publish the rock image
+2. Build the charm
+3. Deploy to a new model
+4. Verify the deployment
+5. Test runtime configuration
 
-- a running ``gopkg-charmed`` application in a Juju model
-- an ingress integration for external routing
-- a verified health endpoint and a verified go-import metadata endpoint
+At the end, you will have a running ``gopkg-charmed`` application in a Juju
+model, an ingress integration for external routing, and a verified health
+endpoint and go-import metadata endpoint.
 
 Prerequisites
 -------------
 
-Complete :ref:`set-up-a-local-linux-environment`. That guide creates the Linux
+You need a workstation with AMD64 or ARM64 architecture and the environment
+from :ref:`set-up-a-local-linux-environment`. That guide creates the Linux
 environment, makes the repository available by mount or clone, and installs
 the required tools.
 
@@ -43,7 +48,7 @@ Confirm that MicroK8s access and the local registry are ready:
    curl --fail http://127.0.0.1:32000/v2/
 
 The last command should return ``{}``. If it cannot connect, return to the
-add-on step in :ref:`set-up-a-local-linux-environment`; do not continue to the
+add-on section in :ref:`set-up-a-local-linux-environment`; do not continue to the
 image push.
 
 Bootstrap Juju only after these checks pass:
@@ -52,19 +57,8 @@ Bootstrap Juju only after these checks pass:
 
    juju bootstrap microk8s dev
 
-Step 1: confirm architecture
-----------------------------
-
-Use this command and keep the result for later commands:
-
-.. code-block:: bash
-
-   dpkg --print-architecture
-
-Expected values are ``amd64`` or ``arm64``.
-
-Step 2: build and publish the rock image
-----------------------------------------
+Build and publish the rock image
+--------------------------------
 
 From the repository root:
 
@@ -87,8 +81,8 @@ Verify image push:
 Expected output contains ``"0.1"``. The command exits with a failure if the
 registry does not contain the image tag.
 
-Step 3: build the charm
------------------------
+Build the charm
+---------------
 
 .. code-block:: bash
 
@@ -98,8 +92,8 @@ Step 3: build the charm
 
 The final command must print the path to the packed charm.
 
-Step 4: deploy to a new model
------------------------------
+Deploy to a new model
+---------------------
 
 .. code-block:: bash
 
@@ -153,8 +147,8 @@ Wait for active status:
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
-Step 5: verify the deployment
------------------------------
+Verify the deployment
+---------------------
 
 Run a health check through ingress:
 
@@ -176,8 +170,8 @@ Verify go-import metadata:
 
 Expected output contains a ``go-import`` meta tag.
 
-Step 6: test runtime configuration
-----------------------------------
+Test runtime configuration
+--------------------------
 
 Update charm config and confirm it applies without rebuild:
 

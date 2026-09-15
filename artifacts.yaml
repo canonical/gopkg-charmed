@@ -4,10 +4,15 @@ version: 1
 rocks:
   - name: gopkg
     rockcraft-yaml: app/rockcraft.yaml
+    # CI builds amd64 only, and so the charm's app-image resource is amd64.
+    # An arm64 entry needs `runner:` with arm64 labels; without it opcli puts
+    # the job on an amd64 runner, where rockcraft builds an amd64 rock and
+    # overwrites the amd64 tag. app/rockcraft.yaml still declares arm64, so a
+    # local `rockcraft pack` on an arm64 machine works as the guides describe.
     platforms:
       - arch: amd64
-      - arch: arm64
 charms:
+  # No `platforms:` key: opcli defaults to a single amd64 build.
   - name: gopkg-charmed
     charmcraft-yaml: app/charm/charmcraft.yaml
     channel: latest/edge

@@ -1,0 +1,25 @@
+version_schema: 2
+
+changes:
+  - title: Published the charm to the latest/edge channel on every push to main
+    author: minulo
+    type: minor
+    description: Added a publication workflow that, after every push to main, takes the charm and rock built and tested by the most recent successful integration-test run for that source tree, uploads the rock as the app-image resource, and releases the charm to the latest/edge channel declared in artifacts.yaml. The workflow can also be started by hand to publish to another channel, such as promoting a tested revision to latest/stable, or to validate without uploading. The integration tests now run on every push to main as well, so publication always has a tested tree to ship.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/35"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false
+  - title: Added integration tests for every charm endpoint
+    author: minulo
+    type: minor
+    description: Added a test module that integrates each of the charm's endpoints with a published counterpart and checks that both applications settle in active. The ingress endpoint is tested with nginx-ingress-integrator, including a health check routed through the ingress controller; logging with loki-k8s; metrics-endpoint with prometheus-k8s, including a check that Prometheus registers a scrape target for the charm; and grafana-dashboard with grafana-k8s. The observability charms are published for amd64 only, so those tests are skipped on arm64 hosts.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/35"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

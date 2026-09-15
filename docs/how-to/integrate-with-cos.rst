@@ -61,14 +61,18 @@ Verify that Prometheus scrapes the service
 
 Prometheus scrapes ``/metrics`` on the application port of every unit. Ask
 its API for the ``up`` series of the application; a value of ``1`` means the
-last scrape succeeded. The loop retries until the first scrape completes and
-gives up after five minutes:
+last scrape succeeded. Reach the API through the Kubernetes Service that Juju
+maintains for ``prometheus-k8s``. Its address is the one ``juju status``
+shows for the application, and it survives pod replacement, which the COS
+charms trigger shortly after they first report active, when they set
+resource limits on their own pods. The loop retries until the first scrape
+completes and gives up after ten minutes:
 
 .. code-block:: bash
 
-   export PROMETHEUS_IP=$(microk8s kubectl -n gopkg-charmed get pod \
-     prometheus-k8s-0 -o jsonpath='{.status.podIP}')
-   timeout 300 bash -c '
+   export PROMETHEUS_IP=$(microk8s kubectl -n gopkg-charmed get service \
+     prometheus-k8s -o jsonpath='{.spec.clusterIP}')
+   timeout 600 bash -c '
      until curl --silent --get "http://${PROMETHEUS_IP}:9090/api/v1/query" \
          --data-urlencode "query=up{juju_application=\"gopkg-charmed\"}" \
          | grep -F "\"1\"]"; do
@@ -104,7 +108,7 @@ no longer serves metrics:
 
 .. code-block:: bash
 
-   timeout 300 bash -c '
+   timeout 600 bash -c '
      until curl --silent --get "http://${PROMETHEUS_IP}:9090/api/v1/query" \
          --data-urlencode "query=up{juju_application=\"gopkg-charmed\",instance=~\".*:9102\"}" \
          | grep -F "\"1\"]"; do

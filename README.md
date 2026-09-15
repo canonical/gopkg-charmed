@@ -226,7 +226,7 @@ issue covers exactly one charm, and the review runs against `main`.
 | Contribution documentation | [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/contribute/](docs/contribute/). |
 | Licence statement | [LICENSE](LICENSE) (BSD-2-Clause, upstream gopkg.in notice retained) and [app/charm/LICENSE](app/charm/LICENSE). |
 | Security statement | [SECURITY.md](SECURITY.md). |
-| Dependency pinning and updates | [app/charm/requirements.txt](app/charm/requirements.txt) and [app/charm/pyproject.toml](app/charm/pyproject.toml); automated updates via [renovate.json](renovate.json). |
+| Dependency pinning and updates | Runtime dependencies and `requires-python` in [app/charm/pyproject.toml](app/charm/pyproject.toml), resolved to exact versions in [app/charm/uv.lock](app/charm/uv.lock); [app/charm/requirements.txt](app/charm/requirements.txt) mirrors the list for the charm build. Automated updates via [renovate.json](renovate.json). |
 | Workload | Built from [app/](app/) with [app/rockcraft.yaml](app/rockcraft.yaml) and attached to the charm as the `app-image` OCI resource. |
 
 ### Self-check before requesting a review

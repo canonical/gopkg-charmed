@@ -7,7 +7,7 @@ changes:
   description: Updated the CI/CD pipeline to use the new GitHub Actions workflow for building and testing the charm. This change improves the build process and ensures that all tests are run in a consistent environment.
   urls:
     pr:
-      - "https://github.com/canonical/gopkg/pull/13"
+      - "https://github.com/canonical/gopkg-charmed/pull/13"
     related_doc:
     related_issue:
   visibility: internal

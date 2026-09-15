@@ -1,4 +1,7 @@
-.. _release-notes:
+.. _release_notes_index:
+
+.. meta::
+	:description: Review user-visible changes, compatibility notes, and operational updates for gopkg-charmed releases.
 
 Release notes
 =============
@@ -6,14 +9,19 @@ Release notes
 Release notes for ``gopkg-charmed`` summarize user-visible changes,
 compatibility notes, and operational updates.
 
-This project currently tracks change artifacts in
-``docs/release-notes/artifacts`` as part of its release workflow.
+Release policy and schedule
+---------------------------
 
-Artifact workflow
------------------
+Release notes are published on demand when user-visible changes are promoted
+for release.
 
-Release-note source artifacts are tracked as YAML files under
-``docs/release-notes/artifacts`` and consumed by the repository automation.
+Releases
+--------
 
-If you need end-user rendered release pages, add rendered ``.rst`` files and
-link them from this index in a future update.
+* :ref:`gopkg-charmed release notes - initial documentation baseline <release_notes_release_notes_0001>`
+
+.. toctree::
+	:hidden:
+	:maxdepth: 1
+
+	Initial documentation baseline <release-notes-0001>

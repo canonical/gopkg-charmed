@@ -7,7 +7,7 @@ changes:
   description: Removed the charm template scaffold, CI workflows, docs, and Terraform module in preparation for importing the gopkg Go application. Kept only org bot config, issue/PR templates, stale bot, release-notes automation, Renovate, CODEOWNERS, LICENSE, and SECURITY.md.
   urls:
     pr:
-      - "https://github.com/canonical/gopkg/pull/2"
+      - "https://github.com/canonical/gopkg-charmed/pull/2"
     related_doc:
     related_issue:
   visibility: internal

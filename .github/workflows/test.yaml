@@ -3,6 +3,10 @@ name: Charm CI (app/charm)
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: app/charm lint (ruff, mypy, codespell)
@@ -50,24 +54,45 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const sha = context.payload.pull_request?.head?.sha;
+            if (!sha) {
+              core.setFailed('Missing pull_request.head.sha; cannot publish required status context.');
+              return;
+            }
+
             const results = {
               lint: '${{ needs.lint.result }}',
               unit: '${{ needs.unit.result }}',
             };
-            const failed = Object.entries(results)
+            const notSuccessful = Object.entries(results)
               .filter(([, value]) => value !== 'success')
               .map(([name]) => name);
-            const state = failed.length === 0 ? 'success' : 'failure';
+            const state = notSuccessful.length === 0 ? 'success' : 'failure';
             const description =
               state === 'success'
                 ? 'Lint checks and unit tests completed successfully.'
-                : `One or more required checks failed: ${failed.join(', ')}.`;
+                : `One or more required checks were not successful: ${notSuccessful.join(', ')}.`;
 
-            await github.rest.repos.createCommitStatus({
+            const payload = {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: context.payload.pull_request.head.sha,
+              sha,
               state,
               context: 'Tests / test / Required Test Status Checks',
               description,
-            });
+            };
+
+            const maxAttempts = 3;
+            for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+              try {
+                await github.rest.repos.createCommitStatus(payload);
+                core.info(`Published required status context on attempt ${attempt}.`);
+                break;
+              } catch (error) {
+                if (attempt === maxAttempts) {
+                  throw error;
+                }
+                core.warning(`Attempt ${attempt} failed: ${error.message}`);
+                await new Promise((resolve) => setTimeout(resolve, attempt * 2000));
+              }
+            }

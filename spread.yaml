@@ -9,6 +9,10 @@ backends:
     type: integration-test
     systems:
       - ubuntu-24.04
+  docs:
+    type: opcli-minimal
+    systems:
+      - ubuntu-24.04
 
 environment:
   CONCIERGE: concierge-lxd.yaml
@@ -22,3 +26,9 @@ integration-suites:
       - integration-test
     pytest-arguments-template: |
       --keep-models
+
+suites:
+  tests/spread/documentation/:
+    summary: Executable documentation command tests
+    backends:
+      - docs

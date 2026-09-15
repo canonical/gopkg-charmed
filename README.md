@@ -77,6 +77,7 @@ multipass shell charm-dev
 ```
 
 Notes:
+
 - 8G memory recommended: with 4G, the Juju controller plus two charms can leave
   the scheduler refusing pods (`Pending`, "Insufficient memory").
 - Mount under `/home/ubuntu/` — snap-confined tools may not read paths outside
@@ -89,10 +90,11 @@ Notes:
 
 ```bash
 sudo snap install curl
+sudo snap install lxd
 sudo snap install rockcraft --classic
 sudo snap install charmcraft --classic
-sudo snap install juju
-sudo snap install microk8s --channel 1.31-strict/stable
+sudo snap install juju --channel 3/stable
+sudo snap install microk8s --channel 1.36-strict/stable
 lxd init --auto        # rockcraft/charmcraft build inside LXD; init is required once
 sudo adduser $USER snap_microk8s
 exit                   # re-enter with `multipass shell charm-dev` to pick up the group
@@ -102,7 +104,8 @@ exit                   # re-enter with `multipass shell charm-dev` to pick up th
 > shell and swallows every line after it. Log out and back in instead, then:
 
 ```bash
-sudo microk8s enable hostpath-storage registry ingress
+microk8s status --wait-ready
+sudo microk8s enable dns hostpath-storage registry ingress
 microk8s status --wait-ready
 mkdir -p ~/.local/share
 juju bootstrap microk8s dev
@@ -117,6 +120,7 @@ machine (`dpkg --print-architecture`), then:
 cd ~/gopkg-charmed/app
 ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
 rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+  --dest-no-creds \
   oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
   docker://localhost:32000/gopkg:0.1
 ```
@@ -159,6 +163,7 @@ juju status --watch 2s    # first deploy: 5-15 min to active/idle is normal
 ```
 
 Two hostname settings exist — do not conflate them:
+
 - `nginx-ingress-integrator service-hostname` — which `Host:` the ingress
   **routes** to the app.
 - `gopkg-charmed hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
@@ -182,13 +187,13 @@ juju config gopkg-charmed hostname=staging.example.com
 
 ### Troubleshooting
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `rockcraft pack`: "LXD has not been properly initialized" | LXD never initialized | `lxd init --auto` |
-| `charmcraft pack`: "No build matches the current execution environment" | `platforms:` ≠ build arch | set `platforms:` to `dpkg --print-architecture` |
-| Pods `Pending`, `describe pod` shows `Node-Selectors: kubernetes.io/arch=amd64` | model constraints unset | `juju set-model-constraints arch=…`, remove and redeploy apps |
-| Pods `Pending`, "Insufficient memory" | VM too small | `multipass stop charm-dev && multipass set local.charm-dev.memory=8G && multipass start charm-dev` |
-| Integrator `blocked`: "service-hostname is not set" | its config, not the app's | `juju config nginx-ingress-integrator service-hostname=…` |
-| Every URL answers 307 → `https://labix.org/gopkg.in` | ingress path rewrite | `juju config nginx-ingress-integrator rewrite-enabled=false` |
-| curl prints nothing but exit 0 | body without trailing newline | add `-w '\n%{http_code}\n'` |
-| `kubectl describe pod -n gopkg-charmed gopkg-charmed-0` | — | names the exact scheduling blocker |
+| Symptom                                                                         | Cause                         | Fix                                                                                                |
+| ------------------------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| `rockcraft pack`: "LXD has not been properly initialized"                       | LXD never initialized         | `lxd init --auto`                                                                                  |
+| `charmcraft pack`: "No build matches the current execution environment"         | `platforms:` ≠ build arch     | set `platforms:` to `dpkg --print-architecture`                                                    |
+| Pods `Pending`, `describe pod` shows `Node-Selectors: kubernetes.io/arch=amd64` | model constraints unset       | `juju set-model-constraints arch=…`, remove and redeploy apps                                      |
+| Pods `Pending`, "Insufficient memory"                                           | VM too small                  | `multipass stop charm-dev && multipass set local.charm-dev.memory=8G && multipass start charm-dev` |
+| Integrator `blocked`: "service-hostname is not set"                             | its config, not the app's     | `juju config nginx-ingress-integrator service-hostname=…`                                          |
+| Every URL answers 307 → `https://labix.org/gopkg.in`                            | ingress path rewrite          | `juju config nginx-ingress-integrator rewrite-enabled=false`                                       |
+| curl prints nothing but exit 0                                                  | body without trailing newline | add `-w '\n%{http_code}\n'`                                                                        |
+| `kubectl describe pod -n gopkg-charmed gopkg-charmed-0`                         | —                             | names the exact scheduling blocker                                                                 |

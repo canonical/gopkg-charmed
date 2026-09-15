@@ -22,13 +22,15 @@ Current behavior:
 - runs on every pull request, on every push to ``main``, and every Saturday
   at 15:00 UTC
 - ``test_charm.py`` deploys the charm with the freshly built image and checks
-  that one unit becomes active and answers the health check
+  that one unit becomes active, answers the health check, and serves
+  metrics
 - ``test_integrations.py`` integrates each of the charm's endpoints with a
   published counterpart and checks that both sides settle in ``active``:
   ``ingress`` with ``nginx-ingress-integrator``, which must then route
-  ``gopkg.example.com`` to the service; ``logging`` with ``loki-k8s``;
-  ``metrics-endpoint`` with ``prometheus-k8s``, which must register a scrape
-  target for the charm; and ``grafana-dashboard`` with ``grafana-k8s``
+  ``gopkg.example.com`` to the service; ``logging`` with ``loki-k8s``, which
+  must receive a log record from the service; ``metrics-endpoint`` with
+  ``prometheus-k8s``, which must report a healthy scrape target for the
+  charm; and ``grafana-dashboard`` with ``grafana-k8s``
 - the Loki, Prometheus, and Grafana charms come from the ``2/stable``
   channel, which is published for amd64 only, so those tests are skipped on
   arm64 hosts
@@ -100,8 +102,9 @@ the tools, enable MicroK8s, bootstrap Juju, and build the rock and charm from
 source.
 
 The guides run in prerequisite order. Both tests start with the setup guide
-and the tutorial, and the second test continues into the ingress and hostname
-how-to guides against the deployment the tutorial leaves behind. Two sentinels
+and the tutorial, and the second test continues into the ingress, hostname,
+and observability how-to guides against the deployment the tutorial leaves
+behind. Two sentinels
 control the boundaries: a page's clean-up commands, marked by
 ``# spread-teardown``, run only when that page is last in its chain, so the
 tutorial test destroys what it created while the how-to test keeps the

@@ -23,3 +23,14 @@ changes:
       related_issue:
     visibility: public
     highlight: false
+  - title: Added metrics, structured logs, a Grafana dashboard, and alert rules for the Canonical Observability Stack
+    author: minulo
+    type: minor
+    description: The service now exposes Prometheus metrics for requests, upstream GitHub and godoc.org calls, the refs cache, and git upload-pack traffic, at the framework's metrics path on the application port or on a separate port when the metrics-port option differs, which keeps the endpoint off the hostname ingress publishes. Logs are structured JSON records that Pebble forwards to Loki. The charm ships a gopkg Overview Grafana dashboard and Prometheus and Loki alert rules for scrape failures, server errors, latency, GitHub failures, application termination, and error-log spikes. A new how-to guide covers integrating with the Canonical Observability Stack, and the reference documents the endpoints, metrics, logs, and alert rules.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/35"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

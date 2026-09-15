@@ -3,11 +3,13 @@
 
 """Unit tests for the gopkg charm shim."""
 
+import json
 import pathlib
 from secrets import token_hex
 
 import ops.testing
 import paas_charm.go
+import paas_charm.utils
 import yaml
 
 from charm import GopkgCharm
@@ -97,3 +99,35 @@ def test_charmcraft_declares_go_framework_contract() -> None:
     hostname_option = charmcraft["config"]["options"]["hostname"]
     assert hostname_option["type"] == "string"
     assert hostname_option["default"] == "gopkg.in"
+
+
+def test_custom_cos_assets_are_valid() -> None:
+    """
+    arrange: given the charm's cos_custom directory with a dashboard and alert
+        rules, which paas-charm merges with the go-framework defaults at start-up
+    act: when paas-charm validates the directory layout and the assets are parsed
+    assert: the layout is accepted, the dashboard binds to the Prometheus
+        datasource variable that the Grafana library substitutes, every rule
+        file has populated groups, and every Loki rule expression carries the
+        topology placeholder the Loki library requires.
+    """
+    cos_custom = pathlib.Path(__file__).parents[2] / "cos_custom"
+
+    paas_charm.utils.validate_cos_custom_dir(cos_custom)
+    dashboard = json.loads(
+        (cos_custom / "grafana_dashboards" / "gopkg.json").read_text(encoding="utf-8")
+    )
+    prometheus_rules = yaml.safe_load(
+        (cos_custom / "prometheus_alert_rules" / "gopkg.rule").read_text(encoding="utf-8")
+    )
+    loki_rules = yaml.safe_load(
+        (cos_custom / "loki_alert_rules" / "gopkg.rule").read_text(encoding="utf-8")
+    )
+
+    assert dashboard["title"] == "gopkg Overview"
+    assert any(item["name"] == "prometheusds" for item in dashboard["templating"]["list"])
+    for rules in (prometheus_rules, loki_rules):
+        assert rules["groups"]
+        assert all(group["rules"] for group in rules["groups"])
+    for group in loki_rules["groups"]:
+        assert all("%%juju_topology%%" in rule["expr"] for rule in group["rules"])

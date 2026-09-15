@@ -71,7 +71,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "ops", specifier = "~=3.8" },
-    { name = "paas-charm", specifier = ">=1.0,<2" },
+    { name = "paas-charm", specifier = ">=1.12.2,<2" },
 ]
 
 [[package]]

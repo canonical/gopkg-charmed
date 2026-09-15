@@ -1,3 +1,25 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+[project]
+name = "gopkg-charm"
+version = "0.1.0"
+description = "Juju charm for the gopkg.in versioned Go import-path service"
+requires-python = ">=3.12"
+# Runtime dependencies of the charm code. Keep requirements.txt in step with
+# this list: the go-framework extension builds the charm with Charmcraft's
+# charm plugin, which installs requirements.txt, while uv.lock records the
+# exact versions this list resolves to.
+dependencies = [
+    "ops~=3.8",
+    "paas-charm>=1.0,<2",
+]
+
+[tool.uv]
+# The charm is not a distributable Python package; uv should manage the
+# environment and the lock file only, not build or install this project.
+package = false
+
 # Testing tools configuration
 [tool.coverage.run]
 branch = true

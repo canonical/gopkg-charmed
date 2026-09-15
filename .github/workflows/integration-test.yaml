@@ -2,6 +2,11 @@ name: Integration Tests
 
 on:
   pull_request:
+  # Every change to the default branch is tested, and the "Publish charm"
+  # workflow publishes only trees with a successful run of this workflow.
+  push:
+    branches:
+      - main
   schedule:
     # Weekly on Saturday at 3pm UTC
     - cron: "0 15 * * SAT"

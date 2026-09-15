@@ -300,4 +300,5 @@ intersphinx_mapping = {
     "juju": ("https://canonical.com/juju/docs/juju-cli/3.6/", None),
     "charmcraft": ("https://canonical.com/juju/docs/charmcraft/4/", None),
     "rockcraft": ("https://ubuntu.com/containers/rockcraft/docs/latest/", None),
+    "multipass": ("https://canonical.com/multipass/docs/latest/", None),
 }

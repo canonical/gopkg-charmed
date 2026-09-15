@@ -20,11 +20,16 @@ dependencies, and OCI images.
 
 This guide uses `Multipass <https://canonical.com/multipass>`_ to create an
 Ubuntu 24.04 LTS virtual machine. Multipass runs on Linux, macOS, and Windows,
-so the same steps apply on every host. Install it by following the `Multipass
-installation guide
-<https://canonical.com/multipass/docs/latest/how-to-guides/install-multipass/>`_
-before continuing. If your workstation already runs Ubuntu 24.04 LTS, you can
-skip the virtual machine and run the remaining steps directly on it.
+so the same steps apply on every host, and the VM keeps everything the guide
+installs separate from your workstation. Install it by following
+:ref:`Install Multipass <multipass:how-to-guides-install-multipass>` before
+continuing.
+
+If your workstation already runs Ubuntu 24.04 LTS, you can skip the virtual
+machine and run the remaining steps directly on it. Be aware of what that
+means: the steps install packages and snaps with ``sudo``, add your user to
+the ``snap_microk8s`` and ``lxd`` groups, and start a MicroK8s cluster whose
+add-ons listen on ports 80, 443, and 32000 of the workstation.
 
 Create and enter a VM
 ---------------------
@@ -77,6 +82,13 @@ The final command should return ``/home/ubuntu/gopkg-charm``.
 Install required tools
 ----------------------
 
+Building, deploying, and testing ``gopkg-charmed`` needs Go for the service,
+Python 3.12 and tox for the charm tests, Rockcraft and Charmcraft to build the
+rock and the charm (both build inside LXD), Juju and MicroK8s to deploy them,
+and curl and git for the commands in the guides.
+:ref:`platforms-and-prerequisites` lists the channels and the versions the
+guides were last verified with. Install everything:
+
 .. code-block:: bash
 
    sudo apt update
@@ -87,6 +99,12 @@ Install required tools
    sudo snap install charmcraft --classic
    sudo snap install juju --channel 3/stable
    sudo snap install microk8s --channel 1.36-strict/stable
+
+MicroK8s and LXD only accept commands from members of their groups, so add
+your user to both:
+
+.. code-block:: bash
+
    sudo adduser $USER snap_microk8s
    sudo adduser $USER lxd
 
@@ -113,34 +131,51 @@ Confirm the new group memberships in the new session, then initialize LXD:
    id -nG | grep -qw lxd
    lxd init --auto
 
-The commands must exit successfully before you continue. In an interactive
-shell, ``newgrp snap_microk8s`` also applies the membership, but it opens a
-new shell: do not paste further commands after it.
+If both memberships apply, none of the commands print anything.
+
+.. note::
+
+   In an interactive shell, ``newgrp snap_microk8s`` applies the membership
+   without logging out. It starts a new shell, so any commands you paste
+   together with it run in the original shell, before the membership applies.
 
 Enable Kubernetes add-ons
 -------------------------
+
+The deployment needs four MicroK8s add-ons: ``dns`` for name resolution
+inside the cluster, ``hostpath-storage`` for the volumes the Juju controller
+requests, ``registry`` for the local image registry on port 32000 that
+receives the rock, and ``ingress`` for the NGINX ingress controller that
+publishes the service on ports 80 and 443. Wait for the cluster, then enable
+them:
 
 .. code-block:: bash
 
    microk8s status --wait-ready
    sudo microk8s enable dns hostpath-storage registry ingress
+
+Confirm that the add-ons are enabled and that the registry accepts
+connections:
+
+.. code-block:: bash
+
    microk8s status --wait-ready
    microk8s kubectl rollout status deployment/registry \
      -n container-registry --timeout=15m
    curl --fail --silent --show-error --retry 30 --retry-delay 2 \
      --retry-all-errors http://127.0.0.1:32000/v2/
 
-The add-ons must appear under ``enabled`` in the status output. The final
-command returns ``{}``, confirming that the registry is accepting connections
-before you build or publish an image. It retries for up to a minute because
-the registry can take a few seconds to accept connections after the
+The status output lists the four add-ons under ``enabled``, the second
+command ends with ``deployment "registry" successfully rolled out``, and the
+final command prints ``{}``. That last command retries for up to a minute
+because the registry can take a few seconds to accept connections after the
 deployment finishes rolling out.
 
 Optional: clean local-only Python artifacts
 -------------------------------------------
 
 If you mounted a checkout that contains Python environments created on another
-OS, remove those generated artifacts before building rocks:
+OS, remove those generated artifacts before building the rock:
 
 .. code-block:: bash
 
@@ -151,31 +186,26 @@ This prevents ``rockcraft pack`` errors caused by incompatible interpreter
 files entering Rockcraft's build instance. A repository cloned inside the VM
 does not need this cleanup unless it contains copied environments.
 
-Verify the repository and tools
--------------------------------
+Confirm the tools
+-----------------
+
+Check that every tool is on the path and that the checkout contains the two
+build recipes:
 
 .. code-block:: bash
 
    cd ~/gopkg-charm
-   command -v curl
-   command -v go
-   command -v juju
-   command -v charmcraft
-   command -v rockcraft
-   command -v microk8s
-   command -v tox
-   command -v lxd
-   id -nG | grep -qw snap_microk8s
-   id -nG | grep -qw lxd
+   command -v curl go juju charmcraft rockcraft microk8s tox lxd
    dpkg --print-architecture
-   git rev-parse --show-toplevel
    test -f app/rockcraft.yaml
    test -f app/charm/charmcraft.yaml
 
-The architecture command prints ``amd64`` or ``arm64``.
+The first command prints one path per tool, ``dpkg`` prints ``amd64`` or
+``arm64``, and the two ``test`` commands print nothing.
 
 Next steps
 ----------
 
-- For deployment flow: :ref:`deploy-and-verify-on-kubernetes`
-- For full integration tests: :ref:`full-integration-suite-local`
+- Follow the step-by-step tutorial :ref:`deploy-and-verify-on-kubernetes`
+  to build, deploy, and verify the charm in this environment.
+- Run the integration tests with :ref:`full-integration-suite-local`.

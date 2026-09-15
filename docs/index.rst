@@ -8,9 +8,10 @@ gopkg charm
 <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_ that
 operates the ``gopkg.in`` versioned Go import service on Kubernetes.
 
-The service ships as a rock, an Ubuntu-based container image. Juju deploys
-the charm, and the charm runs that image, configures the public hostname the
-service advertises, and connects it to ingress. Like any Juju charm, it
+The service ships as a rock, a container image built with Rockcraft. Juju
+deploys the charm, and the charm runs that image, configures the public
+hostname the service advertises, and connects it to ingress. Like any Juju
+charm, it
 supports repeatable deployment, configuration, integration, and lifecycle
 management, on Kubernetes platforms from `MicroK8s
 <https://canonical.com/microk8s>`_ for local development to `Charmed
@@ -71,8 +72,8 @@ structure.
 
 - The :ref:`Tutorial <tutorials>` takes you step-by-step through a complete
   deployment of ``gopkg-charmed``.
-- :ref:`How-to guides <how-to-guides>` assume you have deployed the charm.
-  They cover configuring, testing, and troubleshooting it.
+- :ref:`How-to guides <how-to-guides>` cover preparing an environment,
+  configuring the charm, testing it, and troubleshooting it.
 - :ref:`Reference <reference>` provides the configuration options, supported
   platforms, and CI behavior.
 - :ref:`Explanation <explanation>` includes topic overviews, background and

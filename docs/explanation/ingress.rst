@@ -52,8 +52,8 @@ Running ``juju integrate nginx-ingress-integrator gopkg-charmed`` creates a
 Juju integration through which ``gopkg-charmed`` supplies its Service name,
 namespace, and port. The integrator combines that information with its own
 configuration to create the Ingress resource, and Juju keeps it up to date
-when either application changes. Both applications must be in the same
-model, which on Kubernetes is a namespace.
+when either application changes. The tutorial deploys both applications in
+the same model.
 
 Why the guides pin the hostname locally
 ---------------------------------------
@@ -66,9 +66,10 @@ supply the address for one request without changing DNS or ``/etc/hosts``.
 uses it to choose the backend, so a request without the hostname never
 matches the rule.
 
-This works because the MicroK8s ingress controller listens on the local
-loopback interface. From another machine, the same request must target the
-address of the machine or load balancer that exposes the controller.
+This works because the MicroK8s ingress controller binds ports 80 and 443 on
+the node itself, loopback included. From another machine, the same request
+must target the address of the machine or load balancer that exposes the
+controller.
 
 The two hostname settings
 -------------------------

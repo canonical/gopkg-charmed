@@ -143,9 +143,8 @@ Enable Kubernetes add-ons
 The deployment needs four MicroK8s add-ons: ``dns`` for name resolution
 inside the cluster, ``hostpath-storage`` for the volumes the Juju controller
 requests, ``registry`` for the local image registry on port 32000 that
-receives the rock, and ``ingress`` for the NGINX ingress controller that
-publishes the service on ports 80 and 443. Wait for the cluster, then enable
-them:
+receives the rock, and ``ingress`` for the ingress controller that publishes
+the service on ports 80 and 443. Wait for the cluster, then enable them:
 
 .. code-block:: bash
 

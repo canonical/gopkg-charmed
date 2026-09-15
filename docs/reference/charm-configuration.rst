@@ -6,8 +6,13 @@
 Charm configuration
 ===================
 
-The charm exposes one application-specific option. To change it and verify
-the result, follow :ref:`configure-hostname-and-check-go-import`.
+The charm declares one application-specific option. To change it and verify
+the result, follow :ref:`configure-hostname-and-check-go-import`. Running
+``juju config gopkg-charmed`` also lists the options that the Go framework
+extension adds when the charm is packed: ``app-port``, ``app-secret-key``,
+``app-secret-key-id``, ``metrics-port``, and ``metrics-path``. See
+:ref:`charmcraft:go-framework-extension-config-options` for the extension's
+options.
 
 ``hostname``
   Type: string

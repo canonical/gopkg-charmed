@@ -38,7 +38,10 @@ Enter the repository root before continuing:
 
    cd ~/gopkg-charm
 
-Confirm that MicroK8s access and the local registry are ready:
+Confirm that MicroK8s access and the local registry are still ready. These
+repeat the setup guide's final checks on purpose: a shell opened before you
+joined the group, or a restarted machine whose registry is still starting,
+fails here rather than in the middle of the image push:
 
 .. code-block:: bash
 
@@ -101,7 +104,6 @@ registry:
 
 .. code-block:: bash
 
-   curl --fail http://127.0.0.1:32000/v2/
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
@@ -147,7 +149,7 @@ Confirm that the charm was packed:
 
 .. code-block:: bash
 
-   ls -1 gopkg-charmed_*.charm
+   ls -1 gopkg-charmed_$(dpkg --print-architecture).charm
 
 The command prints the name of the packed charm, such as
 ``gopkg-charmed_amd64.charm``.
@@ -173,7 +175,7 @@ registry:
 .. code-block:: bash
 
    cd ~/gopkg-charm/app/charm
-   juju deploy ./gopkg-charmed_*.charm gopkg-charmed \
+   juju deploy ./gopkg-charmed_$(dpkg --print-architecture).charm gopkg-charmed \
      --resource app-image=localhost:32000/gopkg:0.1
 
 On its own, the service is reachable only inside the cluster. To publish it

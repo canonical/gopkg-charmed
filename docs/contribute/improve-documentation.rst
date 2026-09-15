@@ -7,8 +7,9 @@ Improve the documentation
 =========================
 
 Use this path for changes under ``docs/``. Building and checking the
-documentation requires only Git, Make, and Python, not the deployment tools
-(Juju, MicroK8s, Rockcraft, or Charmcraft).
+documentation requires only Git, Make, and Python, plus network access on the
+first run, which fetches the pinned Python packages and the Vale styles. The
+deployment tools (Juju, MicroK8s, Rockcraft, or Charmcraft) are not needed.
 
 Prerequisites
 -------------

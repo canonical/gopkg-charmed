@@ -27,9 +27,10 @@ Multipass VM, run ``multipass shell charm-dev`` again:
    id -nG | grep -qw snap_microk8s || sudo adduser $USER snap_microk8s
 
 Do not bootstrap Juju until ``id -nG | grep -qw snap_microk8s`` succeeds in
-the new session. In an interactive shell, ``newgrp snap_microk8s`` also
-applies the membership, but it opens a new shell: do not paste further
-commands after it.
+the new session. In an interactive shell, ``newgrp snap_microk8s`` applies
+the membership without logging out. It starts a new shell, so any commands
+pasted together with it run in the original shell, before the membership
+applies.
 
 Local image registry refuses connections
 ----------------------------------------
@@ -96,7 +97,8 @@ Fix: align the request with the rule. With curl, include the matching
 
 .. code-block:: bash
 
-   juju config nginx-ingress-integrator service-hostname path-routes
+   juju config nginx-ingress-integrator service-hostname
+   juju config nginx-ingress-integrator path-routes
    curl --fail --silent --show-error http://gopkg.example.com/health-check \
      --resolve gopkg.example.com:80:127.0.0.1
 

@@ -31,9 +31,10 @@ Rockcraft 1.20.0, Juju 3.6.28, MicroK8s 1.36.2, LXD 5.21.7, and Go 1.26.7
 from the ``go`` snap. Newer releases from the same channels are expected to
 work; older releases are untested.
 
-The artifacts pin what they are built on: the rock and the charm use the
-``ubuntu@24.04`` base, the Go module requires Go 1.21 or later, and the charm
-depends on ``ops`` 3.8 and ``paas-charm`` 1.x.
+The artifacts pin what they are built on: the charm uses the ``ubuntu@24.04``
+base, the rock builds on ``ubuntu@24.04`` but ships with ``base: bare``, the
+Go module requires Go 1.21.2 or later, and the charm depends on ``ops`` 3.8
+and ``paas-charm`` 1.x.
 
 MicroK8s add-ons
 ----------------

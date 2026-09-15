@@ -24,11 +24,13 @@ runs it from a container image, and that image is the rock.
 Rock
 ----
 
-A **rock** is an Ubuntu-based container image. The rock for this project
-contains the compiled ``gopkg.in`` application and the files needed to start
-it. Its build recipe is ``app/rockcraft.yaml``. The recipe uses the Go
-framework extension, which supplies the standard build and runtime setup for
-a Go web application.
+A **rock** is a container image built with Rockcraft from Ubuntu packages.
+The rock for this project is built with ``base: bare``, so it carries no
+Ubuntu base system: only the compiled ``gopkg.in`` application and the
+slices of Ubuntu packages it needs to run, which are CA certificates,
+``bash``, and ``coreutils``. Its build recipe is ``app/rockcraft.yaml``. The
+recipe uses the Go framework extension, which supplies the standard build
+and runtime setup for a Go web application.
 
 The rock does not decide when to deploy ``gopkg.in``, how to react to
 configuration changes, or how to connect the application to other services.
@@ -46,11 +48,11 @@ Charm
 
 A **charm** is a software package containing the knowledge needed to operate
 an application. The ``gopkg-charmed`` charm tells Juju how to run the gopkg
-rock on Kubernetes: it deploys the workload, passes the configured hostname
-to the process as ``APP_HOSTNAME``, integrates with an ingress charm for
-external HTTP routing and TLS termination, and reports the workload's health
-through a health endpoint and Juju status. Its definition is
-``app/charm/charmcraft.yaml``, and its entry point is
+rock on Kubernetes: it configures and starts the workload, passes the
+configured hostname to the process as ``APP_HOSTNAME``, integrates with an
+ingress charm for external HTTP routing and TLS termination, and reports the
+workload's health through a health endpoint and Juju status. Its definition
+is ``app/charm/charmcraft.yaml``, and its entry point is
 ``app/charm/src/charm.py``.
 
 ``gopkg-charmed`` is a 12-factor app charm. Charmcraft's Go framework

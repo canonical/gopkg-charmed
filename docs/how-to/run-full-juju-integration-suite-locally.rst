@@ -45,18 +45,17 @@ Run the suite manually
 ----------------------
 
 Use the individual steps when you need fine-grained control, for example to
-rebuild only one artifact:
+rebuild only one artifact. The first block confirms the environment from
+:ref:`set-up-a-local-linux-environment` and bootstraps a controller only if
+none exists yet:
 
 .. code-block:: bash
 
    cd ~/gopkg-charm
    microk8s status --wait-ready
-   sudo microk8s enable dns hostpath-storage registry ingress
-   microk8s kubectl rollout status deployment/registry \
-     -n container-registry --timeout=15m
    curl --fail --silent --show-error --retry 30 --retry-delay 2 \
      --retry-all-errors http://127.0.0.1:32000/v2/
-   juju bootstrap microk8s dev
+   juju controllers >/dev/null 2>&1 || juju bootstrap microk8s dev
 
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack

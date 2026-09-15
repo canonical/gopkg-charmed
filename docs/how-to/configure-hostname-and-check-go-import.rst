@@ -14,13 +14,15 @@ These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
 are deployed and integrated, as they are after the deployment steps of
 :ref:`deploy-and-verify-on-kubernetes` and before its clean-up section.
 
-Set an ingress host for local checks
-------------------------------------
+Set the ingress host variable
+-----------------------------
+
+The deployment steps of the tutorial configured the integrator with this
+hostname; the variable keeps the commands below in step with it:
 
 .. code-block:: bash
 
    export INGRESS_HOST=gopkg.example.com
-   juju config nginx-ingress-integrator service-hostname=${INGRESS_HOST}
 
 For local verification, requests are routed to ``127.0.0.1`` with ``--resolve``.
 

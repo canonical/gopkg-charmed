@@ -80,7 +80,6 @@ resource:
 .. code-block:: bash
 
    juju status --relations
-   microk8s kubectl -n gopkg-charmed get ingress
    microk8s kubectl -n gopkg-charmed describe ingress
 
 Then test both workload behavior and metadata through ingress. The

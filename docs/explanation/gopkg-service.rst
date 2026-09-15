@@ -63,9 +63,9 @@ What the charm adds
 -------------------
 
 The service is the HTTP application described above. ``gopkg-charmed`` is
-its operational layer: it packages the service as a rock, deploys it on
-Kubernetes, and manages its configuration and integrations through Juju. Two
-operational facts follow from the service's job:
+its operational layer: the service is packaged as a rock, Juju deploys the
+charm on Kubernetes, and the charm manages the workload's configuration and
+integrations. Two operational facts follow from the service's job:
 
 - The workload reaches GitHub over HTTPS to read repository references and
   to relay source transfers, so the cluster must allow that outbound access.

@@ -104,14 +104,17 @@ job:
    juju config gopkg-charmed metrics-port=9102
 
 Confirm that Prometheus scrapes the new port, then that the public hostname
-no longer serves metrics:
+no longer serves metrics. The ``up`` series cannot tell the ports apart,
+because the Prometheus charm rewrites its ``instance`` label to the Juju
+topology, so ask the targets API instead: it lists the scrape URL and health
+of every active target. The loop waits until the target whose URL ends in
+``:9102/metrics`` reports ``up``:
 
 .. code-block:: bash
 
    timeout 600 bash -c '
-     until curl --silent --get "http://${PROMETHEUS_IP}:9090/api/v1/query" \
-         --data-urlencode "query=up{juju_application=\"gopkg-charmed\",instance=~\".*:9102\"}" \
-         | grep -F "\"1\"]"; do
+     until curl --silent "http://${PROMETHEUS_IP}:9090/api/v1/targets?state=active" \
+         | grep --only-matching "\"scrapeUrl\":\"[^\"]*:9102/metrics\"[^}]*\"health\":\"up\""; do
        sleep 10
      done
    '
@@ -120,6 +123,6 @@ no longer serves metrics:
      http://${INGRESS_HOST}/metrics \
      --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep -Fx 404
 
-The first command prints a result ending in ``"1"`` for an instance on port
-``9102``; the second prints ``404``, because the application answers its
-own not-found page for that path.
+The first command prints the matching part of the target entry, from its
+scrape URL to ``"health":"up"``; the second prints ``404``, because the
+application answers its own not-found page for that path.

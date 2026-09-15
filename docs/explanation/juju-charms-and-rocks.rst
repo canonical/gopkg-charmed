@@ -73,12 +73,10 @@ Juju objects:
 
 - The :ref:`controller <juju:controller>` ``dev``, created by
   ``juju bootstrap``, coordinates all work on the cluster.
-- The :ref:`model <juju:model>` ``gopkg-charmed`` groups the deployment; on
-  Kubernetes it is a namespace.
+- The :ref:`model <juju:model>` ``gopkg-charmed`` groups the deployment.
 - ``gopkg-charmed`` and ``nginx-ingress-integrator`` are two
-  :ref:`applications <juju:application>` in that model. Each runs as a
-  :ref:`unit <juju:unit>`, which for a Kubernetes charm is a pod holding the
-  charm and workload containers.
+  :ref:`applications <juju:application>` in that model, each running as one
+  :ref:`unit <juju:unit>`.
 - An :ref:`integration <juju:relation>` between the two applications carries
   the routing data the ingress needs.
 

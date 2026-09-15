@@ -34,8 +34,6 @@ add-ons listen on ports 80, 443, and 32000 of the workstation.
 Create and enter a VM
 ---------------------
 
-Skip this section if your workstation already runs Ubuntu 24.04 LTS.
-
 .. SPREAD SKIP
 
 .. code-block:: bash

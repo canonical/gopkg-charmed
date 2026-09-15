@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -91,7 +90,7 @@ func newServer() *http.Server {
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		logger.Error("application stopped", "error", err)
 		os.Exit(1)
 	}
 }
@@ -108,16 +107,40 @@ func run() error {
 	if err := validateHostname(*hostnameFlag); err != nil {
 		return err
 	}
-
-	http.HandleFunc("/", handler)
+	metricsPath := envOr("APP_METRICS_PATH", "/metrics")
+	if err := validateMetricsPath(metricsPath); err != nil {
+		return err
+	}
 
 	if *httpFlag == "" {
 		return fmt.Errorf("must provide -http or APP_PORT")
 	}
+	metricsAddr, err := metricsListenAddr(*httpFlag, os.Getenv("APP_METRICS_PORT"))
+	if err != nil {
+		return err
+	}
 
+	// Metrics share the application listener unless APP_METRICS_PORT names
+	// another port, in which case a second listener serves only that path.
+	errs := make(chan error, 2)
 	server := newServer()
 	server.Addr = *httpFlag
-	return server.ListenAndServe()
+	if metricsAddr == "" {
+		server.Handler = newHTTPHandler(metricsPath)
+	} else {
+		server.Handler = newHTTPHandler("")
+		metricsServer := newServer()
+		metricsServer.Addr = metricsAddr
+		metricsServer.Handler = newMetricsHandler(metricsPath)
+		go func() { errs <- metricsServer.ListenAndServe() }()
+	}
+	metricsListener := metricsAddr
+	if metricsListener == "" {
+		metricsListener = *httpFlag
+	}
+	logger.Info("serving", "http", *httpFlag, "metrics_addr", metricsListener, "metrics_path", metricsPath, "hostname", *hostnameFlag)
+	go func() { errs <- server.ListenAndServe() }()
+	return <-errs
 }
 
 var gogetTemplate = template.Must(template.New("").Parse(`
@@ -246,11 +269,10 @@ var patternNew = regexp.MustCompile(`^/(?:([a-zA-Z0-9][-a-zA-Z0-9]+)/)?([a-zA-Z]
 
 func handler(resp http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/health-check" {
+		resp.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		resp.Write([]byte("ok"))
 		return
 	}
-
-	log.Printf("%s requested %s", req.RemoteAddr, req.URL)
 
 	if req.URL.Path == "/" {
 		resp.Header().Set("Location", "https://labix.org/gopkg.in")
@@ -302,6 +324,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 	original, err := fetchRefs(repo)
 	if err == ErrTimeout {
 		// Retry once.
+		applicationMetrics.refsRetries.Inc()
 		httpClient.CloseIdleConnections()
 		original, err = fetchRefs(repo)
 	}
@@ -348,7 +371,7 @@ func handler(resp http.ResponseWriter, req *http.Request) {
 		// execute simple template when this is a go-get request
 		err = gogetTemplate.Execute(resp, repo)
 		if err != nil {
-			log.Printf("error executing go get template: %s\n", err)
+			logger.Error("template execution failed", "template", "go_get", "error", err)
 		}
 		return
 	}
@@ -367,20 +390,34 @@ func sendNotFound(resp http.ResponseWriter, msg string, args ...interface{}) {
 const refsSuffix = ".git/info/refs?service=git-upload-pack"
 
 func proxyUploadPack(resp http.ResponseWriter, req *http.Request, repo *Repo) {
+	started := time.Now()
+	result := "ok"
+	defer func() {
+		applicationMetrics.observeUpstream("github", "git_upload_pack", result, started)
+	}()
+
 	preq, err := http.NewRequest(req.Method, "https://"+repo.GitHubRoot()+"/git-upload-pack", req.Body)
 	if err != nil {
+		result = "request_error"
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(fmt.Sprintf("Cannot create GitHub request: %v", err)))
 		return
 	}
 	preq.Header = req.Header
+	if req.ContentLength > 0 {
+		applicationMetrics.uploadPackBytes.WithLabelValues("request").Add(float64(req.ContentLength))
+	}
 	presp, err := bulkClient.Do(preq)
 	if err != nil {
+		result = upstreamResult(err)
 		resp.WriteHeader(http.StatusBadGateway)
 		resp.Write([]byte(fmt.Sprintf("Cannot obtain data pack from GitHub: %v", err)))
 		return
 	}
 	defer presp.Body.Close()
+	if presp.StatusCode >= http.StatusBadRequest {
+		result = "http_error"
+	}
 
 	header := resp.Header()
 	for key, values := range presp.Header {
@@ -389,9 +426,11 @@ func proxyUploadPack(resp http.ResponseWriter, req *http.Request, repo *Repo) {
 	resp.WriteHeader(presp.StatusCode)
 
 	// Ignore errors. Dropped connections are usual and will make this fail.
-	_, err = io.Copy(resp, presp.Body)
+	written, err := io.Copy(resp, presp.Body)
+	applicationMetrics.uploadPackBytes.WithLabelValues("response").Add(float64(written))
 	if err != nil {
-		log.Printf("Error copying data from GitHub: %v", err)
+		result = "copy_error"
+		logger.Error("GitHub response copy failed", "operation", "git_upload_pack", "error", err)
 	}
 }
 
@@ -434,12 +473,20 @@ func setRefs(root string, refs []byte) {
 		refs:      refs,
 		timestamp: time.Now(),
 	}
+	applicationMetrics.refsCacheEntries.Set(float64(len(refsCache)))
 }
 
 func fetchRefs(repo *Repo) (data []byte, err error) {
 	if refs := getRefs(repo.GitHubRoot()); refs != nil {
+		applicationMetrics.refsCacheRequests.WithLabelValues("hit").Inc()
 		return refs, nil
 	}
+	applicationMetrics.refsCacheRequests.WithLabelValues("miss").Inc()
+
+	started := time.Now()
+	defer func() {
+		applicationMetrics.observeUpstream("github", "refs", upstreamResult(err), started)
+	}()
 
 	resp, err := httpClient.Get("https://" + repo.GitHubRoot() + refsSuffix)
 	if err != nil {

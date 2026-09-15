@@ -141,15 +141,33 @@ async def test_logging_integration_settles(
     """
     arrange: given the charm and loki-k8s deployed in the same model
     act: when the charm's logging endpoint is integrated with Loki's
-    assert: both applications return to active and the relation is
-        established, so the Pebble log forwarding target was accepted.
+    assert: both applications return to active, and a request to the service
+        shows up in Loki as a log stream labelled with the application name.
     """
     loki = cos[LOKI]
 
     await model.integrate(f"{app.name}:logging", f"{loki.name}:logging")
     await model.wait_for_idle(apps=[app.name, loki.name], status="active", timeout=15 * 60)
-
     assert await _related(model, app.name, loki.name)
+    # Any non-health request writes one structured log record to stdout,
+    # which Pebble forwards to Loki with the unit's Juju topology labels.
+    app_address = await _unit_address(model, app)
+    loki_address = await _unit_address(model, loki)
+    requests.get(f"http://{app_address}:8080/", timeout=10, allow_redirects=False)
+
+    def log_stream_labelled_with_app() -> list[str] | None:
+        response = requests.get(
+            f"http://{loki_address}:3100/loki/api/v1/label/juju_application/values", timeout=10
+        )
+        response.raise_for_status()
+        values = response.json().get("data") or []
+        return values if app.name in values else None
+
+    labels = await _wait_until(
+        log_stream_labelled_with_app, f"Loki to receive logs from {app.name}"
+    )
+
+    assert app.name in labels
 
 
 @requires_amd64
@@ -161,8 +179,9 @@ async def test_metrics_endpoint_is_scraped(
     """
     arrange: given the charm and prometheus-k8s deployed in the same model
     act: when the charm's metrics-endpoint is integrated with Prometheus
-    assert: both applications return to active and Prometheus registers a
-        scrape target labelled with the charm's application name.
+    assert: both applications return to active and Prometheus reports a
+        healthy scrape target labelled with the charm's application name,
+        so the workload's metrics endpoint is really being scraped.
     """
     prometheus = cos[PROMETHEUS]
 
@@ -170,14 +189,16 @@ async def test_metrics_endpoint_is_scraped(
     await model.wait_for_idle(apps=[app.name, prometheus.name], status="active", timeout=15 * 60)
     address = await _unit_address(model, prometheus)
 
-    def scrape_target() -> list[dict[str, typing.Any]] | None:
+    def healthy_scrape_target() -> list[dict[str, typing.Any]] | None:
         response = requests.get(f"http://{address}:9090/api/v1/targets", timeout=10)
         response.raise_for_status()
         targets = response.json()["data"]["activeTargets"]
         matching = [t for t in targets if t["labels"].get("juju_application") == app.name]
-        return matching or None
+        return matching if matching and all(t["health"] == "up" for t in matching) else None
 
-    targets = await _wait_until(scrape_target, f"a Prometheus scrape target for {app.name}")
+    targets = await _wait_until(
+        healthy_scrape_target, f"a healthy Prometheus scrape target for {app.name}"
+    )
 
     assert targets
 

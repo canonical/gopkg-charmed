@@ -55,7 +55,10 @@ curl localhost:8080/health-check        # -> ok
 
 Config comes from the environment (`APP_PORT`, `APP_HOSTNAME`); explicit flags
 (`-http`, `-hostname`) override it. Invalid values fail at startup with a
-one-line error. TLS is not handled in-app — ingress terminates it.
+one-line error. TLS is not handled in-app — ingress terminates it. Prometheus
+metrics are served at `APP_METRICS_PATH` (default `/metrics`) on the app port,
+or on a separate `APP_METRICS_PORT` when one is set; logs are JSON lines on
+standard output.
 
 ## Deploying as a 12-factor charm
 

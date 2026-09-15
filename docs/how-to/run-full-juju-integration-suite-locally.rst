@@ -22,6 +22,13 @@ this guide needs: ``microk8s``, ``juju``, ``rockcraft``, ``charmcraft``, and
 ``tox``. The suite requires Linux; on macOS or Windows, run it inside the
 Multipass VM from that guide.
 
+Besides the charm itself, the suite deploys ``nginx-ingress-integrator``,
+``loki-k8s``, ``prometheus-k8s``, and ``grafana-k8s`` from Charmhub, so the
+machine needs internet access and the memory recommended in the setup guide.
+The three observability charms are published for amd64 only; on an arm64
+host, such as an Apple Silicon VM, their tests are skipped and the rest of
+the suite runs.
+
 Run the suite with one command
 ------------------------------
 

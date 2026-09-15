@@ -50,10 +50,11 @@ A **charm** is a software package containing the knowledge needed to operate
 an application. The ``gopkg-charmed`` charm tells Juju how to run the gopkg
 rock on Kubernetes: it configures and starts the workload, passes the
 configured hostname to the process as ``APP_HOSTNAME``, integrates with an
-ingress charm for external HTTP routing and TLS termination, and reports the
-workload's health through a health endpoint and Juju status. Its definition
-is ``app/charm/charmcraft.yaml``, and its entry point is
-``app/charm/src/charm.py``.
+ingress charm for external HTTP routing and TLS termination, exposes the
+workload's metrics, logs, and dashboard to the Canonical Observability
+Stack, and reports the workload's health through a health endpoint and Juju
+status. Its definition is ``app/charm/charmcraft.yaml``, and its entry point
+is ``app/charm/src/charm.py``.
 
 ``gopkg-charmed`` is a 12-factor app charm. Charmcraft's Go framework
 extension and the ``paas_charm`` library implement the workload lifecycle, so

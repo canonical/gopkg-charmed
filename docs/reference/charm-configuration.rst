@@ -10,9 +10,10 @@ The charm declares one application-specific option. To change it and verify
 the result, follow :ref:`configure-hostname-and-check-go-import`. Running
 ``juju config gopkg-charmed`` also lists the options that the Go framework
 extension adds when the charm is packed: ``app-port``, ``app-secret-key``,
-``app-secret-key-id``, ``metrics-port``, and ``metrics-path``. See
-:ref:`charmcraft:go-framework-extension-config-options` for the extension's
-options.
+``app-secret-key-id``, ``metrics-port``, and ``metrics-path``. The
+observability options are described in :ref:`integrations`, and
+:ref:`charmcraft:go-framework-extension-config-options` documents the
+extension's full set.
 
 ``hostname``
   Type: string

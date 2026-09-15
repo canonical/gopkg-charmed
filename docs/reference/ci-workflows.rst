@@ -1,10 +1,68 @@
 .. _ci-workflows:
 
 .. meta::
-  :description: Reference the GitHub Actions workflows that build, lint, link-check, and execute gopkg-charmed documentation.
+  :description: Reference the GitHub Actions workflows that test and publish the gopkg-charmed charm and that build, check, and execute its documentation.
 
-CI workflows for documentation validation
-=========================================
+CI workflows
+============
+
+Integration tests
+-----------------
+
+Workflow: ``.github/workflows/integration-test.yaml``
+
+This workflow builds the rock and the charm for AMD64, then runs the Juju
+integration suite in ``app/charm/tests/integration`` on a fresh MicroK8s
+cloud. It reuses
+Canonical's shared workflow,
+``canonical/charm-ci/.github/workflows/integration-test.yml``, pinned to a
+specific commit, and runs each test module as its own job.
+
+Current behavior:
+
+- runs on every pull request, on every push to ``main``, and every Saturday
+  at 15:00 UTC
+- ``test_charm.py`` deploys the charm with the freshly built image and checks
+  that one unit becomes active, answers the health check, and serves
+  metrics
+- ``test_integrations.py`` integrates each of the charm's endpoints with a
+  published counterpart and checks that both sides settle in ``active``:
+  ``ingress`` with ``nginx-ingress-integrator``, which must then route
+  ``gopkg.example.com`` to the service; ``logging`` with ``loki-k8s``, which
+  must receive a log record from the service; ``metrics-endpoint`` with
+  ``prometheus-k8s``, which must report a healthy scrape target for the
+  charm; and ``grafana-dashboard`` with ``grafana-k8s``
+- the Loki, Prometheus, and Grafana charms come from the ``2/stable``
+  channel, which is published for amd64 only, so those tests are skipped on
+  arm64 hosts
+
+Charm publication
+-----------------
+
+Workflow: ``.github/workflows/publish_charm.yaml``
+
+This workflow publishes the charm and its rock to Charmhub on every push to
+``main``. It reuses ``canonical/charm-ci/.github/workflows/publish-artifacts.yml``,
+pinned to the same commit as the integration tests.
+
+Current behavior:
+
+- finds the most recent successful integration-test run for the exact source
+  tree being published, and downloads the charm and rock that run built and
+  tested, so nothing untested is uploaded
+- uploads the rock as the ``app-image`` resource and releases the charm to
+  the channel declared in ``artifacts.yaml``, ``latest/edge``, for AMD64,
+  the only architecture ``artifacts.yaml`` builds
+- tags the commit with the published revision and creates a GitHub release
+  for the run
+- can be started by hand from the Actions tab to publish to another channel,
+  for example to promote a tested revision to ``latest/stable``, or to
+  validate without uploading
+
+If the workflow reports that no successful integration-test run exists for
+the tree, the merge commit was not tested yet, which happens when a branch
+was squash-merged while behind ``main``. Wait for the push-triggered
+integration-test run on ``main`` to pass, then re-run the publication.
 
 Automatic doc checks
 --------------------
@@ -45,9 +103,9 @@ Current behavior:
 - starts from a bare system: the guides' own commands install the tools,
   enable MicroK8s, bootstrap Juju, and build the rock and charm from source
 - composes guides in prerequisite order; both tests start with the setup
-  guide and the tutorial, and the second test continues with the ingress
-  and hostname how-to guides against the deployment the tutorial leaves
-  behind
+  guide and the tutorial, and the second test continues with the ingress,
+  hostname, and observability how-to guides against the deployment the
+  tutorial leaves behind
 - runs a page's clean-up commands, marked by the ``# spread-teardown``
   sentinel, only when that page is last in its chain, so the tutorial test
   destroys what it created and the how-to test keeps the deployment

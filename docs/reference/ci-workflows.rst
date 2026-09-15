@@ -11,8 +11,9 @@ Integration tests
 
 Workflow: ``.github/workflows/integration-test.yaml``
 
-This workflow builds the rock and the charm, then runs the Juju integration
-suite in ``app/charm/tests/integration`` on a fresh MicroK8s cloud. It reuses
+This workflow builds the rock and the charm for AMD64, then runs the Juju
+integration suite in ``app/charm/tests/integration`` on a fresh MicroK8s
+cloud. It reuses
 Canonical's shared workflow,
 ``canonical/charm-ci/.github/workflows/integration-test.yml``, pinned to a
 specific commit, and runs each test module as its own job.
@@ -50,7 +51,8 @@ Current behavior:
   tree being published, and downloads the charm and rock that run built and
   tested, so nothing untested is uploaded
 - uploads the rock as the ``app-image`` resource and releases the charm to
-  the channel declared in ``artifacts.yaml``, ``latest/edge``
+  the channel declared in ``artifacts.yaml``, ``latest/edge``, for AMD64,
+  the only architecture ``artifacts.yaml`` builds
 - tags the commit with the published revision and creates a GitHub release
   for the run
 - can be started by hand from the Actions tab to publish to another channel,

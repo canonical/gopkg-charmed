@@ -1,7 +1,7 @@
 .. _reference:
 
 .. meta::
-	:description: Find gopkg-charmed configuration options, supported platforms, prerequisites, and documentation CI behavior.
+	:description: Find gopkg-charmed configuration options, supported platforms, prerequisites, and CI behavior.
 
 Reference
 =========

@@ -8,8 +8,9 @@ gopkg charm
 <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_ that
 operates the ``gopkg.in`` versioned Go import service on Kubernetes.
 
-The charm packages the service as a rock, deploys it, configures the public
-hostname it advertises, and connects it to ingress. Like any Juju charm, it
+The service ships as a rock, an Ubuntu-based container image. Juju deploys
+the charm, and the charm runs that image, configures the public hostname the
+service advertises, and connects it to ingress. Like any Juju charm, it
 supports repeatable deployment, configuration, integration, and lifecycle
 management, on Kubernetes platforms from `MicroK8s
 <https://canonical.com/microk8s>`_ for local development to `Charmed
@@ -99,7 +100,6 @@ Governance and policies
 
 - `Code of conduct <https://ubuntu.com/community/docs/ethos/code-of-conduct>`_
 - `Security policy <https://github.com/canonical/gopkg-charmed/blob/main/SECURITY.md>`_
-- Contributing guide: ``CONTRIBUTING.md`` in the repository
 
 Get involved
 ~~~~~~~~~~~~

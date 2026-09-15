@@ -64,13 +64,74 @@ async def ingress_fixture(
     return ingress
 
 
+async def _stuck_in_patch_race(
+    model: juju.model.Model, names: tuple[str, ...], timeout: int, grace: int = 120
+) -> list[str]:
+    """Wait until every application in ``names`` is active.
+
+    Returns the applications whose units have been blocked with a Kubernetes
+    "Unauthorized" error for longer than ``grace`` seconds, or an empty list
+    once everything is active. Raises when ``timeout`` expires first.
+    """
+    deadline = time.monotonic() + timeout
+    first_seen: dict[str, float] = {}
+    while time.monotonic() < deadline:
+        status = await model.get_status()
+        all_active = True
+        stuck: list[str] = []
+        for name in names:
+            application = status.applications.get(name)
+            units = list(application.units.values()) if application else []
+            if not units or any(unit.workload_status.status != "active" for unit in units):
+                all_active = False
+            if any(
+                unit.workload_status.status == "blocked"
+                and "Unauthorized" in (unit.workload_status.info or "")
+                for unit in units
+            ):
+                first_seen.setdefault(name, time.monotonic())
+                if time.monotonic() - first_seen[name] > grace:
+                    stuck.append(name)
+            else:
+                first_seen.pop(name, None)
+        if all_active:
+            return []
+        if stuck:
+            return stuck
+        await asyncio.sleep(15)
+    raise AssertionError(f"timed out after {timeout}s waiting for {names} to become active")
+
+
 @pytest_asyncio.fixture(scope="module", name="cos")
 async def cos_fixture(model: juju.model.Model) -> dict[str, juju.application.Application]:
-    """Loki, Prometheus and Grafana from COS, deployed side by side."""
+    """Loki, Prometheus and Grafana from COS, deployed side by side.
+
+    A COS charm occasionally ends up blocked with "... patch failed:
+    Unauthorized" after patching its own StatefulSet resource limits: the
+    Kubernetes API rejects the unit's service-account token and the charm
+    does not retry on its own, so the unit stays blocked indefinitely. This
+    is a Juju/COS race unrelated to gopkg; the fixture redeploys such an
+    application once instead of failing every test in the module.
+    """
+    names = (LOKI, PROMETHEUS, GRAFANA)
     apps = {}
-    for name in (LOKI, PROMETHEUS, GRAFANA):
+    for name in names:
         apps[name] = await model.deploy(name, channel=COS_CHANNEL, trust=True)
-    await model.wait_for_idle(apps=list(apps), status="active", timeout=20 * 60)
+    for attempt in (1, 2):
+        stuck = await _stuck_in_patch_race(model, names, timeout=20 * 60)
+        if not stuck:
+            break
+        if attempt == 2:
+            raise AssertionError(
+                f"{stuck} stayed blocked by the Kubernetes patch race after a redeploy"
+            )
+        logger.warning("%s blocked by the Kubernetes patch race; redeploying once", stuck)
+        for name in stuck:
+            await model.remove_application(
+                name, block_until_done=True, destroy_storage=True, force=True
+            )
+            apps[name] = await model.deploy(name, channel=COS_CHANNEL, trust=True)
+    await model.wait_for_idle(apps=list(names), status="active", timeout=5 * 60)
     return apps
 
 

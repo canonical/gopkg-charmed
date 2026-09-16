@@ -1,7 +1,7 @@
 .. _how-to-guides:
 
 .. meta::
-   :description: Set up an environment, configure, observe, test, and troubleshoot gopkg-charmed with task-focused procedures.
+   :description: Set up an environment, configure, observe, test, and troubleshoot gopkg-k8s with task-focused procedures.
 
 How-to guides
 =============

@@ -1,7 +1,7 @@
 # Contributing
 
 This document explains the processes and practices recommended for
-contributing enhancements to the gopkg-charmed project.
+contributing enhancements to the gopkg-k8s project.
 
 ## Overview
 
@@ -128,7 +128,7 @@ signatures.
 
 #### Canonical contributor agreement
 
-Canonical welcomes contributions to the gopkg-charmed project. Please check
+Canonical welcomes contributions to the gopkg-k8s project. Please check
 out our [contributor agreement](https://canonical.com/legal/contributors) if
 you're interested in contributing to the solution.
 

@@ -5,7 +5,7 @@
 # See https://canonical.com/juju/docs/charmcraft/4/reference/files/charmcraft-yaml-file/ for guidance.
 # For questions or help, visit https://matrix.to/#/#12-factor-charms:ubuntu.com 
 
-name: gopkg-charmed
+name: gopkg-k8s
 
 type: charm
 
@@ -15,9 +15,14 @@ title: gopkg.in 12-Factor Operator
 
 # the platforms this charm should be built on and run on.
 # you can check your architecture with `dpkg --print-architecture`
+#
+# amd64 only: the published charm and its app-image resource are amd64, and the
+# observability charms it integrates with are published for amd64 only. Building
+# on another architecture fails with "No build matches the current execution
+# environment" - add that architecture here to build locally.
 platforms:
   amd64:
-  arm64:
+  # arm64:
   # ppc64el:
   # s390x:
 

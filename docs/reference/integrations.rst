@@ -1,12 +1,12 @@
 .. _integrations:
 
 .. meta::
-   :description: Reference the gopkg-charmed integration endpoints, the metrics, logs, dashboard, and alert rules the charm provides, and its observability options.
+   :description: Reference the gopkg-k8s integration endpoints, the metrics, logs, dashboard, and alert rules the charm provides, and its observability options.
 
 Integrations
 ============
 
-The Go framework extension gives ``gopkg-charmed`` the endpoints below. To
+The Go framework extension gives ``gopkg-k8s`` the endpoints below. To
 connect the observability endpoints, follow :ref:`integrate-with-cos`; for
 ingress, follow :ref:`configure-ingress`. The ``secret-storage`` peer relation
 is internal to the extension. For how the extension implements these

@@ -1,19 +1,19 @@
 .. _integrate-with-cos:
 
 .. meta::
-   :description: Connect gopkg-charmed to Prometheus, Loki, and Grafana, verify that its metrics are scraped, and keep the metrics endpoint off the public hostname.
+   :description: Connect gopkg-k8s to Prometheus, Loki, and Grafana, verify that its metrics are scraped, and keep the metrics endpoint off the public hostname.
 
 How to integrate with the Canonical Observability Stack
 =======================================================
 
-``gopkg-charmed`` exposes Prometheus metrics, forwards its structured logs,
+``gopkg-k8s`` exposes Prometheus metrics, forwards its structured logs,
 and ships a Grafana dashboard and alert rules. Integrate its
 ``metrics-endpoint``, ``logging``, and ``grafana-dashboard`` endpoints with
 the Canonical Observability Stack (COS) to use them. For what each endpoint
 carries and the metrics and alert rules the charm provides, see
 :ref:`integrations`.
 
-These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
+These steps assume that ``gopkg-k8s`` and ``nginx-ingress-integrator``
 are deployed and integrated, as they are after the deployment steps of
 :ref:`deploy-and-verify-on-kubernetes` and before its clean-up section. They
 deploy the three COS charms into the same model, which is enough to see the
@@ -35,9 +35,9 @@ Integrate the endpoints
 
 .. code-block:: bash
 
-   juju integrate gopkg-charmed:metrics-endpoint prometheus-k8s:metrics-endpoint
-   juju integrate gopkg-charmed:logging loki-k8s:logging
-   juju integrate gopkg-charmed:grafana-dashboard grafana-k8s:grafana-dashboard
+   juju integrate gopkg-k8s:metrics-endpoint prometheus-k8s:metrics-endpoint
+   juju integrate gopkg-k8s:logging loki-k8s:logging
+   juju integrate gopkg-k8s:grafana-dashboard grafana-k8s:grafana-dashboard
 
 Wait until every application is active:
 
@@ -50,7 +50,7 @@ Wait until every application is active:
 .. SPREAD SKIP END
 
 .. SPREAD
-   for application in gopkg-charmed prometheus-k8s loki-k8s grafana-k8s; do
+   for application in gopkg-k8s prometheus-k8s loki-k8s grafana-k8s; do
      juju wait-for application "${application}" \
        --query='status=="active"' --timeout=20m
    done
@@ -70,11 +70,11 @@ completes and gives up after ten minutes:
 
 .. code-block:: bash
 
-   export PROMETHEUS_IP=$(microk8s kubectl -n gopkg-charmed get service \
+   export PROMETHEUS_IP=$(microk8s kubectl -n gopkg-k8s get service \
      prometheus-k8s -o jsonpath='{.spec.clusterIP}')
    timeout 600 bash -c '
      until curl --silent --get "http://${PROMETHEUS_IP}:9090/api/v1/query" \
-         --data-urlencode "query=up{juju_application=\"gopkg-charmed\"}" \
+         --data-urlencode "query=up{juju_application=\"gopkg-k8s\"}" \
          | grep -F "\"1\"]"; do
        sleep 10
      done
@@ -101,7 +101,7 @@ job:
 
 .. code-block:: bash
 
-   juju config gopkg-charmed metrics-port=9102
+   juju config gopkg-k8s metrics-port=9102
 
 Confirm that Prometheus scrapes the new port, then that the public hostname
 no longer serves metrics. The ``up`` series cannot tell the ports apart,

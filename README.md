@@ -147,15 +147,15 @@ CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 ### 4. Deploy
 
 ```bash
-juju add-model gopkg-charmed
+juju add-model gopkg-k8s
 juju set-model-constraints arch=$(dpkg --print-architecture)
 # ^ REQUIRED: without it Juju defaults pods to an amd64 nodeSelector, which can
 #   never schedule on an arm64 node — pods stay Pending with no events.
 #   Constraints bind at deploy time; set them BEFORE deploying.
 
-juju deploy ./gopkg-charmed_*.charm gopkg-charmed --resource app-image=localhost:32000/gopkg:0.1
+juju deploy ./gopkg-k8s_*.charm gopkg-k8s --resource app-image=localhost:32000/gopkg:0.1
 juju deploy nginx-ingress-integrator --channel=latest/stable --trust
-juju integrate nginx-ingress-integrator gopkg-charmed
+juju integrate nginx-ingress-integrator gopkg-k8s
 
 # rewrite-enabled=false is CRITICAL: the default rewrites every request path
 # to "/", so the app answers its root redirect (307) for every URL.
@@ -169,7 +169,7 @@ Two hostname settings exist — do not conflate them:
 
 - `nginx-ingress-integrator service-hostname` — which `Host:` the ingress
   **routes** to the app.
-- `gopkg-charmed hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
+- `gopkg-k8s hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
   `go-import` meta tags.
 
 ### 5. Verify
@@ -185,7 +185,7 @@ curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
 # expect: HTML containing the go-import meta tag
 
 # Config change without rebuild (delivered as APP_HOSTNAME):
-juju config gopkg-charmed hostname=staging.example.com
+juju config gopkg-k8s hostname=staging.example.com
 ```
 
 ### Troubleshooting
@@ -199,11 +199,11 @@ juju config gopkg-charmed hostname=staging.example.com
 | Integrator `blocked`: "service-hostname is not set"                             | its config, not the app's     | `juju config nginx-ingress-integrator service-hostname=…`                                          |
 | Every URL answers 307 → `https://labix.org/gopkg.in`                            | ingress path rewrite          | `juju config nginx-ingress-integrator rewrite-enabled=false`                                       |
 | curl prints nothing but exit 0                                                  | body without trailing newline | add `-w '\n%{http_code}\n'`                                                                        |
-| `kubectl describe pod -n gopkg-charmed gopkg-charmed-0`                         | —                             | names the exact scheduling blocker                                                                 |
+| `kubectl describe pod -n gopkg-k8s gopkg-k8s-0`                         | —                             | names the exact scheduling blocker                                                                 |
 
 ## Charmhub listing review
 
-`gopkg-charmed` is published on [Charmhub](https://charmhub.io/gopkg-charmed)
+`gopkg-k8s` is published on [Charmhub](https://charmhub.io/gopkg-k8s)
 but not yet *listed* (it does not appear in searches). Listing requires a
 lightweight review, requested as a
 [listing request issue](https://github.com/canonical/charmhub-listing-review/issues/new?template=listing-request.yml)
@@ -218,7 +218,7 @@ issue covers exactly one charm, and the review runs against `main`.
 
 | Prerequisite | In this repository |
 | --- | --- |
-| Charm name and store page | `gopkg-charmed` on [charmhub.io/gopkg-charmed](https://charmhub.io/gopkg-charmed); metadata, links and icon in [app/charm/charmcraft.yaml](app/charm/charmcraft.yaml) and [app/charm/icon.svg](app/charm/icon.svg). Publisher: Platform Engineering (Canonical). |
+| Charm name and store page | `gopkg-k8s` on [charmhub.io/gopkg-k8s](https://charmhub.io/gopkg-k8s); metadata, links and icon in [app/charm/charmcraft.yaml](app/charm/charmcraft.yaml) and [app/charm/icon.svg](app/charm/icon.svg). Publisher: Platform Engineering (Canonical). |
 | Source repository | [github.com/canonical/gopkg-charmed](https://github.com/canonical/gopkg-charmed); the charm directory is `app/charm`. |
 | Demo or tutorial | [Deploy and verify on Kubernetes](docs/tutorials/deploy-and-verify-on-kubernetes.rst), executed in CI by [documentation-tests.yml](.github/workflows/documentation-tests.yml). |
 | Coding conventions in CI | [test.yaml](.github/workflows/test.yaml) (ruff, mypy, codespell, pytest via [app/charm/tox.ini](app/charm/tox.ini)), [go-tests.yaml](.github/workflows/go-tests.yaml) (gofmt, vet, race tests), [.pre-commit-config.yaml](.pre-commit-config.yaml) (docs). |
@@ -239,7 +239,7 @@ locally from the repository root:
 
 ```bash
 uvx --from git+https://github.com/canonical/charmhub-listing-review self-review \
-  --charm-name gopkg-charmed \
+  --charm-name gopkg-k8s \
   --repository https://github.com/canonical/gopkg-charmed \
   --charm-dir app/charm \
   --ci-linting-url https://github.com/canonical/gopkg-charmed/blob/main/.github/workflows/test.yaml

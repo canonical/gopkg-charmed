@@ -1,7 +1,7 @@
 .. _reference:
 
 .. meta::
-	:description: Find gopkg-charmed configuration options, integration endpoints, supported platforms, prerequisites, and CI behavior.
+	:description: Find gopkg-k8s configuration options, integration endpoints, supported platforms, prerequisites, and CI behavior.
 
 Reference
 =========

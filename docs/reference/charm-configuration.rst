@@ -1,7 +1,7 @@
 .. _charm-configuration:
 
 .. meta::
-   :description: Reference the gopkg-charmed hostname option, its default value, and how it maps to the workload.
+   :description: Reference the gopkg-k8s hostname option, its default value, and how it maps to the workload.
 
 Charm configuration
 ===================
@@ -19,7 +19,7 @@ The charm declares one application-specific option:
 To change it and verify the result, follow
 :ref:`configure-hostname-and-check-go-import`.
 
-Running ``juju config gopkg-charmed`` also lists the options that the Go
+Running ``juju config gopkg-k8s`` also lists the options that the Go
 framework extension adds when the charm is packed: ``app-port``,
 ``app-secret-key``, ``app-secret-key-id``, ``metrics-port``, and
 ``metrics-path``. The observability options are described in
@@ -28,7 +28,7 @@ framework extension adds when the charm is packed: ``app-port``,
 extension's full set.
 
 Ingress routing is configured on the ``nginx-ingress-integrator`` charm, not
-on ``gopkg-charmed``. See :ref:`configure-ingress` for the settings this
+on ``gopkg-k8s``. See :ref:`configure-ingress` for the settings this
 deployment uses and the `NGINX ingress integrator configuration reference
 <https://charmhub.io/nginx-ingress-integrator/configurations>`_ for every
 option.

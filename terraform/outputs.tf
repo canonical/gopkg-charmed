@@ -7,7 +7,7 @@ output "app_name" {
 }
 
 output "requires" {
-  description = "Map of gopkg-charmed's `requires` relation names to their endpoint names."
+  description = "Map of gopkg-k8s's `requires` relation names to their endpoint names."
   value = {
     ingress = "ingress"
     logging = "logging"
@@ -15,7 +15,7 @@ output "requires" {
 }
 
 output "provides" {
-  description = "Map of gopkg-charmed's `provides` relation names to their endpoint names."
+  description = "Map of gopkg-k8s's `provides` relation names to their endpoint names."
   value = {
     metrics_endpoint  = "metrics-endpoint"
     grafana_dashboard = "grafana-dashboard"

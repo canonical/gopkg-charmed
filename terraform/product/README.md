@@ -1,4 +1,4 @@
-# gopkg-charmed product module
+# gopkg-k8s product module
 
 This module deploys gopkg together with the charms it needs to be usable
 end-to-end: the [base module](../README.md) plus an optional ingress, plus
@@ -131,7 +131,7 @@ module "gopkg" {
 
   gopkg = {
     channel = "latest/stable"
-    # renovate: charm="gopkg-charmed" track="latest" risk="stable" base="24.04" arch="amd64"
+    # renovate: charm="gopkg-k8s" track="latest" risk="stable" base="24.04" arch="amd64"
     revision = 12
   }
 }

@@ -1,18 +1,18 @@
-# gopkg-charmed Terraform module
+# gopkg-k8s Terraform module
 
-This folder contains a base [Terraform][Terraform] module for the `gopkg-charmed`
+This folder contains a base [Terraform][Terraform] module for the `gopkg-k8s`
 charm.
 
 The module uses the [Terraform Juju provider][Terraform Juju provider] to model
 the charm deployment onto any Kubernetes environment managed by [Juju][Juju]. It
-deploys only the `gopkg-charmed` application — it does not create a Juju model
+deploys only the `gopkg-k8s` application — it does not create a Juju model
 and does not wire any relations. For a self-contained deployment (gopkg +
 ingress + observability wiring), use the [product module](./product/README.md)
 instead.
 
 ## Module structure
 
-- **main.tf** - Defines the `juju_application` resource for gopkg-charmed.
+- **main.tf** - Defines the `juju_application` resource for gopkg-k8s.
 - **variables.tf** - Inputs for customizing the deployment (charm channel,
   revision, config, constraints, units) and the target model.
 - **outputs.tf** - Exposes the application name plus maps of relation endpoint
@@ -45,7 +45,7 @@ not a deployment one.
 
 `config` keys map directly to the charm's config options (see
 `app/charm/charmcraft.yaml` in this repository, or
-https://charmhub.io/gopkg-charmed/configurations once published):
+https://charmhub.io/gopkg-k8s/configurations once published):
 
 | Key | Purpose |
 |---|---|
@@ -61,15 +61,15 @@ https://charmhub.io/gopkg-charmed/configurations once published):
 | Name | Description |
 |---|---|
 | `app_name` | Name of the deployed gopkg application. |
-| `requires` | Map of gopkg-charmed's `requires` relations to endpoint names: `ingress`, `logging`. Both optional. |
-| `provides` | Map of gopkg-charmed's `provides` relations to endpoint names: `metrics_endpoint` (endpoint name `metrics-endpoint`), `grafana_dashboard` (endpoint name `grafana-dashboard`). Both optional. |
+| `requires` | Map of gopkg-k8s's `requires` relations to endpoint names: `ingress`, `logging`. Both optional. |
+| `provides` | Map of gopkg-k8s's `provides` relations to endpoint names: `metrics_endpoint` (endpoint name `metrics-endpoint`), `grafana_dashboard` (endpoint name `grafana-dashboard`). Both optional. |
 
 Map keys are snake_case; map values are the literal hyphenated endpoint names
 Juju expects.
 
 ## External inputs this module does not manage
 
-gopkg-charmed has no required integrations — it runs standalone. For a
+gopkg-k8s has no required integrations — it runs standalone. For a
 deployment reachable from outside the cluster you must additionally provide (or
 use the [product module](./product/README.md), which bundles it):
 
@@ -84,7 +84,7 @@ use the [product module](./product/README.md), which bundles it):
 
 TLS is not handled in-app — ingress terminates it.
 
-## Using the gopkg-charmed base module in higher-level modules
+## Using the gopkg-k8s base module in higher-level modules
 
 ```hcl
 resource "juju_model" "my_model" {

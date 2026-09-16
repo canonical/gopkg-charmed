@@ -19,20 +19,20 @@ variable "base" {
 }
 
 variable "channel" {
-  description = "The Charmhub channel to use when deploying the gopkg-charmed charm."
+  description = "The Charmhub channel to use when deploying the gopkg-k8s charm."
   type        = string
   default     = "latest/edge"
 }
 
 variable "revision" {
-  description = "Revision number of the gopkg-charmed charm. Leave null to use the latest revision in the given channel."
+  description = "Revision number of the gopkg-k8s charm. Leave null to use the latest revision in the given channel."
   type        = number
   default     = null
 }
 
 variable "config" {
   description = <<-EOT
-    Application config, passed through directly to the gopkg-charmed charm. Keys
+    Application config, passed through directly to the gopkg-k8s charm. Keys
     match the options documented in app/charm/charmcraft.yaml, which is nothing right now.
   EOT
   type        = map(string)

@@ -23,7 +23,7 @@ variable "external_hostname" {
 }
 
 variable "gopkg" {
-  description = "gopkg-charmed charm configuration."
+  description = "gopkg-k8s charm configuration."
   type = object({
     app_name    = optional(string, "gopkg")
     channel     = optional(string, "latest/edge")

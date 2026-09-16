@@ -59,7 +59,7 @@ Pods stay Pending
 -----------------
 
 **Symptom:** ``juju status`` never reports the unit as ``active``, and
-``microk8s kubectl get pods -n gopkg-charmed`` shows its pod as ``Pending``.
+``microk8s kubectl get pods -n gopkg-k8s`` shows its pod as ``Pending``.
 
 **Cause:** either the model has no architecture constraint, so Juju schedules
 for AMD64 on an ARM64 node, or the machine has too little memory. 4 GB of
@@ -70,7 +70,7 @@ charm workloads.
 
 .. code-block:: bash
 
-   microk8s kubectl describe pod -n gopkg-charmed gopkg-charmed-0
+   microk8s kubectl describe pod -n gopkg-k8s gopkg-k8s-0
 
 For an architecture mismatch, set the constraint before deploying:
 
@@ -123,7 +123,7 @@ Ingress relation blocked on hostname
 ``service-hostname`` is not set.
 
 **Cause:** the integrator has no hostname to route, or the integration with
-``gopkg-charmed`` is missing.
+``gopkg-k8s`` is missing.
 
 **Fix:** set the hostname and confirm the integration exists:
 
@@ -135,7 +135,7 @@ Ingress relation blocked on hostname
 Requests reach the wrong application
 ------------------------------------
 
-**Symptom:** a request for the ``gopkg-charmed`` hostname is answered by another
+**Symptom:** a request for the ``gopkg-k8s`` hostname is answered by another
 application.
 
 **Cause:** another Ingress resource claims the same hostname and path, or the
@@ -163,7 +163,7 @@ is restarting after a configuration change.
 
 .. code-block:: bash
 
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
    juju wait-for application nginx-ingress-integrator \
      --query='status=="active"' --timeout=15m
@@ -195,7 +195,7 @@ is in the wrong namespace, or ``tls-secret-name`` does not match the secret.
 
 .. code-block:: bash
 
-   microk8s kubectl -n gopkg-charmed get secret
+   microk8s kubectl -n gopkg-k8s get secret
    juju config nginx-ingress-integrator tls-secret-name
 
 Rock or charm build fails on architecture

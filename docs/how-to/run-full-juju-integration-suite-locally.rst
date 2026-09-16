@@ -2,7 +2,7 @@
 .. _full-integration-suite-local:
 
 .. meta::
-   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-charmed integration suite locally.
+   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-k8s integration suite locally.
 
 How to run the full Juju integration suite locally
 ==================================================
@@ -94,6 +94,6 @@ Run the integration tests against the charm and image you just built:
 
 .. code-block:: bash
 
-   CHARM_FILE=$(ls -1 gopkg-charmed_*.charm | head -n1)
+   CHARM_FILE=$(ls -1 gopkg-k8s_*.charm | head -n1)
    CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
      tox --workdir ~/.cache/gopkg-charm-tox -e integration

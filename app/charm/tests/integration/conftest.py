@@ -6,7 +6,7 @@
 Requires a bootstrapped Juju controller (e.g. the MicroK8s cloud from the
 README deployment guide). Configuration via environment variables:
 
-- CHARM_FILE: path to a packed charm (default: first gopkg-charmed_*.charm in CWD)
+- CHARM_FILE: path to a packed charm (default: first gopkg-k8s_*.charm in CWD)
 - APP_IMAGE:  OCI image reference for the app-image resource; overrides
               automatic discovery from ``build/artifacts.build.yaml``
               (default when neither is available: localhost:32000/gopkg:0.1)
@@ -80,16 +80,16 @@ async def model_fixture(ops_test: pytest_operator.plugin.OpsTest) -> juju.model.
 
 @pytest_asyncio.fixture(scope="module", name="app")
 async def app_fixture(model: juju.model.Model) -> juju.application.Application:
-    """The deployed gopkg-charmed application."""
+    """The deployed gopkg-k8s application."""
     charm_file = os.environ.get("CHARM_FILE")
     if not charm_file:
         # charm-ci builds the charm in a separate phase and places it in the
         # project tree, not necessarily the tox working directory - search
         # here first, then recursively from the repository root.
         for pattern in (
-            "gopkg-charmed_*.charm",
-            "../../gopkg-charmed_*.charm",
-            "../../**/gopkg-charmed_*.charm",
+            "gopkg-k8s_*.charm",
+            "../../gopkg-k8s_*.charm",
+            "../../**/gopkg-k8s_*.charm",
         ):
             matches = sorted(glob.glob(pattern, recursive=True))
             if matches:
@@ -99,7 +99,7 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
     if not charm_file:
         raise FileNotFoundError(
             "No charm file found. Set CHARM_FILE environment variable or "
-            "run `charmcraft pack` to generate gopkg-charmed_*.charm in the working directory."
+            "run `charmcraft pack` to generate gopkg-k8s_*.charm in the working directory."
         )
 
     app_image = _resolve_app_image()
@@ -109,7 +109,7 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
     await model.set_constraints({"arch": arch})
     application = await model.deploy(
         f"./{charm_file}",
-        application_name="gopkg-charmed",
+        application_name="gopkg-k8s",
         resources={"app-image": app_image},
     )
     try:

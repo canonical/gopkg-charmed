@@ -1,7 +1,7 @@
 .. _improve-code:
 
 .. meta::
-   :description: Set up and run Go, charm, and Juju integration tests for code changes to gopkg-charmed.
+   :description: Set up and run Go, charm, and Juju integration tests for code changes to gopkg-k8s.
 
 Improve the code
 ================

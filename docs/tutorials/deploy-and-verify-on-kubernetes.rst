@@ -1,9 +1,9 @@
 .. _deploy-and-verify-on-kubernetes:
 
 .. meta::
-   :description: Build the gopkg-charmed rock and charm, deploy them on Kubernetes with Juju, and verify ingress and go-import metadata.
+   :description: Build the gopkg-k8s rock and charm, deploy them on Kubernetes with Juju, and verify ingress and go-import metadata.
 
-Deploy and verify gopkg-charmed on Kubernetes
+Deploy and verify gopkg-k8s on Kubernetes
 =============================================
 
 An end-to-end deployment shows how the Go service, rock, charm, Juju, and
@@ -20,7 +20,7 @@ What you'll do
 5. Update the hostname
 6. Clean up
 
-Along the way, you will have a running ``gopkg-charmed`` application in a
+Along the way, you will have a running ``gopkg-k8s`` application in a
 Juju model, an ingress relation for external routing, and a verified
 health endpoint and go-import metadata endpoint.
 
@@ -150,10 +150,10 @@ Confirm that the charm was packed:
 
 .. code-block:: bash
 
-   ls -1 gopkg-charmed_$(dpkg --print-architecture).charm
+   ls -1 gopkg-k8s_$(dpkg --print-architecture).charm
 
 The command prints the name of the packed charm, such as
-``gopkg-charmed_amd64.charm``.
+``gopkg-k8s_amd64.charm``.
 
 Deploy to a new model
 ---------------------
@@ -163,7 +163,7 @@ each model is a namespace. Create one for this deployment:
 
 .. code-block:: bash
 
-   juju add-model gopkg-charmed
+   juju add-model gopkg-k8s
    juju set-model-constraints arch=$(dpkg --print-architecture)
 
 The constraint
@@ -178,7 +178,7 @@ registry:
 .. code-block:: bash
 
    cd ~/gopkg-charm/app/charm
-   juju deploy ./gopkg-charmed_$(dpkg --print-architecture).charm gopkg-charmed \
+   juju deploy ./gopkg-k8s_$(dpkg --print-architecture).charm gopkg-k8s \
      --resource app-image=localhost:32000/gopkg:0.1
 
 On its own, the service is reachable only inside the cluster. To publish it
@@ -196,9 +196,9 @@ Integrate the two applications:
 
 .. code-block:: bash
 
-   juju integrate nginx-ingress-integrator gopkg-charmed
+   juju integrate nginx-ingress-integrator gopkg-k8s
 
-Over the relation, ``gopkg-charmed`` tells
+Over the relation, ``gopkg-k8s`` tells
 the integrator the name and port of its Kubernetes service, and the
 integrator writes the routing rule.
 
@@ -232,7 +232,7 @@ them to ``/``, which would turn every package request into a request for the
 front page. :ref:`configure-ingress` covers these settings in more depth.
 
 .. SPREAD
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
    juju wait-for application nginx-ingress-integrator \
      --query='status=="active"' --timeout=15m
@@ -256,19 +256,19 @@ still ``waiting`` or ``maintenance``, run the command again after a minute:
    :output-only:
 
    Model          Controller  Cloud/Region        Version  SLA          Timestamp
-   gopkg-charmed  dev         microk8s/localhost  3.6.28   unsupported  22:13:30Z
+   gopkg-k8s  dev         microk8s/localhost  3.6.28   unsupported  22:13:30Z
 
    App                       Version  Status  Scale  Charm                     Channel        Rev  Address         Exposed  Message
-   gopkg-charmed                      active      1  gopkg-charmed                              0  10.152.183.31   no
+   gopkg-k8s                      active      1  gopkg-k8s                              0  10.152.183.31   no
    nginx-ingress-integrator  24.2.0   active      1  nginx-ingress-integrator  latest/stable  203  10.152.183.208  no
 
    Unit                         Workload  Agent  Address      Ports  Message
-   gopkg-charmed/0*             active    idle   10.1.58.140
+   gopkg-k8s/0*             active    idle   10.1.58.140
    nginx-ingress-integrator/0*  active    idle   10.1.58.141
 
    Integration provider                  Requirer                              Interface       Type     Message
-   gopkg-charmed:secret-storage          gopkg-charmed:secret-storage          secret-storage  peer
-   nginx-ingress-integrator:ingress      gopkg-charmed:ingress                 ingress         regular
+   gopkg-k8s:secret-storage          gopkg-k8s:secret-storage          secret-storage  peer
+   nginx-ingress-integrator:ingress      gopkg-k8s:ingress                 ingress         regular
    nginx-ingress-integrator:nginx-peers  nginx-ingress-integrator:nginx-peers  nginx-instance  peer
 
 .. vale on
@@ -303,7 +303,7 @@ The output contains a ``go-import`` meta tag.
 Update the hostname
 -------------------
 
-The ``hostname`` configuration option of ``gopkg-charmed`` is the name the
+The ``hostname`` configuration option of ``gopkg-k8s`` is the name the
 service writes into its ``go-import`` metadata and package links, so it must
 be the public name that Go clients use to reach the service. In production
 you set it to your domain; here, change it to see that the charm applies a
@@ -311,10 +311,10 @@ configuration change to the running service without a rebuild:
 
 .. code-block:: bash
 
-   juju config gopkg-charmed hostname=staging.example.com
+   juju config gopkg-k8s hostname=staging.example.com
 
 .. SPREAD
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
@@ -348,7 +348,7 @@ destroy the model to remove both applications and their storage:
 
 .. code-block:: bash
 
-   juju destroy-model gopkg-charmed --destroy-storage --no-prompt
+   juju destroy-model gopkg-k8s --destroy-storage --no-prompt
 
 If you no longer need the Juju controller either, remove it as well:
 

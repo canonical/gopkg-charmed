@@ -1,7 +1,7 @@
 .. _contribute:
 
 .. meta::
-	:description: Learn how to contribute to the documentation or code for gopkg-charmed.
+	:description: Learn how to contribute to the documentation or code for gopkg-k8s.
 
 Contribute
 ==========

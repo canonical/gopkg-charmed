@@ -1,7 +1,7 @@
 .. _platforms-and-prerequisites:
 
 .. meta::
-   :description: Reference the supported architectures, required tools and channels, MicroK8s add-ons, and verified tool versions for gopkg-charmed.
+   :description: Reference the supported architectures, required tools and channels, MicroK8s add-ons, and verified tool versions for gopkg-k8s.
 
 Platforms and prerequisites
 ===========================

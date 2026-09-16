@@ -1,7 +1,7 @@
 .. _ci-workflows:
 
 .. meta::
-  :description: Reference the GitHub Actions workflows that test and publish the gopkg-charmed charm and that build, check, and execute its documentation.
+  :description: Reference the GitHub Actions workflows that test and publish the gopkg-k8s charm and that build, check, and execute its documentation.
 
 CI workflows
 ============

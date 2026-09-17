@@ -70,8 +70,8 @@ integrations. Two operational facts follow from the service's job:
 - The workload reaches GitHub over HTTPS to read repository references and
   to relay source transfers, so the cluster must allow that outbound access.
 - The hostname the service writes into ``go-import`` metadata and package
-  links must be the public name that clients use. That is the ``hostname``
-  option in :ref:`charm-configuration`, set in
+  links must be the public name that clients use. The ``hostname``
+  option is described in :ref:`charm-configuration` and
   :ref:`configure-hostname-and-check-go-import`.
 
 See :doc:`Juju, charms, and rocks <juju-charms-and-rocks>` for the packaging

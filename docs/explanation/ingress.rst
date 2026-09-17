@@ -33,7 +33,7 @@ the routing rules, and an `ingress controller
 implements them by forwarding matching requests to a Service; the Kubernetes
 documentation describes both. In this deployment:
 
-- ``gopkg-charmed`` runs the ``gopkg.in`` workload. Its Go framework
+- ``gopkg-charmed`` runs the ``gopkg.in`` workload. The Go framework
   extension creates the Kubernetes Service and provides the relation data
   needed to expose it.
 - The `nginx-ingress-integrator
@@ -76,11 +76,11 @@ The two hostname settings
 
 This deployment has two independent hostname settings:
 
-``nginx-ingress-integrator service-hostname``
-  Controls which incoming HTTP hostname routes to the application.
+``service-hostname``
+  Set in ``nginx-ingress-integrator``. Controls which incoming HTTP hostname routes to the application.
 
-``gopkg-charmed hostname``
-  Becomes ``APP_HOSTNAME`` inside the workload. It controls the hostname shown
+``hostname``
+  Set in ``gopkg-charmed``. Becomes ``APP_HOSTNAME`` inside the workload. It controls the hostname shown
   in package links and ``go-import`` metadata.
 
 For a normal deployment, both are set to the public hostname. They can differ

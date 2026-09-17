@@ -21,7 +21,7 @@ What you'll do
 6. Clean up
 
 Along the way, you will have a running ``gopkg-charmed`` application in a
-Juju model, an ingress integration for external routing, and a verified
+Juju model, an ingress relation for external routing, and a verified
 health endpoint and go-import metadata endpoint.
 
 Prerequisites
@@ -29,8 +29,8 @@ Prerequisites
 
 You need a workstation with AMD64 or ARM64 architecture and the environment
 from :ref:`set-up-a-local-linux-environment`. After following that guide,
-you have an Ubuntu environment with the repository and the required tools,
-and your user belongs to the MicroK8s group.
+you'll have an Ubuntu environment with the repository and the required tools,
+and your user will belong to the MicroK8s group.
 
 Enter the repository root before continuing:
 
@@ -59,7 +59,7 @@ prints ``{}``. If the registry check cannot connect, see
 :ref:`troubleshoot-deployment`.
 
 Bootstrap a Juju controller on the MicroK8s cloud. The controller is the
-management service that every later ``juju`` command talks to:
+management service that every ``juju`` command talks to:
 
 .. code-block:: bash
 
@@ -122,10 +122,11 @@ a failure.
 Build the charm
 ---------------
 
-The rock is the workload; the charm is the operator that tells Juju how to
+The rock is the workload, and the charm is the operator that tells Juju how to
 run it. Its definition lives in ``app/charm`` and uses Charmcraft's Go
 framework extension, the counterpart of the Rockcraft extension you used
-above, which is why the same kind of environment variable is needed:
+above, which is why the same kind of environment variable is needed.
+Enter the charm directory and pack the charm:
 
 .. SPREAD SKIP
 
@@ -158,15 +159,17 @@ Deploy to a new model
 ---------------------
 
 A Juju model is a workspace that holds a set of applications; on Kubernetes,
-each model is a namespace. Create one for this deployment. The constraint
-tells Juju to schedule the deployment's pods on your machine's architecture,
-which is necessary because the rock you built only exists for that
-architecture:
+each model is a namespace. Create one for this deployment: 
 
 .. code-block:: bash
 
    juju add-model gopkg-charmed
    juju set-model-constraints arch=$(dpkg --print-architecture)
+
+The constraint
+tells Juju to schedule the deployment's pods on your machine's architecture,
+which is necessary because the rock you built only works for that
+architecture.
 
 Deploy the charm you built. It is a local file rather than a charm from
 Charmhub, and the ``app-image`` resource points it at the rock in the local
@@ -188,13 +191,15 @@ Kubernetes permissions it needs to create ingress resources:
 
    juju deploy nginx-ingress-integrator --channel=latest/stable --trust
 
-Integrate the two applications. Over the integration, ``gopkg-charmed`` tells
-the integrator the name and port of its Kubernetes service, and the
-integrator writes the routing rule:
+Integrate the two applications:
 
 .. code-block:: bash
 
    juju integrate nginx-ingress-integrator gopkg-charmed
+
+Over the relation, ``gopkg-charmed`` tells
+the integrator the name and port of its Kubernetes service, and the
+integrator writes the routing rule.
 
 Set an ingress hostname and keep it in the ``INGRESS_HOST`` variable, which
 the remaining commands reuse:
@@ -336,7 +341,7 @@ Clean up
 .. SPREAD END
 
 The how-to guides listed in the next section continue from the deployment
-you just verified, so follow them first if you plan to. When you are done,
+you just verified, so follow them first before tearing down. When you are done,
 destroy the model to remove both applications and their storage:
 
 .. code-block:: bash

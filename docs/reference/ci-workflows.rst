@@ -54,8 +54,8 @@ Current behavior:
 - starts a fresh login shell at each ``# spread-session-break`` sentinel a
   guide emits, mirroring the reader logging out and back in
 
-Automatic vs manual linkage
----------------------------
+Automatic and manual linkage
+----------------------------
 
 Command synchronization is content-aware, but workflow triggering is
 path-based. Commands are extracted from the guides at test time, so editing an

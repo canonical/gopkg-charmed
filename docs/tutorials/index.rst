@@ -3,8 +3,8 @@
 .. meta::
 	:description: Follow an end-to-end tutorial to build, deploy, and verify gopkg-charmed on Kubernetes.
 
-Tutorials
-=========
+Tutorial
+========
 
 Build, deploy, and verify ``gopkg-charmed`` from start to finish.
 

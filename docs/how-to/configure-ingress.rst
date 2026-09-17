@@ -7,7 +7,7 @@ How to configure ingress
 ========================
 
 Ingress is what makes ``gopkg-charmed`` reachable from outside the Kubernetes
-cluster under a hostname you choose. Set the routing rules on the ingress
+cluster under a chosen hostname. Set the routing rules on the ingress
 integrator, keep the workload hostname in step with them, then point DNS at
 the ingress controller and terminate TLS there for production.
 

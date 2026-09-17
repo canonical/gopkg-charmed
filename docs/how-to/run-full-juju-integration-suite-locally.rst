@@ -18,14 +18,21 @@ Prerequisites
 -------------
 
 Complete :ref:`set-up-a-local-linux-environment`, which installs the tools
-this guide needs: ``microk8s``, ``juju``, ``rockcraft``, ``charmcraft``, and
-``tox``. The suite requires Linux; on macOS or Windows, run it inside the
-Multipass VM from that guide.
+this guide needs: 
 
-Run the suite with one command
-------------------------------
+- ``microk8s`` 
+- ``juju``
+- ``rockcraft``
+- ``charmcraft``
+- ``tox``
 
-From the repository root:
+The suite requires Linux; on macOS or Windows, run it inside a
+Multipass VM.
+
+Run the full suite
+------------------
+
+From the repository root, run:
 
 .. code-block:: bash
 

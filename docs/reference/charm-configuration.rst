@@ -6,13 +6,7 @@
 Charm configuration
 ===================
 
-The charm declares one application-specific option. To change it and verify
-the result, follow :ref:`configure-hostname-and-check-go-import`. Running
-``juju config gopkg-charmed`` also lists the options that the Go framework
-extension adds when the charm is packed: ``app-port``, ``app-secret-key``,
-``app-secret-key-id``, ``metrics-port``, and ``metrics-path``. See
-:ref:`charmcraft:go-framework-extension-config-options` for the extension's
-options.
+The charm declares one application-specific option:
 
 ``hostname``
   Type: string
@@ -21,6 +15,16 @@ options.
 
   Value passed to the workload as ``APP_HOSTNAME``. It controls the hostname
   rendered in package links and ``go-import`` metadata.
+
+To change it and verify
+the result, follow :ref:`configure-hostname-and-check-go-import`. 
+
+Running
+``juju config gopkg-charmed`` also lists the options that the Go framework
+extension adds when the charm is packed: ``app-port``, ``app-secret-key``,
+``app-secret-key-id``, ``metrics-port``, and ``metrics-path``. See
+:ref:`charmcraft:go-framework-extension-config-options` for the extension's
+options.
 
 Ingress routing is configured on the ``nginx-ingress-integrator`` charm, not
 on ``gopkg-charmed``. See :ref:`configure-ingress` for the settings this

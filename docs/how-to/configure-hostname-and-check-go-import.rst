@@ -12,7 +12,7 @@ query a package path to verify the generated ``go-import`` metadata.
 
 These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
 are deployed and integrated, as they are after the deployment steps of
-:ref:`deploy-and-verify-on-kubernetes` and before its clean-up section.
+:ref:`deploy-and-verify-on-kubernetes`.
 
 Set the ingress host variable
 -----------------------------

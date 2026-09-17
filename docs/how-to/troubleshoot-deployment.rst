@@ -110,7 +110,7 @@ Symptom: every path redirects or the backend sees the wrong path.
 Cause: path rewriting is enabled, so the controller changes the path before
 forwarding it and the workload never receives the package path.
 
-Fix:
+Fix: Disable path rewriting using the `rewrite-enabled` configuration:
 
 .. code-block:: bash
 

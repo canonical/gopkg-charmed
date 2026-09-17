@@ -1,0 +1,23 @@
+name: RTD workflows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".readthedocs.yaml"
+      - ".github/workflows/automatic-doc-checks.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - ".readthedocs.yaml"
+      - ".github/workflows/automatic-doc-checks.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rtd-workflows:
+    uses: canonical/operator-workflows/.github/workflows/docs_rtd.yaml@main

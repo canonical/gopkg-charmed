@@ -182,7 +182,8 @@ registry:
      --resource app-image=localhost:32000/gopkg:0.1
 
 On its own, the service is reachable only inside the cluster. To publish it
-under a hostname, deploy the NGINX ingress integrator from Charmhub. That
+under a hostname, deploy the `NGINX ingress integrator
+<https://charmhub.io/nginx-ingress-integrator>`_ from Charmhub. That
 charm does not serve traffic itself: it configures the ingress controller
 that the MicroK8s ``ingress`` add-on runs, and ``--trust`` grants it the
 Kubernetes permissions it needs to create ingress resources:
@@ -249,9 +250,10 @@ Check that both applications are active and that the integration exists:
 The output looks like this once the deployment has settled; if a status is
 still ``waiting`` or ``maintenance``, run the command again after a minute:
 
-.. SPREAD SKIP
+.. vale off
 
-.. code-block:: text
+.. terminal::
+   :output-only:
 
    Model          Controller  Cloud/Region        Version  SLA          Timestamp
    gopkg-charmed  dev         microk8s/localhost  3.6.28   unsupported  22:13:30Z
@@ -269,7 +271,7 @@ still ``waiting`` or ``maintenance``, run the command again after a minute:
    nginx-ingress-integrator:ingress      gopkg-charmed:ingress                 ingress         regular
    nginx-ingress-integrator:nginx-peers  nginx-ingress-integrator:nginx-peers  nginx-instance  peer
 
-.. SPREAD SKIP END
+.. vale on
 
 The ``ingress`` row is the integration you created; the two ``peer`` rows
 are internal to each charm.
@@ -374,3 +376,7 @@ What to read next
 - :ref:`Configure ingress <configure-ingress>`
 - :ref:`Configure hostname <configure-hostname-and-check-go-import>`
 - :ref:`Troubleshoot deployment <troubleshoot-deployment>`
+- :ref:`Rockcraft's Go framework extension <rockcraft:reference-go-framework>`,
+  which built the rock
+- :ref:`Charmcraft's Go framework extension <charmcraft:go-framework-extension>`,
+  which built the charm

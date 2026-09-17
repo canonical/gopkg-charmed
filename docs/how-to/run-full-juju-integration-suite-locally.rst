@@ -52,9 +52,11 @@ Run the suite manually
 ----------------------
 
 Use the individual steps when you need fine-grained control, for example to
-rebuild only one artifact. The first block confirms the environment from
-:ref:`set-up-a-local-linux-environment` and bootstraps a controller only if
-none exists yet:
+rebuild only one artifact. Run them in the same shell: the last step uses a
+variable set in the step before it.
+
+Confirm the environment from :ref:`set-up-a-local-linux-environment`, and
+bootstrap a controller only if none exists yet:
 
 .. code-block:: bash
 
@@ -64,14 +66,27 @@ none exists yet:
      --retry-all-errors http://127.0.0.1:32000/v2/
    juju controllers >/dev/null 2>&1 || juju bootstrap microk8s dev
 
+Build the rock and push it to the local registry:
+
+.. code-block:: bash
+
    cd ~/gopkg-charm/app
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
      oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
      docker://localhost:32000/gopkg:0.1
 
+Build the charm:
+
+.. code-block:: bash
+
    cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
+
+Run the integration tests against the charm and image you just built:
+
+.. code-block:: bash
+
    CHARM_FILE=$(ls -1 gopkg-charmed_*.charm | head -n1)
    CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
      tox --workdir ~/.cache/gopkg-charm-tox -e integration

@@ -106,13 +106,19 @@ your user to both:
    sudo adduser $USER snap_microk8s
    sudo adduser $USER lxd
 
-Log out of the VM and back in so the new group memberships apply:
+Log out of the VM so the new group memberships apply:
 
 .. SPREAD SKIP
 
 .. code-block:: bash
 
    exit
+
+``exit`` ends the session and returns you to the host, so run the next
+command there to open a new one:
+
+.. code-block:: bash
+
    multipass shell charm-dev
 
 .. SPREAD SKIP END
@@ -140,11 +146,16 @@ If both memberships apply, none of the commands print anything.
 Enable Kubernetes add-ons
 -------------------------
 
-The deployment needs four MicroK8s add-ons: ``dns`` for name resolution
-inside the cluster, ``hostpath-storage`` for the volumes the Juju controller
-requests, ``registry`` for the local image registry on port 32000 that
-receives the rock, and ``ingress`` for the ingress controller that publishes
-the service on ports 80 and 443. Wait for the cluster, then enable them:
+The deployment needs four MicroK8s add-ons:
+
+- ``dns`` resolves names inside the cluster.
+- ``hostpath-storage`` provides the volumes the Juju controller requests.
+- ``registry`` runs the local image registry on port 32000 that receives the
+  rock.
+- ``ingress`` runs the ingress controller that publishes the service on
+  ports 80 and 443.
+
+Wait for the cluster, then enable them:
 
 .. code-block:: bash
 

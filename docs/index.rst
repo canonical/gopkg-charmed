@@ -11,18 +11,11 @@ operates the ``gopkg.in`` versioned Go import service on Kubernetes.
 The service ships as a rock, a container image built with Rockcraft. Juju
 deploys the charm, and the charm runs that image, configures the public
 hostname the service advertises, and connects it to ingress. Like any Juju
-charm, it
-supports repeatable deployment, configuration, integration, and lifecycle
-management, on Kubernetes platforms from `MicroK8s
+charm, it supports repeatable deployment, configuration, integration, and
+lifecycle management, on Kubernetes platforms from `MicroK8s
 <https://canonical.com/microk8s>`_ for local development to `Charmed
 Kubernetes <https://ubuntu.com/kubernetes>`_ and public-cloud Kubernetes
 offerings.
-
-Existing Go programs still import packages through ``gopkg.in`` paths such
-as ``gopkg.in/yaml.v2``. Those paths are part of a package's identity, so the
-service has to keep resolving them to the right source repository and
-version. The charm keeps that contract available without hand-operated
-infrastructure.
 
 The charm is useful to platform engineers, DevOps engineers, and SRE teams
 who need to operate ``gopkg.in`` reliably, and to maintainers of Go software

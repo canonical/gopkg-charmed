@@ -6,7 +6,7 @@ resource "juju_application" "gopkg" {
   model_uuid = var.model_uuid
 
   charm {
-    name     = "gopkg-charmed"
+    name     = "gopkg-k8s"
     channel  = var.channel
     revision = var.revision
     base     = var.base

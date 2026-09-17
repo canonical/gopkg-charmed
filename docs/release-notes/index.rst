@@ -1,32 +1,19 @@
-.. meta::
-   :description: Release notes for all versions of the __charm_name__ charm, including release policy and schedule.
-
-.. _release_notes_index:
-
-.. Remember to update this file for your charm -- replace __charm_name__ with the appropriate name,
-   specify the track the release notes will follow, and include a link on how to upgrade.
+.. _release-notes:
 
 Release notes
 =============
 
-Release notes for the <main> track of __charm_name__, summarizing new features,
-bug fixes and backwards-incompatible changes in each revision.
+Release notes for ``gopkg-charmed`` summarize user-visible changes,
+compatibility notes, and operational updates.
 
-For upgrading the charm, see :ref:`How to upgrade <how_to_upgrade>`.
-For instructions on a specific release, see the corresponding release notes.
+This project currently tracks change artifacts in
+``docs/release-notes/artifacts`` as part of its release workflow.
 
-Release policy and schedule
-----------------------------
+Artifact workflow
+-----------------
 
-..
-   Use this section to define a schedule at which we publish release notes for this charm. 
-   Please adopt one of the following release patterns:
-   - Fixed release schedule (monthly, bimonthly, etc.)
-   - Release notes with every revision of the <main> track
-   - Release notes published when there's a need (maintenance, bug fixes, etc.)
+Release-note source artifacts are tracked as YAML files under
+``docs/release-notes/artifacts`` and consumed by the repository automation.
 
-Releases
---------
-
-.. TODO: Add a list of releases here, with links to the individual release notes.
-         Use a toctree directive
+If you need end-user rendered release pages, add rendered ``.rst`` files and
+link them from this index in a future update.

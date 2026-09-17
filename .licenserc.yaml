@@ -30,6 +30,7 @@ header:
       - '**/*.j2'
       - '**/.gitignore'
       - '.licenserc.yaml'
+      - '.readthedocs.yaml'
       - 'CODEOWNERS'
       - 'LICENSE'
       - '**/LICENSE'

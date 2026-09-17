@@ -9,7 +9,7 @@
 - [Publication](#publication)
 
 The
-[Charm development best practices](https://documentation.ubuntu.com/juju/3.6/reference/charm/index.html)
+[Charm development best practices](https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/)
 are incorporated by reference.
 
 ## Definitions

@@ -65,7 +65,7 @@ body:
       description: >
         Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
         Fetch the logs using `juju debug-log --replay` and `kubectl logs ...`. Additional details available in the juju docs 
-        at https://documentation.ubuntu.com/juju/3.6/howto/manage-logs/#manage-logs
+        at https://canonical.com/juju/docs/juju-cli/3.6/howto/manage-logs/
       render: shell
     validations:
       required: true

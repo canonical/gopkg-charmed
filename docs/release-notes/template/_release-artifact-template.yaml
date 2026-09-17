@@ -1,8 +1,17 @@
 # --- Information about release ----
 
 version_schema: 2
-workload_with_version::
-included_changes: 
-earliest_revision: 
-latest_revision: 
 
+# Four-digit release number; it names the rendered page
+# (release-notes-<NNNN>.md) and its anchor.
+release_number:
+
+# Workload name and version, for example "gopkg.in 1.0".
+workload_with_version:
+
+# Change artifacts included in the release, for example pr0027.yaml.
+included_changes:
+
+# Charm revisions covered by the release.
+earliest_revision:
+latest_revision:

@@ -66,10 +66,10 @@ supply the address for one request without changing DNS or ``/etc/hosts``.
 uses it to choose the backend, so a request without the hostname never
 matches the rule.
 
-This works because the MicroK8s ingress controller binds ports 80 and 443 on
-the node itself, loopback included. From another machine, the same request
-must target the address of the machine or load balancer that exposes the
-controller.
+Connecting to ``127.0.0.1`` reaches the controller because the MicroK8s
+ingress controller binds ports 80 and 443 on the node itself, loopback
+included. From another machine, the same request must target the address of
+the machine or load balancer that exposes the controller.
 
 The two hostname settings
 -------------------------

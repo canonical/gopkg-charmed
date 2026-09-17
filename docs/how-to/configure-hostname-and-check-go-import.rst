@@ -7,24 +7,35 @@ How to configure hostname
 =========================
 
 Correct hostname metadata lets Go clients discover source through the stable
-``gopkg.in`` import path. Set the ingress and workload hostname values, then
-query a package path to verify the generated ``go-import`` metadata.
+``gopkg.in`` import path. Set the workload hostname, then query a package
+path to verify the generated ``go-import`` metadata.
 
-These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
-are deployed and integrated, as they are after the deployment steps of
-:ref:`deploy-and-verify-on-kubernetes`.
+Two settings carry a hostname. ``service-hostname``, on
+``nginx-ingress-integrator``, decides which incoming requests reach the
+application. ``hostname``, on ``gopkg-charmed``, is the name the workload
+writes into its ``go-import`` metadata and package links. This guide changes
+the second one and queries the service through the first.
+:ref:`Ingress <ingress>` explains why they are separate settings.
 
-Set the ingress host variable
------------------------------
+Prerequisites
+-------------
 
-The deployment steps of the tutorial configured the integrator with this
-hostname; the variable keeps the commands below in step with it:
+This guide changes a running deployment, so it needs:
+
+- ``gopkg-charmed`` and ``nginx-ingress-integrator`` deployed and integrated
+- the integrator's ``service-hostname`` set to the hostname clients use
+- that same hostname exported as ``INGRESS_HOST``, which every command below
+  reuses
+
+The deployment steps of :ref:`deploy-and-verify-on-kubernetes` leave the
+first two in place, using ``gopkg.example.com``. Export it:
 
 .. code-block:: bash
 
    export INGRESS_HOST=gopkg.example.com
 
-For local verification, requests are routed to ``127.0.0.1`` with ``--resolve``.
+For local verification, requests are routed to ``127.0.0.1`` with
+``--resolve``.
 
 Change the hostname configuration
 ---------------------------------
@@ -33,7 +44,9 @@ Change the hostname configuration
 
    juju config gopkg-charmed hostname=staging.example.com
 
-Wait until the application is active again:
+The charm applies the new value by restarting the workload in place, which
+usually takes a couple of minutes. Wait until the application is active
+again:
 
 .. SPREAD SKIP
 
@@ -48,17 +61,19 @@ Wait until the application is active again:
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
-Inspect the configuration
--------------------------
-
-Show every option with its current value:
+Confirm the stored value
+------------------------
 
 .. code-block:: bash
 
-   juju config gopkg-charmed
+   juju config gopkg-charmed hostname
 
-Verify the health endpoint
---------------------------
+The command prints ``staging.example.com``.
+
+Verify the change
+-----------------
+
+Check that the service still answers through ingress:
 
 .. code-block:: bash
 
@@ -69,12 +84,9 @@ Verify the health endpoint
 
 Expected output is ``ok``.
 
-Verify the go-import metadata
------------------------------
-
-The charm delivers the new hostname by restarting the workload in place,
-so the old value can be served for a few more seconds. Query until the
-new value appears (the loop gives up after two minutes):
+Then check the metadata the service serves to Go clients. The restart means
+the old value can be served for a few more seconds, so query until the new
+value appears (the loop gives up after two minutes):
 
 .. code-block:: bash
 

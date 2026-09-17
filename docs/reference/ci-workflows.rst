@@ -33,26 +33,26 @@ documentation test workflow,
 ``canonical/charm-ci/.github/workflows/doc-test.yml``, pinned to a specific
 commit for reproducibility.
 
-Current behavior:
+It runs on changes to the tutorial, the how-to guides, the Spread tasks, the
+application source, the artifact recipes, the provisioning files, and the
+workflow itself. It also runs every Saturday at 15:00 UTC on ``main``,
+alongside the integration tests, so drift in the tools and images the guides
+install is caught between documentation changes.
 
-- triggers on tutorial, how-to, Spread task, application source, artifact
-  recipe, provisioning, and workflow changes
-- also runs every Saturday at 15:00 UTC on ``main``, alongside the
-  integration tests, so drift in the tools and images the guides install is
-  caught between documentation changes
-- uses ``opcli tutorial expand`` to extract commands directly from the RST
-- executes the generated shell script through the ``docs-ci`` Spread backend
-- starts from a bare system: the guides' own commands install the tools,
-  enable MicroK8s, bootstrap Juju, and build the rock and charm from source
-- composes guides in prerequisite order; both tests start with the setup
-  guide and the tutorial, and the second test continues with the ingress
-  and hostname how-to guides against the deployment the tutorial leaves
-  behind
-- runs a page's clean-up commands, marked by the ``# spread-teardown``
-  sentinel, only when that page is last in its chain, so the tutorial test
-  destroys what it created and the how-to test keeps the deployment
-- starts a fresh login shell at each ``# spread-session-break`` sentinel a
-  guide emits, mirroring the reader logging out and back in
+Each run extracts the commands directly from the RST with ``opcli tutorial
+expand`` and executes the generated shell script through the ``docs-ci``
+Spread backend, starting from a bare system: the guides' own commands install
+the tools, enable MicroK8s, bootstrap Juju, and build the rock and charm from
+source.
+
+The guides run in prerequisite order. Both tests start with the setup guide
+and the tutorial, and the second test continues into the ingress and hostname
+how-to guides against the deployment the tutorial leaves behind. Two sentinels
+control the boundaries: a page's clean-up commands, marked by
+``# spread-teardown``, run only when that page is last in its chain, so the
+tutorial test destroys what it created while the how-to test keeps the
+deployment; and each ``# spread-session-break`` a guide emits starts a fresh
+login shell, mirroring the reader logging out and back in.
 
 Automatic and manual linkage
 ----------------------------

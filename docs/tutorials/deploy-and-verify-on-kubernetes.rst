@@ -1,0 +1,181 @@
+.. _deploy-and-verify-on-kubernetes:
+
+Deploy and verify gopkg-charmed on Kubernetes
+=============================================
+
+This tutorial is for someone who has never worked with this project before.
+You will build the artifacts, deploy the charm with Juju, and verify that the
+service is healthy.
+
+This guide is platform-agnostic and supports both ``amd64`` and ``arm64``.
+
+What you will build
+-------------------
+
+At the end of this tutorial, you will have:
+
+- a running ``gopkg-charmed`` application in a Juju model
+- an ingress integration for external routing
+- a verified health endpoint and a verified go-import metadata endpoint
+
+Prerequisites
+-------------
+
+You need:
+
+- a Linux environment (native Linux host, Multipass VM, or equivalent)
+- architecture: ``amd64`` or ``arm64``
+- internet access for package downloads
+
+If you are on macOS, create a Linux VM first (example):
+
+.. code-block:: bash
+
+   multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
+   multipass mount /path/to/gopkg-charm charm-dev:/home/ubuntu/gopkg-charm
+   multipass shell charm-dev
+
+Then run the rest of this tutorial inside the VM.
+
+Install required tooling in that Linux environment:
+
+.. code-block:: bash
+
+   sudo snap install rockcraft --classic
+   sudo snap install charmcraft --classic
+   sudo snap install juju
+   sudo snap install microk8s --channel 1.31-strict/stable
+   lxd init --auto
+   sudo adduser $USER snap_microk8s
+
+Log out and back in, then enable MicroK8s add-ons:
+
+.. code-block:: bash
+
+   sudo microk8s enable hostpath-storage registry ingress
+   microk8s status --wait-ready
+
+Bootstrap Juju:
+
+.. code-block:: bash
+
+   juju bootstrap microk8s dev
+
+Step 1: confirm architecture
+----------------------------
+
+Use this command and keep the result for later commands:
+
+.. code-block:: bash
+
+   dpkg --print-architecture
+
+Expected values are ``amd64`` or ``arm64``.
+
+Step 2: build and publish the rock image
+----------------------------------------
+
+From the repository root:
+
+.. code-block:: bash
+
+   cd app
+   ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
+   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
+     oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
+     docker://localhost:32000/gopkg:0.1
+
+Verify image push:
+
+.. code-block:: bash
+
+   curl http://localhost:32000/v2/gopkg/tags/list
+
+Step 3: build the charm
+-----------------------
+
+.. code-block:: bash
+
+   cd app/charm
+   CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
+
+Step 4: deploy to a new model
+-----------------------------
+
+.. code-block:: bash
+
+   juju add-model gopkg-charmed
+   juju set-model-constraints arch=$(dpkg --print-architecture)
+
+Deploy the charm and ingress integrator:
+
+.. code-block:: bash
+
+   juju deploy ./gopkg-charmed_*.charm gopkg-charmed \
+     --resource app-image=localhost:32000/gopkg:0.1
+   juju deploy nginx-ingress-integrator --channel=latest/stable --trust
+   juju integrate nginx-ingress-integrator gopkg-charmed
+
+Configure ingress:
+
+.. code-block:: bash
+
+   juju config nginx-ingress-integrator \
+     service-hostname=gopkg.example.com \
+     path-routes=/ \
+     rewrite-enabled=false
+
+Wait for active status:
+
+.. code-block:: bash
+
+   juju status --watch 2s
+
+Step 5: verify the deployment
+-----------------------------
+
+Run a health check through ingress:
+
+.. code-block:: bash
+
+   curl -sw '\nHTTP %{http_code}\n' http://gopkg.example.com/health-check \
+     --resolve gopkg.example.com:80:127.0.0.1
+
+Expected output includes ``ok`` and ``HTTP 200``.
+
+Verify go-import metadata:
+
+.. code-block:: bash
+
+   curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
+     --resolve gopkg.example.com:80:127.0.0.1
+
+Expected output contains a ``go-import`` meta tag.
+
+Step 6: test runtime configuration
+----------------------------------
+
+Update charm config and confirm it applies without rebuild:
+
+.. code-block:: bash
+
+   juju config gopkg-charmed hostname=staging.example.com
+
+Then query again:
+
+.. code-block:: bash
+
+   curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
+     --resolve gopkg.example.com:80:127.0.0.1
+
+You should see output reflecting the new hostname value.
+
+If the change is not immediately visible, wait for ``juju status`` to return
+``active`` and run the request again.
+
+What to read next
+-----------------
+
+- :ref:`deploy-locally-with-microk8s`
+- :ref:`configure-hostname-and-check-go-import`
+- :ref:`troubleshoot-deployment`

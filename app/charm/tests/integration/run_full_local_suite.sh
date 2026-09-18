@@ -80,7 +80,7 @@ pushd "$CHARM_DIR" >/dev/null
 CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
 
 shopt -s nullglob
-charm_files=(gopkg-charmed_*.charm)
+charm_files=(gopkg-k8s_*.charm)
 shopt -u nullglob
 
 if [[ ${#charm_files[@]} -eq 0 ]]; then

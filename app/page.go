@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -261,9 +260,18 @@ func renderPackagePage(resp http.ResponseWriter, _ *http.Request, repo *Repo) {
 	gotResp := make(chan bool, wantResps)
 
 	go func() {
+		started := time.Now()
+		result := "ok"
+		defer func() {
+			applicationMetrics.observeUpstream("godoc", "package_page", result, started)
+			gotResp <- true
+		}()
+
 		// Retrieve package name from godoc.org. This should be on a proper API.
 		godocResp, err := http.Get("https://godoc.org/" + repo.GopkgPath())
-		if err == nil {
+		if err != nil {
+			result = upstreamResult(err)
+		} else {
 			godocRespBytes, err := ioutil.ReadAll(godocResp.Body)
 			godocResp.Body.Close()
 			if err == nil {
@@ -275,14 +283,22 @@ func renderPackagePage(resp http.ResponseWriter, _ *http.Request, repo *Repo) {
 				}
 			}
 		}
-		gotResp <- true
 	}()
 
 	go func() {
+		started := time.Now()
+		result := "ok"
+		defer func() {
+			applicationMetrics.observeUpstream("godoc", "search", result, started)
+			gotResp <- true
+		}()
+
 		// Retrieve synopsis from godoc.org. This should be on a package path API
 		// rather than a search.
 		searchResp, err := http.Get("https://api.godoc.org/search?q=" + url.QueryEscape(repo.GopkgPath()))
-		if err == nil {
+		if err != nil {
+			result = upstreamResult(err)
+		} else {
 			searchResults := &SearchResults{}
 			err = json.NewDecoder(searchResp.Body).Decode(&searchResults)
 			searchResp.Body.Close()
@@ -298,7 +314,6 @@ func renderPackagePage(resp http.ResponseWriter, _ *http.Request, repo *Repo) {
 				}
 			}
 		}
-		gotResp <- true
 	}()
 
 	r := 0
@@ -316,6 +331,6 @@ func renderPackagePage(resp http.ResponseWriter, _ *http.Request, repo *Repo) {
 
 	err := packageTemplate.Execute(resp, data)
 	if err != nil {
-		log.Printf("error executing package page template: %v", err)
+		logger.Error("template execution failed", "template", "package_page", "error", err)
 	}
 }

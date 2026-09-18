@@ -1,14 +1,14 @@
 .. _set-up-a-local-linux-environment:
 
 .. meta::
-   :description: Prepare an Ubuntu environment with the tools and resources required to build, deploy, and test gopkg-charmed.
+   :description: Prepare an Ubuntu environment with the tools and resources required to build, deploy, and test gopkg-k8s.
 
 How to set up a local Linux environment
 =======================================
 
 A consistent Ubuntu environment keeps local builds and tests aligned with CI.
 Prepare a virtual machine with the tools needed to build, deploy, and test
-``gopkg-charmed``.
+``gopkg-k8s``.
 
 Prerequisites
 -------------
@@ -80,7 +80,7 @@ The final command should return ``/home/ubuntu/gopkg-charm``.
 Install required tools
 ----------------------
 
-Building, deploying, and testing ``gopkg-charmed`` needs Go for the service,
+Building, deploying, and testing ``gopkg-k8s`` needs Go for the service,
 Python 3.12 and tox for the charm tests, Rockcraft and Charmcraft to build the
 rock and the charm (both build inside LXD), Juju and MicroK8s to deploy them,
 and curl and git for the commands in the guides.

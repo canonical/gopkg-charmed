@@ -1,13 +1,13 @@
 .. _release_notes_release_notes_0001:
 
 .. meta::
-	:description: Review the initial public-facing documentation baseline and validation updates for gopkg-charmed.
+	:description: Review the initial public-facing documentation baseline and validation updates for gopkg-k8s.
 
-gopkg-charmed release notes - initial documentation baseline
+gopkg-k8s release notes - initial documentation baseline
 ============================================================
 
 These release notes summarize the first public-facing documentation baseline
-for ``gopkg-charmed``.
+for ``gopkg-k8s``.
 
 Main features
 -------------

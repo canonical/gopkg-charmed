@@ -1,17 +1,18 @@
 .. _reference:
 
 .. meta::
-	:description: Find gopkg-charmed configuration options, supported platforms, prerequisites, and documentation CI behavior.
+	:description: Find gopkg-k8s configuration options, integration endpoints, supported platforms, prerequisites, and CI behavior.
 
 Reference
 =========
 
-Find configuration options, supported platforms, prerequisites, and CI
-behavior.
+Find configuration options, integration endpoints, supported platforms,
+prerequisites, and CI behavior.
 
 .. toctree::
 	:maxdepth: 1
 
 	charm-configuration
+	integrations
 	platforms-and-prerequisites
 	ci-workflows

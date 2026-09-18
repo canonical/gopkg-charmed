@@ -1,7 +1,7 @@
 .. _configure-hostname-and-check-go-import:
 
 .. meta::
-   :description: Set the ingress and workload hostname of gopkg-charmed, then verify the go-import metadata served to Go clients.
+   :description: Set the ingress and workload hostname of gopkg-k8s, then verify the go-import metadata served to Go clients.
 
 How to configure hostname
 =========================
@@ -12,7 +12,7 @@ path to verify the generated ``go-import`` metadata.
 
 Two settings carry a hostname. ``service-hostname``, on
 ``nginx-ingress-integrator``, decides which incoming requests reach the
-application. ``hostname``, on ``gopkg-charmed``, is the name the workload
+application. ``hostname``, on ``gopkg-k8s``, is the name the workload
 writes into its ``go-import`` metadata and package links. This guide changes
 the second one and queries the service through the first.
 :ref:`Ingress <ingress>` explains why they are separate settings.
@@ -22,7 +22,7 @@ Prerequisites
 
 This guide changes a running deployment, so it needs:
 
-- ``gopkg-charmed`` and ``nginx-ingress-integrator`` deployed and integrated
+- ``gopkg-k8s`` and ``nginx-ingress-integrator`` deployed and integrated
 - the integrator's ``service-hostname`` set to the hostname clients use
 - that same hostname exported as ``INGRESS_HOST``, which every command below
   reuses
@@ -42,7 +42,7 @@ Change the hostname configuration
 
 .. code-block:: bash
 
-   juju config gopkg-charmed hostname=staging.example.com
+   juju config gopkg-k8s hostname=staging.example.com
 
 The charm applies the new value by restarting the workload in place, which
 usually takes a couple of minutes. Wait until the application is active
@@ -57,7 +57,7 @@ again:
 .. SPREAD SKIP END
 
 .. SPREAD
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
 .. SPREAD END
 
@@ -66,7 +66,7 @@ Confirm the stored value
 
 .. code-block:: bash
 
-   juju config gopkg-charmed hostname
+   juju config gopkg-k8s hostname
 
 The command prints ``staging.example.com``.
 

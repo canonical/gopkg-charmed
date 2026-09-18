@@ -1,0 +1,22 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+groups:
+  - name: gopkg-loki-alerts
+    rules:
+      - alert: GopkgApplicationStopped
+        expr: sum(count_over_time({%%juju_topology%%} | json | msg="application stopped" [5m])) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: gopkg application stopped
+          description: A gopkg process reported a fatal startup or server error.
+
+      - alert: GopkgErrorLogSpike
+        expr: sum(count_over_time({%%juju_topology%%} | json | level="ERROR" [5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: gopkg error logs are elevated
+          description: More than ten gopkg error log entries were recorded in five minutes.

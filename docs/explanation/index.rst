@@ -1,12 +1,12 @@
 .. _explanation:
 
 .. meta::
-	:description: Understand how gopkg.in resolves imports and how rocks, charms, Juju, and ingress package, operate, and expose gopkg-charmed.
+	:description: Understand how gopkg.in resolves imports and how rocks, charms, Juju, and ingress package, operate, and expose gopkg-k8s.
 
 Explanation
 ===========
 
-Understand what the service does and how ``gopkg-charmed`` is packaged,
+Understand what the service does and how ``gopkg-k8s`` is packaged,
 operated, and exposed:
 
 - Learn what ``gopkg.in`` does for a Go program and why its import paths

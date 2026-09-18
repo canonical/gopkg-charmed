@@ -1,12 +1,12 @@
 .. _gopkg-service:
 
 .. meta::
-   :description: Understand what the gopkg.in service operated by gopkg-charmed does for Go programs, why its import paths still matter, and what the charm adds.
+   :description: Understand what the gopkg.in service operated by gopkg-k8s does for Go programs, why its import paths still matter, and what the charm adds.
 
 How gopkg.in serves stable import paths
 =======================================
 
-``gopkg.in`` is the Go service that ``gopkg-charmed`` operates. This page
+``gopkg.in`` is the Go service that ``gopkg-k8s`` operates. This page
 describes what the service does for a Go program that imports a ``gopkg.in``
 path, why those paths still matter, and what the charm adds. The URL patterns
 and version rules of the service itself are documented upstream on the
@@ -27,7 +27,7 @@ module paths themselves; see `Module version numbering
 Go modules do not remove import paths already published in source code and
 ``go.mod`` files. Those paths are part of a package's identity, so existing
 applications and libraries still need ``gopkg.in`` to resolve them to the
-right repository and version. ``gopkg-charmed`` keeps that contract
+right repository and version. ``gopkg-k8s`` keeps that contract
 available; the service is not a second package manager and does not replace
 Go's module tooling.
 
@@ -62,7 +62,7 @@ clients perform the download.
 What the charm adds
 -------------------
 
-``gopkg-charmed`` is the operational layer of the HTTP application:
+``gopkg-k8s`` is the operational layer of the HTTP application:
 the service is packaged as a rock, Juju deploys the
 charm on Kubernetes, and the charm manages the workload's configuration and
 integrations. Two operational facts follow from the service's job:

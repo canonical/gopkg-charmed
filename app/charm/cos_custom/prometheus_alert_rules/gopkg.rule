@@ -1,0 +1,53 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+groups:
+  - name: gopkg-prometheus-alerts
+    rules:
+      - alert: GopkgTargetDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: gopkg metrics target is unavailable
+          description: Prometheus has been unable to scrape a gopkg unit for five minutes.
+
+      - alert: GopkgHighServerErrorRatio
+        expr: |
+          sum(rate(gopkg_http_requests_total{status_code=~"5.."}[5m]))
+          / clamp_min(sum(rate(gopkg_http_requests_total[5m])), 0.001) > 0.05
+          and sum(rate(gopkg_http_requests_total[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: gopkg is returning too many server errors
+          description: More than 5% of gopkg requests are returning 5xx responses under sustained traffic.
+
+      - alert: GopkgHighRequestLatency
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le) (
+              rate(gopkg_http_request_duration_seconds_bucket{route=~"go_get|package_page|git_info_refs|git_upload_pack"}[5m])
+            )
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: gopkg request latency is high
+          description: The p95 latency of functional gopkg routes has exceeded two seconds for ten minutes.
+
+      - alert: GopkgGitHubFailureRatio
+        expr: |
+          sum(rate(gopkg_upstream_requests_total{service="github",result!="ok"}[5m]))
+          / clamp_min(sum(rate(gopkg_upstream_requests_total{service="github"}[5m])), 0.001) > 0.2
+          and sum(rate(gopkg_upstream_requests_total{service="github"}[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: gopkg is experiencing GitHub failures
+          description: More than 20% of sustained GitHub operations are failing.

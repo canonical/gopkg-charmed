@@ -172,7 +172,7 @@ rediraffe_dir_only = True
 # <first sentence of home page>".
 llms_txt_description = textwrap.dedent(
     """\
-    This is the documentation for gopkg-charmed, a Kubernetes charm that deploys and
+    This is the documentation for gopkg-k8s, a Kubernetes charm that deploys and
     operates the gopkg.in versioned import-path service with a 12-factor workflow.
     """
 )

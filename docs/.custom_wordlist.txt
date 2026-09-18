@@ -9,7 +9,7 @@ fonts
 freefont
 github
 gopkg
-gopkg-charmed
+gopkg-k8s
 gopkg\.in
 GPG
 gyre

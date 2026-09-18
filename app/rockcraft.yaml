@@ -7,9 +7,11 @@ version: '0.1'
 summary: Stable APIs for the Go language
 description: The gopkg.in versioned-import-path redirector.
 license: BSD-2-Clause
+# amd64 only, matching the charm: this rock is published as the charm's
+# amd64 app-image resource. Uncomment arm64 to build the rock locally there.
 platforms:
-  arm64:
   amd64:
+  # arm64:
 extensions:
   - go-framework
 parts:

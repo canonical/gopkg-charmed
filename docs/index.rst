@@ -1,10 +1,10 @@
 .. meta::
-    :description: Operate the gopkg.in versioned Go import service on Kubernetes with the gopkg-charmed Juju charm.
+    :description: Operate the gopkg.in versioned Go import service on Kubernetes with the gopkg-k8s Juju charm.
 
 gopkg charm
 ===========
 
-``gopkg-charmed`` is a `Juju <https://canonical.com/juju>`_ `charm
+``gopkg-k8s`` is a `Juju <https://canonical.com/juju>`_ `charm
 <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_ that
 operates the ``gopkg.in`` versioned Go import service on Kubernetes.
 
@@ -30,7 +30,7 @@ In this documentation
       :link: tutorials
       :link-type: ref
 
-      **Start here**: build, deploy, and verify ``gopkg-charmed`` on
+      **Start here**: build, deploy, and verify ``gopkg-k8s`` on
       Kubernetes from a fresh environment.
 
    .. grid-item-card:: How-to guides
@@ -64,7 +64,7 @@ This documentation uses the `Diátaxis <https://diataxis.fr/>`_ documentation
 structure.
 
 - The :ref:`Tutorial <tutorials>` takes you step-by-step through a complete
-  deployment of ``gopkg-charmed``.
+  deployment of ``gopkg-k8s``.
 - :ref:`How-to guides <how-to-guides>` cover preparing an environment,
   configuring the charm, testing it, and troubleshooting it.
 - :ref:`Reference <reference>` provides the configuration options, supported
@@ -85,7 +85,7 @@ started. If a topic you need is missing, please `file a bug
 Project and community
 ---------------------
 
-``gopkg-charmed`` is a member of the Ubuntu family. It is an open source
+``gopkg-k8s`` is a member of the Ubuntu family. It is an open source
 project that warmly welcomes community projects, contributions, suggestions,
 fixes, and constructive feedback.
 
@@ -103,7 +103,7 @@ Get involved
 - `Report an issue <https://github.com/canonical/gopkg-charmed/issues>`_
 - :ref:`Contribute <contribute>`
 
-Thinking about using ``gopkg-charmed`` for your next project? `Get in touch
+Thinking about using ``gopkg-k8s`` for your next project? `Get in touch
 <https://matrix.to/#/#charmhub-charmdev:ubuntu.com>`_!
 
 .. toctree::

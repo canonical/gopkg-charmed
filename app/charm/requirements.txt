@@ -1,2 +1,2 @@
 ops ~=3.8
-paas-charm>=1.0,<2
+paas-charm>=1.12.2,<2

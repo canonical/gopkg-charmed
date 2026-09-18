@@ -1,7 +1,7 @@
 .. _improve-documentation:
 
 .. meta::
-   :description: Build, preview, and validate gopkg-charmed documentation and executable examples locally.
+   :description: Build, preview, and validate gopkg-k8s documentation and executable examples locally.
 
 Improve the documentation
 =========================

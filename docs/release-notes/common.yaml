@@ -1,5 +1,5 @@
 # --- Common information that applies to all releases ----
 
-charm_name: gopkg-charmed
+charm_name: gopkg-k8s
 release_condition: latest/edge
 show_internal: false

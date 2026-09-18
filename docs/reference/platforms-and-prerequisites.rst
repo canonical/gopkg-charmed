@@ -1,7 +1,7 @@
 .. _platforms-and-prerequisites:
 
 .. meta::
-   :description: Reference the supported architectures, required tools and channels, MicroK8s add-ons, and verified tool versions for gopkg-charmed.
+   :description: Reference the supported architectures, required tools and channels, MicroK8s add-ons, and verified tool versions for gopkg-k8s.
 
 Platforms and prerequisites
 ===========================
@@ -9,7 +9,10 @@ Platforms and prerequisites
 Supported architectures
 -----------------------
 
-This project supports both AMD64 and ARM64.
+The guides build and run the rock and the charm on both AMD64 and ARM64, and
+``app/rockcraft.yaml`` and ``app/charm/charmcraft.yaml`` declare both. CI
+builds and publishes AMD64 only, so the charm and the ``app-image`` resource
+on Charmhub are AMD64. Build locally to run on ARM64.
 
 Required tooling for charm deployment
 -------------------------------------

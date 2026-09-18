@@ -1,11 +1,12 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-summary: Execute documentation commands - configure hostname how-to, from a bare system
+summary: Execute documentation commands - ingress, hostname, and observability how-to guides, from a bare system
 
-# A green run takes 20-40 min, and over an hour when the runner's network
-# is degraded; the tutorial's build retries can add up to four failed packs
-# (1-10 min each) on top.
+# A green run takes 25-50 min (the observability guide deploys three COS
+# charms), and over an hour when the runner's network is degraded; the
+# tutorial's build retries can add up to four failed packs (1-10 min each)
+# on top.
 kill-timeout: 120m
 
 # Cold start: no concierge, no pre-installed tools. The documentation's own
@@ -49,4 +50,5 @@ execute: |
     docs/how-to/set-up-a-local-linux-environment.rst \
     docs/tutorials/deploy-and-verify-on-kubernetes.rst \
     docs/how-to/configure-ingress.rst \
-    docs/how-to/configure-hostname-and-check-go-import.rst
+    docs/how-to/configure-hostname-and-check-go-import.rst \
+    docs/how-to/integrate-with-cos.rst

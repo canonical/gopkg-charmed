@@ -17,6 +17,7 @@ test runs on both architectures.
 import asyncio
 import logging
 import platform
+import re
 import time
 import typing
 
@@ -59,6 +60,10 @@ async def ingress_fixture(
             "rewrite-enabled": "false",
         },
     )
+    # The service never reads the Host header: it renders its own `hostname`
+    # option into go-import metadata. Routing and metadata are separate
+    # settings, so the tutorial sets both to the same name.
+    await app.set_config({"hostname": INGRESS_HOST})
     await model.integrate(f"{app.name}:ingress", f"{ingress.name}:ingress")
     await model.wait_for_idle(apps=[app.name, ingress.name], status="active", timeout=15 * 60)
     return ingress
@@ -191,6 +196,40 @@ async def test_ingress_routes_to_the_service(
     response = await _wait_until(health_through_ingress, "the ingress to route /health-check")
 
     assert response.text == "ok"
+
+
+async def test_ingress_serves_go_import_for_the_routed_host(
+    app: juju.application.Application, ingress: juju.application.Application
+) -> None:
+    """
+    arrange: given the charm integrated with nginx-ingress-integrator routing
+        gopkg.example.com to it, and its hostname option set to the same name
+    act: when a package path is requested through the ingress with ?go-get=1,
+        which is the query the Go tool sends to resolve an import path
+    assert: the go-import meta tag names the routed host as the import
+        prefix. The Go tool rejects a tag whose prefix differs from the import
+        path it asked for, so a health check alone cannot prove that
+        `go get gopkg.example.com/yaml.v2` would work.
+    """
+    assert ingress.status == "active"
+
+    def go_import_through_ingress() -> requests.Response | None:
+        response = requests.get(
+            "http://127.0.0.1/yaml.v2",
+            params={"go-get": "1"},
+            headers={"Host": INGRESS_HOST},
+            timeout=10,
+        )
+        return response if response.status_code == 200 else None
+
+    response = await _wait_until(go_import_through_ingress, "the ingress to route /yaml.v2")
+
+    tag = re.search(r'<meta name="go-import" content="([^"]*)"', response.text)
+    assert tag, f"no go-import meta tag in:\n{response.text}"
+    prefix, vcs, repo_root = tag.group(1).split()
+    assert prefix == f"{INGRESS_HOST}/yaml.v2"
+    assert vcs == "git"
+    assert repo_root == f"https://{INGRESS_HOST}/yaml.v2"
 
 
 @requires_amd64

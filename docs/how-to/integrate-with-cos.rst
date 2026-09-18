@@ -95,13 +95,57 @@ JSON document whose ``result`` entry ends in ``"1"``. If it gives up after
 ten minutes, it prints the message on the last line instead: follow
 :ref:`prometheus-does-not-scrape` before going on.
 
-Logs and the dashboard need no extra steps. Every request other than a
-health check produces one JSON log record, which Pebble forwards to Loki
-with the Juju topology labels; in Grafana, the **Explore** view shows them
-under the Loki data source when filtered by ``juju_application``. The
-**gopkg Overview** dashboard and the Go framework's **Go Operator**
-dashboard appear under **Dashboards**. The Grafana administrator password
-comes from the ``get-admin-password`` action of ``grafana-k8s``.
+Generate traffic and view the dashboards
+----------------------------------------
+
+The dashboards show nothing until the service has handled requests. Send
+two minutes of mixed traffic through ingress: package pages, ``go-get``
+queries, a package that does not exist, and health checks, so that every
+panel has data. The loop stops by itself and leaves nothing behind; stop it
+early with Ctrl-C:
+
+.. code-block:: bash
+
+   export INGRESS_HOST=gopkg.example.com
+   timeout 120 bash -c '
+     while true; do
+       for path in /yaml.v2 "/yaml.v2?go-get=1" /mgo.v2 /check.v1 \
+           /does-not-exist.v9 /health-check; do
+         curl --silent --output /dev/null "http://${INGRESS_HOST}${path}" \
+           --resolve "${INGRESS_HOST}:80:127.0.0.1"
+       done
+       sleep 1
+     done
+   '
+
+Package requests make the service look up references on GitHub, so the
+loop also exercises the upstream and cache panels.
+
+Grafana has no route out of the VM, so fetch its administrator password and
+then, in a second terminal on the VM, forward its port to every interface
+of the VM:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   juju run grafana-k8s/0 get-admin-password
+   microk8s kubectl -n gopkg-k8s port-forward --address 0.0.0.0 \
+     svc/grafana-k8s 3000:3000
+
+.. SPREAD SKIP END
+
+In a browser on your workstation, open ``http://<vm-address>:3000``, where
+``<vm-address>`` is the VM's address from ``multipass info charm-dev`` on
+the host, and log in as ``admin`` with that password. Under **Dashboards**,
+**gopkg Overview** shows the traffic you just sent as request rate by route,
+HTTP error rate, latency, upstream failure rate and refs cache hit ratio;
+only its git upload-pack panel stays empty, because that needs a real
+``git clone``. **Go Operator** is the framework's dashboard. In
+**Explore**, the Loki data source shows one
+JSON log record per request other than a health check when filtered by
+``juju_application="gopkg-k8s"``. Press Ctrl-C in the second terminal to
+stop the port forward; nothing else needs cleaning up.
 
 Keep the metrics endpoint off the public hostname
 -------------------------------------------------

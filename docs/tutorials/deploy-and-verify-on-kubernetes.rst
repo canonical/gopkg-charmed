@@ -231,6 +231,19 @@ tells the controller to pass paths through unchanged instead of rewriting
 them to ``/``, which would turn every package request into a request for the
 front page. :ref:`configure-ingress` covers these settings in more depth.
 
+Set the workload hostname to the same name:
+
+.. code-block:: bash
+
+   juju config gopkg-k8s hostname=${INGRESS_HOST}
+
+The ``hostname`` option of ``gopkg-k8s`` is the name the service writes into
+its ``go-import`` metadata and package links. It is separate from
+``service-hostname``, which only decides which requests reach the service,
+and neither setting updates the other. The Go tool rejects metadata whose
+import prefix differs from the hostname it requested, so the two must carry
+the same public name.
+
 .. SPREAD
    juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
@@ -289,38 +302,52 @@ The output is ``ok``. This is where the ``--resolve`` option pins
 routing rule matches, but it is sent to the ingress controller on your
 machine.
 
-Verify the go-import metadata that the Go tool reads when it resolves an
-import path:
+Send the query that the Go tool sends when it resolves an import path, and
+check the ``go-import`` meta tag it answers with:
 
 .. code-block:: bash
 
    curl --fail --silent --show-error \
      "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
-     --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep go-import
+     --resolve ${INGRESS_HOST}:80:127.0.0.1 \
+     | grep -F "content=\"${INGRESS_HOST}/yaml.v2 git https://${INGRESS_HOST}/yaml.v2\""
 
-The output contains a ``go-import`` meta tag.
+The output is the meta tag:
+
+.. terminal::
+   :output-only:
+
+   <meta name="go-import" content="gopkg.example.com/yaml.v2 git https://gopkg.example.com/yaml.v2">
+
+The first word of ``content`` is the import prefix. ``go get
+gopkg.example.com/yaml.v2`` only accepts the tag because that prefix matches
+the import path it asked for, which is why ``grep`` checks the whole content
+rather than only that a tag exists.
 
 Update the hostname
 -------------------
 
-The ``hostname`` configuration option of ``gopkg-k8s`` is the name the
-service writes into its ``go-import`` metadata and package links, so it must
-be the public name that Go clients use to reach the service. In production
-you set it to your domain; here, change it to see that the charm applies a
-configuration change to the running service without a rebuild:
+In production you set both hostname settings to your domain. Here, move
+them to a new name to see that the charms apply a configuration change to
+the running deployment without a rebuild:
 
 .. code-block:: bash
 
-   juju config gopkg-k8s hostname=staging.example.com
+   export INGRESS_HOST=staging.example.com
+   juju config nginx-ingress-integrator service-hostname=${INGRESS_HOST}
+   juju config gopkg-k8s hostname=${INGRESS_HOST}
 
 .. SPREAD
    juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
+   juju wait-for application nginx-ingress-integrator \
+     --query='status=="active"' --timeout=15m
 .. SPREAD END
 
-The charm delivers the new value by restarting the workload in place, so
-the old hostname can be served for a few more seconds. Query again until
-the new value appears:
+The integrator rewrites the routing rule, and the ``gopkg-k8s`` charm
+delivers its new value by restarting the workload in place, so for a few
+seconds the new name is not routed yet or the old hostname is still served.
+Query the new name until the new value appears:
 
 .. code-block:: bash
 
@@ -328,12 +355,13 @@ the new value appears:
      until curl --fail --silent --show-error \
          "http://${INGRESS_HOST}/yaml.v2?go-get=1" \
          --resolve "${INGRESS_HOST}:80:127.0.0.1" \
-         | grep staging.example.com; do
+         | grep -F "content=\"${INGRESS_HOST}/yaml.v2 git https://${INGRESS_HOST}/yaml.v2\""; do
        sleep 5
      done
    '
 
-The output shows the ``go-import`` meta tag with the new hostname.
+The output is the ``go-import`` meta tag with ``staging.example.com`` as the
+import prefix.
 
 Clean up
 --------

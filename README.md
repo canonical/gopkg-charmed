@@ -161,16 +161,18 @@ juju integrate nginx-ingress-integrator gopkg-k8s
 # to "/", so the app answers its root redirect (307) for every URL.
 juju config nginx-ingress-integrator \
   service-hostname=gopkg.example.com path-routes=/ rewrite-enabled=false
+juju config gopkg-k8s hostname=gopkg.example.com
 
 juju status --watch 2s    # first deploy: 5-15 min to active/idle is normal
 ```
 
-Two hostname settings exist — do not conflate them:
+Two hostname settings exist — do not conflate them, and keep them equal:
 
 - `nginx-ingress-integrator service-hostname` — which `Host:` the ingress
   **routes** to the app.
 - `gopkg-k8s hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
-  `go-import` meta tags.
+  `go-import` meta tags. `go get` rejects a meta tag whose import prefix
+  differs from the host it asked, so this must be the routed name.
 
 ### 5. Verify
 
@@ -182,9 +184,11 @@ curl -sw '\nHTTP %{http_code}\n' http://gopkg.example.com/health-check \
 
 curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
   --resolve gopkg.example.com:80:127.0.0.1
-# expect: HTML containing the go-import meta tag
+# expect: HTML containing a go-import meta tag for gopkg.example.com/yaml.v2
 
-# Config change without rebuild (delivered as APP_HOSTNAME):
+# Config change without rebuild (the app gets it as APP_HOSTNAME); change
+# both names together so the metadata keeps matching the routed host:
+juju config nginx-ingress-integrator service-hostname=staging.example.com
 juju config gopkg-k8s hostname=staging.example.com
 ```
 
@@ -199,6 +203,7 @@ juju config gopkg-k8s hostname=staging.example.com
 | Integrator `blocked`: "service-hostname is not set"                             | its config, not the app's     | `juju config nginx-ingress-integrator service-hostname=…`                                          |
 | Every URL answers 307 → `https://labix.org/gopkg.in`                            | ingress path rewrite          | `juju config nginx-ingress-integrator rewrite-enabled=false`                                       |
 | curl prints nothing but exit 0                                                  | body without trailing newline | add `-w '\n%{http_code}\n'`                                                                        |
+| COS charm `blocked`: "Kubernetes resources patch failed: Unauthorized"          | Juju/COS token race, no retry | `juju remove-application <app> --destroy-storage --force --no-prompt`, redeploy, re-integrate      |
 | `kubectl describe pod -n gopkg-k8s gopkg-k8s-0`                         | —                             | names the exact scheduling blocker                                                                 |
 
 ## Charmhub listing review

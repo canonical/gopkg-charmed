@@ -10,7 +10,7 @@ concurrency:
 jobs:
   lint:
     name: app/charm lint (ruff, mypy, codespell)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: app/charm
@@ -27,7 +27,7 @@ jobs:
 
   unit:
     name: app/charm unit tests (pytest)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: app/charm

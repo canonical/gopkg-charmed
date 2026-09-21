@@ -8,7 +8,8 @@ How gopkg.in serves stable import paths
 
 ``gopkg.in`` is the Go service that ``gopkg-k8s`` operates. This page
 describes what the service does for a Go program that imports a ``gopkg.in``
-path, why those paths still matter, and what the charm adds. The URL patterns
+path, why those paths still matter, what the charm adds, and how a deployment
+differs from the public service. The URL patterns
 and version rules of the service itself are documented upstream on the
 `gopkg.in page <https://labix.org/gopkg.in>`_, which a deployment's front
 page redirects to.
@@ -77,3 +78,27 @@ integrations. Two operational facts follow from the service's job:
 See :doc:`Juju, charms, and rocks <juju-charms-and-rocks>` for the packaging
 and orchestration concepts, and :doc:`Ingress <ingress>` for how requests
 reach the service from outside the cluster.
+
+How a deployment differs from gopkg.in
+--------------------------------------
+
+A deployment runs the same service as the public ``gopkg.in``, with the same
+URL patterns and version rules. It differs in how it is operated:
+
+- The workload serves plain HTTP only. The upstream ``-https``, ``-cert``,
+  ``-key``, and ``-acme`` options are gone, and TLS terminates at the ingress
+  instead; see :ref:`ingress`. The Go tool fetches ``gopkg.in`` paths over
+  HTTPS, so a deployment that serves real clients needs ingress with a
+  certificate for its hostname.
+- It is configured through the charm options in :ref:`charm-configuration`
+  rather than through command-line flags.
+- It keeps no persistent state. Its only cache, of GitHub references, is held
+  in memory for one minute in each unit, so nothing needs backing up and a
+  replaced unit starts empty.
+- It resolves packages hosted on GitHub only, as upstream does.
+- The charm and its ``app-image`` resource are published for AMD64; see
+  :ref:`platforms-and-prerequisites`.
+
+The charm also adds what upstream does not have: Prometheus metrics,
+structured JSON logs, a Grafana dashboard, and alert rules, all described in
+:ref:`integrations`.

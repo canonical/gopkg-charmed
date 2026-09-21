@@ -37,7 +37,18 @@ changes:
   - title: Built and published artifacts for AMD64 only
     author: minulo
     type: minor
-    description: The build plan listed an arm64 rock without the runner labels that would place it on an arm64 machine, so that job ran on an amd64 runner, built a second amd64 rock, and overwrote the amd64 image tag. No arm64 rock was ever produced. The build plan now declares amd64 alone, which halves the rock build and removes the race on the image tag. The rock and charm recipes still declare arm64, so building locally on an arm64 machine works as the guides describe.
+    description: The build plan listed an arm64 rock without the runner labels that would place it on an arm64 machine, so that job ran on an amd64 runner, built a second amd64 rock, and overwrote the amd64 image tag. No arm64 rock was ever produced. The build plan now declares amd64 alone, which halves the rock build and removes the race on the image tag. The rock and charm recipes declare amd64 alone as well; to build locally on an arm64 machine, uncomment arm64 under platforms in both recipes, as the tutorial and the platforms reference now say.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/35"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false
+  - title: Prepared the charm's metadata and documentation for the Charmhub listing review
+    author: minulo
+    type: minor
+    description: The charm's links now include a website and give the source and issues links as single URLs, which is the form the Charmhub listing review checks. The explanation of the gopkg.in service gained a section on how a deployment differs from the public service, covering TLS termination at the ingress, configuration through charm options, the in-memory references cache, and the published architecture. The tutorial now says how to deploy the published charm from Charmhub instead of building it. The traffic loop in the observability guide now ends by itself with a success status, so the commands after it run.
     urls:
       pr:
         - "https://github.com/canonical/gopkg-charmed/pull/35"

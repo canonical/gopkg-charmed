@@ -24,6 +24,13 @@ Along the way, you will have a running ``gopkg-k8s`` application in a
 Juju model, an ingress relation for external routing, and a verified
 health endpoint and go-import metadata endpoint.
 
+The tutorial builds the rock and the charm from source. ``gopkg-k8s`` is also
+published on `Charmhub <https://charmhub.io/gopkg-k8s>`_ for AMD64: to use
+the published charm, skip steps 1 and 2 and, in step 3, deploy it with
+``juju deploy gopkg-k8s --channel latest/edge`` instead of the local file.
+Charmhub supplies the ``app-image`` resource, so that command takes no
+``--resource`` option.
+
 Prerequisites
 -------------
 
@@ -31,6 +38,10 @@ You need a workstation with AMD64 or ARM64 architecture and the environment
 from :ref:`set-up-a-local-linux-environment`. After following that guide,
 you'll have an Ubuntu environment with the repository and the required tools,
 and your user will belong to the MicroK8s group.
+
+The build recipes declare AMD64 only. On ARM64, uncomment ``arm64`` under
+``platforms`` in ``app/rockcraft.yaml`` and ``app/charm/charmcraft.yaml``
+before you build.
 
 Enter the repository root before continuing:
 

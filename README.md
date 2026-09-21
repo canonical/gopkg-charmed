@@ -209,7 +209,8 @@ juju config gopkg-k8s hostname=staging.example.com
 ## Charmhub listing review
 
 `gopkg-k8s` is published on [Charmhub](https://charmhub.io/gopkg-k8s)
-but not yet *listed* (it does not appear in searches). Listing requires a
+for AMD64; deploy it with `juju deploy gopkg-k8s --channel latest/edge`. It
+is not yet *listed* (it does not appear in searches). Listing requires a
 lightweight review, requested as a
 [listing request issue](https://github.com/canonical/charmhub-listing-review/issues/new?template=listing-request.yml)
 in `canonical/charmhub-listing-review`. The criteria are the

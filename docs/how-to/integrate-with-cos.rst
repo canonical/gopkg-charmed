@@ -107,16 +107,15 @@ early with Ctrl-C:
 .. code-block:: bash
 
    export INGRESS_HOST=gopkg.example.com
-   timeout 120 bash -c '
-     while true; do
-       for path in /yaml.v2 "/yaml.v2?go-get=1" /mgo.v2 /check.v1 \
-           /does-not-exist.v9 /health-check; do
-         curl --silent --output /dev/null "http://${INGRESS_HOST}${path}" \
-           --resolve "${INGRESS_HOST}:80:127.0.0.1"
-       done
-       sleep 1
+   SECONDS=0
+   while [ "${SECONDS}" -lt 120 ]; do
+     for path in /yaml.v2 "/yaml.v2?go-get=1" /mgo.v2 /check.v1 \
+         /does-not-exist.v9 /health-check; do
+       curl --silent --output /dev/null "http://${INGRESS_HOST}${path}" \
+         --resolve "${INGRESS_HOST}:80:127.0.0.1"
      done
-   '
+     sleep 1
+   done
 
 Package requests make the service look up references on GitHub, so the
 loop also exercises the upstream and cache panels.

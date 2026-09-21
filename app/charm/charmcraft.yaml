@@ -36,10 +36,11 @@ description: |
   workload with Juju-native configuration and integrations.
 
 links:
-  source:
-    - https://github.com/canonical/gopkg-charmed
-  issues:
-    - https://github.com/canonical/gopkg-charmed/issues
+  # One URL each, as plain strings: the Charmhub listing review reads every
+  # value here as a single URL and reports a list as unreachable.
+  source: https://github.com/canonical/gopkg-charmed
+  issues: https://github.com/canonical/gopkg-charmed/issues
+  website: https://gopkg.in
   # Point at the published documentation once it is publicly reachable.
   documentation: https://github.com/canonical/gopkg-charmed#readme
   contact:

@@ -39,10 +39,6 @@ from :ref:`set-up-a-local-linux-environment`. After following that guide,
 you'll have an Ubuntu environment with the repository and the required tools,
 and your user will belong to the MicroK8s group.
 
-The build recipes declare AMD64 only. On ARM64, uncomment ``arm64`` under
-``platforms`` in ``app/rockcraft.yaml`` and ``app/charm/charmcraft.yaml``
-before you build.
-
 Enter the repository root before continuing:
 
 .. code-block:: bash

@@ -16,13 +16,13 @@ title: gopkg.in - a 12-Factor Application
 # the platforms this charm should be built on and run on.
 # you can check your architecture with `dpkg --print-architecture`
 #
-# amd64 only: the published charm and its app-image resource are amd64, and the
-# observability charms it integrates with are published for amd64 only. Building
-# on another architecture fails with "No build matches the current execution
-# environment" - add that architecture here to build locally.
+# Both architectures build locally. The published charm and its app-image
+# resource are amd64 only: the build plan in artifacts.yaml decides that, not
+# this list. Building on an architecture missing here fails with "No build
+# matches the current execution environment".
 platforms:
   amd64:
-  # arm64:
+  arm64:
   # ppc64el:
   # s390x:
 

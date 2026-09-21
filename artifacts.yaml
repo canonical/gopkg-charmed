@@ -4,10 +4,10 @@ version: 1
 rocks:
   - name: gopkg
     rockcraft-yaml: app/rockcraft.yaml
-    # amd64 only, matching app/rockcraft.yaml and the charm. An arm64 entry
-    # would also need `runner:` with arm64 labels; without it opcli puts the
-    # job on an amd64 runner, where rockcraft builds an amd64 rock and
-    # overwrites the amd64 tag.
+    # amd64 only. app/rockcraft.yaml also declares arm64, for local builds.
+    # An arm64 entry here would also need `runner:` with arm64 labels; without
+    # it opcli puts the job on an amd64 runner, where rockcraft builds an amd64
+    # rock and overwrites the amd64 tag.
     platforms:
       - arch: amd64
 charms:

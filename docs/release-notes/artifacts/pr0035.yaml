@@ -48,7 +48,7 @@ changes:
   - title: Prepared the charm's metadata and documentation for the Charmhub listing review
     author: minulo
     type: minor
-    description: The charm's links now include a website and give the source and issues links as single URLs, which is the form the Charmhub listing review checks. The explanation of the gopkg.in service gained a section on how a deployment differs from the public service, covering TLS termination at the ingress, configuration through charm options, the in-memory references cache, and the published architecture. The tutorial now says how to deploy the published charm from Charmhub instead of building it. The traffic loop in the observability guide now ends by itself with a success status, so the commands after it run.
+    description: The charm's links now include a website and give the source and issues links as single URLs, which is the form the Charmhub listing review checks. The explanation of the gopkg.in service gained a section on how a deployment differs from the public service, covering TLS termination at the ingress, configuration through charm options, the in-memory references cache, and the published architecture. The tutorial now says how to deploy the published charm from Charmhub instead of building it. The traffic loop in the observability guide now ends by itself with a success status, so the commands after it run. The charm now carries a README, so its Charmhub page describes what it does, how to deploy and integrate it, and where the documentation is; the repository README was rewritten to point at the charm README and the documentation instead of repeating them.
     urls:
       pr:
         - "https://github.com/canonical/gopkg-charmed/pull/35"

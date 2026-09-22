@@ -163,3 +163,52 @@ tox -e lint,unit,static
 cd ../..
 app/charm/tests/integration/run_full_local_suite.sh
 ```
+
+## Charmhub listing review
+
+`gopkg-k8s` is published on [Charmhub](https://charmhub.io/gopkg-k8s)
+but not yet *listed* (it does not appear in searches). Listing requires a
+lightweight review, requested as a
+[listing request issue](https://github.com/canonical/charmhub-listing-review/issues/new?template=listing-request.yml)
+in `canonical/charmhub-listing-review`. The criteria are the
+[Charmhub public listing requirements](https://canonical.com/juju/docs/ops/latest/howto/make-your-charm-discoverable/)
+from the Ops documentation; the original
+[Reviewing charms](https://discourse.charmhub.io/t/reviewing-charms/11698)
+Discourse post describes the same prerequisites in their earlier form. One
+issue covers exactly one charm, and the review runs against `main`.
+
+### Review prerequisites and where they live
+
+| Prerequisite | In this repository |
+| --- | --- |
+| Charm name and store page | `gopkg-k8s` on [charmhub.io/gopkg-k8s](https://charmhub.io/gopkg-k8s); metadata, links and icon in [app/charm/charmcraft.yaml](app/charm/charmcraft.yaml) and [app/charm/icon.svg](app/charm/icon.svg). Publisher: Platform Engineering (Canonical). |
+| Source repository | [github.com/canonical/gopkg-charmed](https://github.com/canonical/gopkg-charmed); the charm directory is `app/charm`. |
+| Demo or tutorial | [Deploy and verify on Kubernetes](docs/tutorials/deploy-and-verify-on-kubernetes.rst), executed in CI by [documentation-tests.yml](.github/workflows/documentation-tests.yml). |
+| Coding conventions in CI | [test.yaml](.github/workflows/test.yaml) (ruff, mypy, codespell, pytest via [app/charm/tox.ini](app/charm/tox.ini)), [go-tests.yaml](.github/workflows/go-tests.yaml) (gofmt, vet, race tests), [.pre-commit-config.yaml](.pre-commit-config.yaml) (docs). |
+| Unit tests | Charm: [app/charm/tests/unit](app/charm/tests/unit), run by `tox -e unit`. Service: `app/*_test.go`, run by `go test -race`. Results: [Charm CI runs](https://github.com/canonical/gopkg-charmed/actions/workflows/test.yaml), [Go test runs](https://github.com/canonical/gopkg-charmed/actions/workflows/go-tests.yaml). |
+| Installation and integration tests | [app/charm/tests/integration](app/charm/tests/integration), run through [integration-test.yaml](.github/workflows/integration-test.yaml) (charm-ci, spread) on every pull request, every push to `main`, and weekly. `test_charm.py` deploys the charm to `active` and checks the health endpoint; `test_integrations.py` integrates each endpoint (`ingress`, `logging`, `metrics-endpoint`, `grafana-dashboard`) with a published counterpart. Results: [Integration Tests runs](https://github.com/canonical/gopkg-charmed/actions/workflows/integration-test.yaml). |
+| Release automation to an unstable channel | [publish_charm.yaml](.github/workflows/publish_charm.yaml), calling charm-ci `publish-artifacts.yml` on every push to `main`; the channel comes from [artifacts.yaml](artifacts.yaml) (`latest/edge`). Results: [Publish charm runs](https://github.com/canonical/gopkg-charmed/actions/workflows/publish_charm.yaml). |
+| Usage documentation | [docs/](docs/): tutorial, how-to guides, reference and explanation, built with Sphinx ([.readthedocs.yaml](.readthedocs.yaml)) and published at [canonical-gopkg-charm.readthedocs-hosted.com](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/), which requires a Canonical login until the documentation moves to `canonical.com/juju/docs/gopkg-charm/`. |
+| Contribution documentation | [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/contribute/](docs/contribute/). |
+| Licence statement | [LICENSE](LICENSE) (BSD-2-Clause, upstream gopkg.in notice retained) and [app/charm/LICENSE](app/charm/LICENSE). |
+| Security statement | [SECURITY.md](SECURITY.md). |
+| Dependency pinning and updates | Runtime dependencies and `requires-python` in [app/charm/pyproject.toml](app/charm/pyproject.toml), resolved to exact versions in [app/charm/uv.lock](app/charm/uv.lock); [app/charm/requirements.txt](app/charm/requirements.txt) mirrors the list for the charm build. Automated updates via [renovate.json](renovate.json). |
+| Workload | Built from [app/](app/) with [app/rockcraft.yaml](app/rockcraft.yaml) and attached to the charm as the `app-image` OCI resource. |
+
+### Self-check before requesting a review
+
+The review automation checks part of the list itself. Run the same checks
+locally from the repository root:
+
+```bash
+uvx --from git+https://github.com/canonical/charmhub-listing-review self-review \
+  --charm-name gopkg-k8s \
+  --repository https://github.com/canonical/gopkg-charmed \
+  --charm-dir app/charm \
+  --ci-linting-url https://github.com/canonical/gopkg-charmed/blob/main/.github/workflows/test.yaml
+```
+
+Items the tool reports as needing manual review are checked by the reviewer
+on the issue. The licence check only recognises a few licence texts by hash,
+so it does not tick BSD-2-Clause automatically; point the reviewer at
+`LICENSE`.

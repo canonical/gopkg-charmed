@@ -1,49 +1,62 @@
-# gopkg.in — Stable APIs for the Go language
+[![CharmHub Badge](https://charmhub.io/gopkg-k8s/badge.svg)](https://charmhub.io/gopkg-k8s)
+[![Charm CI](https://github.com/canonical/gopkg-charmed/actions/workflows/test.yaml/badge.svg)](https://github.com/canonical/gopkg-charmed/actions/workflows/test.yaml)
+[![Go tests](https://github.com/canonical/gopkg-charmed/actions/workflows/go-tests.yaml/badge.svg)](https://github.com/canonical/gopkg-charmed/actions/workflows/go-tests.yaml)
+[![Integration Tests](https://github.com/canonical/gopkg-charmed/actions/workflows/integration-test.yaml/badge.svg)](https://github.com/canonical/gopkg-charmed/actions/workflows/integration-test.yaml)
+[![Documentation tests](https://github.com/canonical/gopkg-charmed/actions/workflows/documentation-tests.yml/badge.svg)](https://github.com/canonical/gopkg-charmed/actions/workflows/documentation-tests.yml)
 
-See [http://gopkg.in](http://gopkg.in).
+# gopkg-k8s
 
-## About this repository
+The gopkg.in service and the Juju charm that operates it on Kubernetes, in one
+repository. gopkg.in gives Go programs stable, major-version-specific import
+paths such as `gopkg.in/yaml.v2`; the source was imported from
+[niemeyer/gopkg](https://github.com/niemeyer/gopkg) and is maintained here.
 
-This repository hosts the source of the gopkg.in service, imported as a
-snapshot from [niemeyer/gopkg](https://github.com/niemeyer/gopkg), and is
-the operated source of truth for the service going forward.
+Like any Juju charm, `gopkg-k8s` supports one-line deployment, configuration,
+integration, scaling, and more. For gopkg-k8s, this includes:
+
+* Serving `go-import` metadata and package pages under the hostname you
+  configure
+* Ingress integration for external HTTP access
+* Observability integrations: Prometheus metrics, Loki logs, a Grafana
+  dashboard, and alert rules
+
+For information about how to deploy, integrate, and manage the charm, see the
+official [gopkg-k8s documentation](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/)
+and the [charm's README](app/charm/README.md), which is what
+[Charmhub](https://charmhub.io/gopkg-k8s) shows.
 
 ## Repository layout
 
-The service is scoped to the [app/](app/) folder, which is the permanent Go
-project root and the home of the entire 12-factor pipeline: the Go source and
-`go.mod` live there, alongside the rock (`app/rockcraft.yaml`) and charm
-(`app/charm/`) — both built with the 12-factor `go-framework` extensions for
-Rockcraft and Charmcraft.
+| Path | Contents |
+| --- | --- |
+| [app/](app/) | The Go service: source, `go.mod`, and tests. Also the 12-factor pipeline: [app/rockcraft.yaml](app/rockcraft.yaml) builds the rock (OCI image) with Rockcraft's Go framework extension. |
+| [app/charm/](app/charm/) | The `gopkg-k8s` charm, built with Charmcraft's Go framework extension: [charmcraft.yaml](app/charm/charmcraft.yaml), source, unit and integration tests. |
+| [docs/](docs/) | The documentation (Sphinx, Diátaxis): tutorial, how-to guides, reference, explanation, and release notes. |
+| [terraform/](terraform/) | Terraform modules for deploying the charm with the Juju provider. |
+| [tests/spread/documentation/](tests/spread/documentation/) | Spread tasks that execute the documentation's commands on a bare system. |
+| [.github/workflows/](.github/workflows/) | CI: lint and unit tests, Go tests, integration tests, documentation tests, and publication to Charmhub. |
 
-The repository root is deliberately reserved for sibling concerns that need
-separation from the app: `docs/` (release-notes tooling, existing), and in
-the future `terraform/` (deployment module) and `tests/` (integration
-tests).
+## Get started
 
-## Quickstart: run locally
+### Deploy the charm
 
-### Prerequisites
-
-The app itself needs only a **Go toolchain ≥ 1.21** (see `app/go.mod`):
+With a Juju 3.6 controller on a Kubernetes cloud:
 
 ```bash
-# macOS
-brew install go
-# Ubuntu/Debian
-sudo snap install go --classic
-# verify
-go version
+juju add-model gopkg-k8s
+juju deploy gopkg-k8s --channel latest/edge
 ```
 
-Go downloads and verifies the module dependencies automatically on the
-first build (from `go.mod`/`go.sum`; network access required once — they
-are cached afterwards). Nothing else is needed: no database, no config
-files. Running the charm test suites needs Python 3.12 and
-[tox](https://tox.wiki) (`pipx install tox`), and deploying needs the
-tooling in the next section — neither is required just to run the app.
+The [charm's README](app/charm/README.md) continues with ingress and the
+hostname, and the
+[tutorial](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/tutorials/deploy-and-verify-on-kubernetes/)
+walks through the same deployment from source on MicroK8s, including building
+the rock and the charm.
 
-### Build, test, run
+### Run the service locally
+
+The service needs only a Go toolchain (1.21 or later, see
+[app/go.mod](app/go.mod)). Configuration comes from the environment:
 
 ```bash
 cd app
@@ -53,147 +66,65 @@ APP_PORT=8080 APP_HOSTNAME=localhost ./gopkg
 curl localhost:8080/health-check        # -> ok
 ```
 
-Config comes from the environment (`APP_PORT`, `APP_HOSTNAME`); explicit flags
-(`-http`, `-hostname`) override it. Invalid values fail at startup with a
-one-line error. TLS is not handled in-app — ingress terminates it.
+`APP_PORT` and `APP_HOSTNAME` are the settings the charm passes to the
+workload; the `-http` and `-hostname` flags override them. Invalid values fail
+at startup with a one-line error. TLS is not handled in the service: ingress
+terminates it. Prometheus metrics are served at `APP_METRICS_PATH` (default
+`/metrics`) on the application port, or on `APP_METRICS_PORT` when it is set;
+logs are JSON lines on standard output.
 
-## Deploying as a 12-factor charm
+### Build and test
 
-End-to-end: build the rock (OCI image) and charm from this repository and
-deploy them to a local MicroK8s cloud with Juju. Written for a macOS host
-using Multipass; on a Linux amd64 host, skip step 0 and read `arm64` as
-`amd64` throughout.
+[CONTRIBUTING.md](CONTRIBUTING.md) lists the checks every change runs, and the
+documentation's contribution guides cover
+[the code](docs/contribute/improve-code.rst) and
+[the documentation](docs/contribute/improve-documentation.rst) step by step.
 
-### 0. VM setup (macOS host)
+## Terraform module
 
-Rockcraft and Charmcraft are Linux snaps — use a Multipass VM and **mount** the
-repo into it (no GitHub auth needed in the VM; build artifacts land back on the
-host):
+A reusable [Terraform](https://developer.hashicorp.com/terraform) module for
+deploying the charm with the
+[Juju Terraform provider](https://registry.terraform.io/providers/juju/juju/latest/docs)
+is in [terraform/](terraform/README.md) (application only) and
+[terraform/product/](terraform/product/README.md) (model, application,
+ingress, and observability wiring).
 
-```bash
-multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
-multipass mount /path/to/gopkg-charmed charm-dev:/home/ubuntu/gopkg-charmed
-multipass shell charm-dev
-```
+## Documentation
 
-Notes:
+The documentation is in [docs/](docs/), based on the Canonical starter pack
+and published on Read the Docs at
+[canonical-gopkg-charm.readthedocs-hosted.com](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/),
+which requires a Canonical login until the documentation moves to
+`canonical.com/juju/docs/gopkg-charm/`. It follows the
+[Diátaxis](https://diataxis.fr/) approach.
 
-- 8G memory recommended: with 4G, the Juju controller plus two charms can leave
-  the scheduler refusing pods (`Pending`, "Insufficient memory").
-- Mount under `/home/ubuntu/` — snap-confined tools may not read paths outside
-  `/home`.
-- On Apple Silicon the VM (and everything built in it) is **arm64**. Rocks and
-  charms built here run in the VM's MicroK8s; an amd64 target needs an amd64
-  build host or CI.
-
-### 1. One-time toolchain setup (inside the VM)
-
-```bash
-sudo snap install curl
-sudo snap install lxd
-sudo snap install rockcraft --classic
-sudo snap install charmcraft --classic
-sudo snap install juju --channel 3/stable
-sudo snap install microk8s --channel 1.36-strict/stable
-lxd init --auto        # rockcraft/charmcraft build inside LXD; init is required once
-sudo adduser $USER snap_microk8s
-exit                   # re-enter with `multipass shell charm-dev` to pick up the group
-```
-
-> Do **not** chain `newgrp` with further pasted commands — it starts a new
-> shell and swallows every line after it. Log out and back in instead, then:
+To preview it locally before submitting changes:
 
 ```bash
-microk8s status --wait-ready
-sudo microk8s enable dns hostpath-storage registry ingress
-microk8s status --wait-ready
-mkdir -p ~/.local/share
-juju bootstrap microk8s dev
+cd docs
+make run
 ```
 
-### 2. Build and push the rock
-
-`app/rockcraft.yaml` is committed. Check that `platforms:` matches the build
-machine (`dpkg --print-architecture`), then:
+GitHub runs automatic checks on the documentation for spelling, links, and
+inclusive language, and executes the tutorial and how-to guides on a fresh
+system. Run the static checks locally with:
 
 ```bash
-cd ~/gopkg-charmed/app
-ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
-rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false \
-  --dest-no-creds \
-  oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
-  docker://localhost:32000/gopkg:0.1
+make spelling
+make linkcheck
+make woke
+make lint-md
 ```
 
-The first pack takes several minutes (downloads the build base into LXD);
-subsequent packs are fast. Verify the push from the same VM shell:
-`curl http://localhost:32000/v2/gopkg/tags/list`.
+## Project and community
 
-### 3. Build the charm
+* [Issues](https://github.com/canonical/gopkg-charmed/issues)
+* [Contributing](CONTRIBUTING.md)
+* [Security policy](SECURITY.md)
+* [Matrix](https://matrix.to/#/#charmhub-charmdev:ubuntu.com)
 
-`app/charm/` is committed (including vendored `lib/charms/*` — that is the
-charm-ecosystem convention). Check `platforms:` in `charmcraft.yaml` matches
-the build machine (a mismatch fails with "No build matches the current
-execution environment"), then:
+## Licensing and trademark
 
-```bash
-cd ~/gopkg-charmed/app/charm
-CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
-```
-
-### 4. Deploy
-
-```bash
-juju add-model gopkg-charmed
-juju set-model-constraints arch=$(dpkg --print-architecture)
-# ^ REQUIRED: without it Juju defaults pods to an amd64 nodeSelector, which can
-#   never schedule on an arm64 node — pods stay Pending with no events.
-#   Constraints bind at deploy time; set them BEFORE deploying.
-
-juju deploy ./gopkg-charmed_*.charm gopkg-charmed --resource app-image=localhost:32000/gopkg:0.1
-juju deploy nginx-ingress-integrator --channel=latest/stable --trust
-juju integrate nginx-ingress-integrator gopkg-charmed
-
-# rewrite-enabled=false is CRITICAL: the default rewrites every request path
-# to "/", so the app answers its root redirect (307) for every URL.
-juju config nginx-ingress-integrator \
-  service-hostname=gopkg.example.com path-routes=/ rewrite-enabled=false
-
-juju status --watch 2s    # first deploy: 5-15 min to active/idle is normal
-```
-
-Two hostname settings exist — do not conflate them:
-
-- `nginx-ingress-integrator service-hostname` — which `Host:` the ingress
-  **routes** to the app.
-- `gopkg-charmed hostname` (→ `APP_HOSTNAME`) — what the app **renders** in pages and
-  `go-import` meta tags.
-
-### 5. Verify
-
-```bash
-curl -sw '\nHTTP %{http_code}\n' http://gopkg.example.com/health-check \
-  --resolve gopkg.example.com:80:127.0.0.1
-# expect: ok / HTTP 200   (note: the body is "ok" with no trailing newline —
-# without -w it can vanish against the shell prompt)
-
-curl -s "http://gopkg.example.com/yaml.v2?go-get=1" \
-  --resolve gopkg.example.com:80:127.0.0.1
-# expect: HTML containing the go-import meta tag
-
-# Config change without rebuild (delivered as APP_HOSTNAME):
-juju config gopkg-charmed hostname=staging.example.com
-```
-
-### Troubleshooting
-
-| Symptom                                                                         | Cause                         | Fix                                                                                                |
-| ------------------------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
-| `rockcraft pack`: "LXD has not been properly initialized"                       | LXD never initialized         | `lxd init --auto`                                                                                  |
-| `charmcraft pack`: "No build matches the current execution environment"         | `platforms:` ≠ build arch     | set `platforms:` to `dpkg --print-architecture`                                                    |
-| Pods `Pending`, `describe pod` shows `Node-Selectors: kubernetes.io/arch=amd64` | model constraints unset       | `juju set-model-constraints arch=…`, remove and redeploy apps                                      |
-| Pods `Pending`, "Insufficient memory"                                           | VM too small                  | `multipass stop charm-dev && multipass set local.charm-dev.memory=8G && multipass start charm-dev` |
-| Integrator `blocked`: "service-hostname is not set"                             | its config, not the app's     | `juju config nginx-ingress-integrator service-hostname=…`                                          |
-| Every URL answers 307 → `https://labix.org/gopkg.in`                            | ingress path rewrite          | `juju config nginx-ingress-integrator rewrite-enabled=false`                                       |
-| curl prints nothing but exit 0                                                  | body without trailing newline | add `-w '\n%{http_code}\n'`                                                                        |
-| `kubectl describe pod -n gopkg-charmed gopkg-charmed-0`                         | —                             | names the exact scheduling blocker                                                                 |
+The charm and the gopkg.in service are distributed under the
+[BSD-2-Clause licence](LICENSE). gopkg.in was created by Gustavo Niemeyer,
+whose copyright notice is retained.

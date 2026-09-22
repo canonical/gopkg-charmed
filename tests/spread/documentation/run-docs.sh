@@ -31,6 +31,10 @@ diagnose() {
   df -h / || true
   free -m || true
   snap list || true
+  if command -v juju > /dev/null 2>&1; then
+    # The guides run Juju as ubuntu, whose client store holds the controller.
+    runuser -l ubuntu -c 'juju status --relations' || true
+  fi
   if command -v microk8s > /dev/null 2>&1; then
     microk8s kubectl get nodes -o wide || true
     microk8s kubectl describe nodes | sed -n '/Conditions:/,/Events:/p' || true

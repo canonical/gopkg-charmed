@@ -1,12 +1,12 @@
 .. _ingress:
 
 .. meta::
-  :description: Understand how ingress routes external requests to gopkg-charmed on Kubernetes and how DNS, Services, and TLS fit together.
+  :description: Understand how ingress routes external requests to gopkg-k8s on Kubernetes and how DNS, Services, and TLS fit together.
 
 Ingress
 =======
 
-``gopkg-charmed`` runs inside Kubernetes. By default, its service is reachable
+``gopkg-k8s`` runs inside Kubernetes. By default, its service is reachable
 only by other workloads in the cluster. Ingress provides a controlled route
 from an external hostname, such as ``gopkg.example.com``, to that internal
 service.
@@ -33,7 +33,7 @@ the routing rules, and an `ingress controller
 implements them by forwarding matching requests to a Service; the Kubernetes
 documentation describes both. In this deployment:
 
-- ``gopkg-charmed`` runs the ``gopkg.in`` workload. The Go framework
+- ``gopkg-k8s`` runs the ``gopkg.in`` workload. The Go framework
   extension creates the Kubernetes Service and provides the relation data
   needed to expose it.
 - The `nginx-ingress-integrator
@@ -48,8 +48,8 @@ documentation describes both. In this deployment:
 How Juju connects the applications
 ----------------------------------
 
-Running ``juju integrate nginx-ingress-integrator gopkg-charmed`` creates a
-Juju integration through which ``gopkg-charmed`` supplies its Service name,
+Running ``juju integrate nginx-ingress-integrator gopkg-k8s`` creates a
+Juju integration through which ``gopkg-k8s`` supplies its Service name,
 namespace, and port. The integrator combines that information with its own
 configuration to create the Ingress resource, and Juju keeps it up to date
 when either application changes. The tutorial deploys both applications in
@@ -80,7 +80,7 @@ This deployment has two independent hostname settings:
   Set in ``nginx-ingress-integrator``. Controls which incoming HTTP hostname routes to the application.
 
 ``hostname``
-  Set in ``gopkg-charmed``. Becomes ``APP_HOSTNAME`` inside the workload. It controls the hostname shown
+  Set in ``gopkg-k8s``. Becomes ``APP_HOSTNAME`` inside the workload. It controls the hostname shown
   in package links and ``go-import`` metadata.
 
 For a normal deployment, both are set to the public hostname. They can differ

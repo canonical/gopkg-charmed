@@ -1,14 +1,15 @@
 .. _gopkg-service:
 
 .. meta::
-   :description: Understand what the gopkg.in service operated by gopkg-charmed does for Go programs, why its import paths still matter, and what the charm adds.
+   :description: Understand what the gopkg.in service operated by gopkg-k8s does for Go programs, why its import paths still matter, and what the charm adds.
 
 How gopkg.in serves stable import paths
 =======================================
 
-``gopkg.in`` is the Go service that ``gopkg-charmed`` operates. This page
+``gopkg.in`` is the Go service that ``gopkg-k8s`` operates. This page
 describes what the service does for a Go program that imports a ``gopkg.in``
-path, why those paths still matter, and what the charm adds. The URL patterns
+path, why those paths still matter, what the charm adds, and how a deployment
+differs from the public service. The URL patterns
 and version rules of the service itself are documented upstream on the
 `gopkg.in page <https://labix.org/gopkg.in>`_, which a deployment's front
 page redirects to.
@@ -27,7 +28,7 @@ module paths themselves; see `Module version numbering
 Go modules do not remove import paths already published in source code and
 ``go.mod`` files. Those paths are part of a package's identity, so existing
 applications and libraries still need ``gopkg.in`` to resolve them to the
-right repository and version. ``gopkg-charmed`` keeps that contract
+right repository and version. ``gopkg-k8s`` keeps that contract
 available; the service is not a second package manager and does not replace
 Go's module tooling.
 
@@ -62,7 +63,7 @@ clients perform the download.
 What the charm adds
 -------------------
 
-``gopkg-charmed`` is the operational layer of the HTTP application:
+``gopkg-k8s`` is the operational layer of the HTTP application:
 the service is packaged as a rock, Juju deploys the
 charm on Kubernetes, and the charm manages the workload's configuration and
 integrations. Two operational facts follow from the service's job:
@@ -77,3 +78,27 @@ integrations. Two operational facts follow from the service's job:
 See :doc:`Juju, charms, and rocks <juju-charms-and-rocks>` for the packaging
 and orchestration concepts, and :doc:`Ingress <ingress>` for how requests
 reach the service from outside the cluster.
+
+How a deployment differs from gopkg.in
+--------------------------------------
+
+A deployment runs the same service as the public ``gopkg.in``, with the same
+URL patterns and version rules. It differs in how it is operated:
+
+- The workload serves plain HTTP only. The upstream ``-https``, ``-cert``,
+  ``-key``, and ``-acme`` options are gone, and TLS terminates at the ingress
+  instead; see :ref:`ingress`. The Go tool fetches ``gopkg.in`` paths over
+  HTTPS, so a deployment that serves real clients needs ingress with a
+  certificate for its hostname.
+- It is configured through the charm options in :ref:`charm-configuration`
+  rather than through command-line flags.
+- It keeps no persistent state. Its only cache, of GitHub references, is held
+  in memory for one minute in each unit, so nothing needs backing up and a
+  replaced unit starts empty.
+- It resolves packages hosted on GitHub only, as upstream does.
+- The charm and its ``app-image`` resource are published for AMD64; see
+  :ref:`platforms-and-prerequisites`.
+
+The charm also adds what upstream does not have: Prometheus metrics,
+structured JSON logs, a Grafana dashboard, and alert rules, all described in
+:ref:`integrations`.

@@ -1,0 +1,52 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# Publish the charm and its rock to Charmhub.
+#
+# Delegates to charm-ci's publish-artifacts.yml. That workflow looks up the
+# last successful "Integration Tests" run for the exact tree being published,
+# downloads the charm and rock that run built and tested, uploads the rock as
+# the app-image resource, and releases the charm to the channel declared per
+# charm in artifacts.yaml (latest/edge). It also tags the commit
+# (<charm>-rev<revision>) and opens a GitHub release for the run.
+#
+# Runs on every push to main, so each merge reaches the unstable channel
+# without manual steps. If it fails with "No successful integration-test run
+# found", the merge commit's tree has not been tested yet (a squash merge of
+# a branch that was behind main): wait for the push-triggered Integration
+# Tests run on main to pass, then re-run this workflow. Use workflow_dispatch
+# to publish to another channel, for example to promote to latest/stable.
+#
+# Deliberately no `concurrency:` group: GitHub keeps at most one pending run
+# per group and cancels the earlier one, which would silently drop a publish.
+
+name: Publish charm
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Charmhub channel (default: the per-charm channel in artifacts.yaml)"
+        required: false
+        type: string
+      dry-run:
+        description: "Validate the artifacts without uploading to Charmhub"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    name: Publish to Charmhub
+    uses: canonical/charm-ci/.github/workflows/publish-artifacts.yml@0eef5b8cbef3ee74907850f790cab64bcf0499e5 # v1.0.0
+    permissions:
+      contents: write
+      actions: read
+    with:
+      channel: ${{ inputs.channel }}
+      dry-run: ${{ inputs.dry-run || false }}
+      integration-workflow-name: integration-test.yaml
+    secrets: inherit

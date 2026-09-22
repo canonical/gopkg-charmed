@@ -1,12 +1,12 @@
 .. _release_notes_index:
 
 .. meta::
-	:description: Review user-visible changes, compatibility notes, and operational updates for gopkg-charmed releases.
+	:description: Review user-visible changes, compatibility notes, and operational updates for gopkg-k8s releases.
 
 Release notes
 =============
 
-Release notes for ``gopkg-charmed`` summarize user-visible changes,
+Release notes for ``gopkg-k8s`` summarize user-visible changes,
 compatibility notes, and operational updates.
 
 Release policy and schedule
@@ -18,7 +18,7 @@ for release.
 Releases
 --------
 
-* :ref:`gopkg-charmed release notes - initial documentation baseline <release_notes_release_notes_0001>`
+* :ref:`gopkg-k8s release notes - initial documentation baseline <release_notes_release_notes_0001>`
 
 .. toctree::
 	:hidden:

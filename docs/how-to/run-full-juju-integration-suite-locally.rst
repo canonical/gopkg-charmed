@@ -2,7 +2,7 @@
 .. _full-integration-suite-local:
 
 .. meta::
-   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-charmed integration suite locally.
+   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-k8s integration suite locally.
 
 How to run the full Juju integration suite locally
 ==================================================
@@ -28,6 +28,13 @@ this guide needs:
 
 The suite requires Linux; on macOS or Windows, run it inside a
 Multipass VM.
+
+Besides the charm itself, the suite deploys ``nginx-ingress-integrator``,
+``loki-k8s``, ``prometheus-k8s``, and ``grafana-k8s`` from Charmhub, so the
+machine needs internet access and the memory recommended in the setup guide.
+The three observability charms are published for amd64 only; on an arm64
+host, such as an Apple Silicon VM, their tests are skipped and the rest of
+the suite runs.
 
 Run the full suite
 ------------------
@@ -87,6 +94,6 @@ Run the integration tests against the charm and image you just built:
 
 .. code-block:: bash
 
-   CHARM_FILE=$(ls -1 gopkg-charmed_*.charm | head -n1)
+   CHARM_FILE=$(ls -1 gopkg-k8s_*.charm | head -n1)
    CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
      tox --workdir ~/.cache/gopkg-charm-tox -e integration

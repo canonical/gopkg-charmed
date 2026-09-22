@@ -59,7 +59,7 @@ Pods stay Pending
 -----------------
 
 **Symptom:** ``juju status`` never reports the unit as ``active``, and
-``microk8s kubectl get pods -n gopkg-charmed`` shows its pod as ``Pending``.
+``microk8s kubectl get pods -n gopkg-k8s`` shows its pod as ``Pending``.
 
 **Cause:** either the model has no architecture constraint, so Juju schedules
 for AMD64 on an ARM64 node, or the machine has too little memory. 4 GB of
@@ -70,7 +70,7 @@ charm workloads.
 
 .. code-block:: bash
 
-   microk8s kubectl describe pod -n gopkg-charmed gopkg-charmed-0
+   microk8s kubectl describe pod -n gopkg-k8s gopkg-k8s-0
 
 For an architecture mismatch, set the constraint before deploying:
 
@@ -123,7 +123,7 @@ Ingress relation blocked on hostname
 ``service-hostname`` is not set.
 
 **Cause:** the integrator has no hostname to route, or the integration with
-``gopkg-charmed`` is missing.
+``gopkg-k8s`` is missing.
 
 **Fix:** set the hostname and confirm the integration exists:
 
@@ -135,7 +135,7 @@ Ingress relation blocked on hostname
 Requests reach the wrong application
 ------------------------------------
 
-**Symptom:** a request for the ``gopkg-charmed`` hostname is answered by another
+**Symptom:** a request for the ``gopkg-k8s`` hostname is answered by another
 application.
 
 **Cause:** another Ingress resource claims the same hostname and path, or the
@@ -163,7 +163,7 @@ is restarting after a configuration change.
 
 .. code-block:: bash
 
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
    juju wait-for application nginx-ingress-integrator \
      --query='status=="active"' --timeout=15m
@@ -195,7 +195,7 @@ is in the wrong namespace, or ``tls-secret-name`` does not match the secret.
 
 .. code-block:: bash
 
-   microk8s kubectl -n gopkg-charmed get secret
+   microk8s kubectl -n gopkg-k8s get secret
    juju config nginx-ingress-integrator tls-secret-name
 
 Rock or charm build fails on architecture
@@ -246,6 +246,105 @@ environment needs.
 
    cd ~/gopkg-charm/app/charm
    tox --workdir ~/.cache/gopkg-charm-tox -e integration
+
+.. _cos-charm-blocked-patch-unauthorized:
+
+COS charm blocked on a Kubernetes patch
+---------------------------------------
+
+**Symptom:** after :ref:`integrate-with-cos`, ``grafana-k8s``,
+``prometheus-k8s``, or ``loki-k8s`` stays ``blocked`` with ``Kubernetes
+resources patch failed: Unauthorized`` while the others are ``active``.
+
+**Cause:** shortly after it first reports active, each COS charm patches its
+own StatefulSet to set resource limits. Occasionally the Kubernetes API
+rejects the service-account token the unit presents for that patch. This is
+a race between Juju and the charm, not a problem with ``gopkg-k8s`` or the
+integration, and the charm does not retry on its own, so the unit stays
+blocked indefinitely.
+
+**Fix:** remove the blocked application and deploy it again, then restore
+its integration. For ``grafana-k8s``:
+
+.. code-block:: bash
+
+   juju remove-application grafana-k8s --destroy-storage --force --no-prompt
+   while juju status --format=json | grep -q '"grafana-k8s"'; do sleep 5; done
+   juju deploy grafana-k8s --channel=2/stable --trust
+   juju integrate gopkg-k8s:grafana-dashboard grafana-k8s:grafana-dashboard
+
+For ``prometheus-k8s`` or ``loki-k8s``, substitute the application name and
+its ``juju integrate`` line from :ref:`integrate-with-cos`. The loop waits
+until Juju has finished removing the old application, because a new one
+cannot use the name before then. One redeployment is normally enough; the
+charm's integration tests use the same recovery.
+
+.. _prometheus-does-not-scrape:
+
+Prometheus does not report the service as up
+--------------------------------------------
+
+**Symptom:** a wait loop in :ref:`integrate-with-cos` ends with ``Prometheus
+has not scraped gopkg-k8s successfully`` or ``Prometheus has no healthy
+target on port 9102``.
+
+**Cause:** one of three things: ``PROMETHEUS_IP`` is empty, so ``curl`` never
+reached Prometheus; Prometheus has no scrape target for ``gopkg-k8s``,
+because the ``metrics-endpoint`` integration is missing or Prometheus has
+not processed it yet; or the target exists but the scrape fails, which
+Prometheus records as the target's ``lastError``.
+
+**Fix:** find out which, in that order:
+
+.. code-block:: bash
+
+   echo "${PROMETHEUS_IP}"
+   juju status --relations prometheus-k8s gopkg-k8s
+   curl --silent --show-error \
+     "http://${PROMETHEUS_IP}:9090/api/v1/targets?state=active" \
+     | grep --only-matching \
+       '"scrapeUrl":"[^"]*"\|"lastError":"\(\\.\|[^"\\]\)*"\|"health":"[^"]*"'
+
+If ``echo`` prints nothing, the Service lookup failed: run the ``export``
+line from the guide again and check that ``microk8s kubectl`` works. If
+``juju status`` shows ``prometheus-k8s`` as ``blocked``, see
+:ref:`cos-charm-blocked-patch-unauthorized`; if the ``metrics-endpoint``
+integration is not listed, run its ``juju integrate`` line again. Otherwise
+the last command prints the scrape URL, last error, and health of every
+target. A ``gopkg-k8s`` target whose ``lastError`` is not empty names the
+reason; check it against the service directly, with the unit address from
+``juju status`` and the port from the scrape URL:
+
+.. code-block:: bash
+
+   curl --fail --silent --show-error http://<unit-address>:<port>/metrics | head -3
+
+The output starts with ``# HELP`` lines. If there is no ``gopkg-k8s`` target
+at all although the integration is listed, Prometheus has not reloaded its
+configuration yet; wait a minute and query the targets again.
+
+If the direct request is refused on the ``metrics-port`` port, or answers
+``404`` on the application port, the running image does not serve metrics:
+it was built from a checkout that predates ``app/observability.go``, or the
+pod is still running an older image that was cached under the same tag,
+because Kubernetes does not pull an image again for a tag it already has.
+Rebuild the rock from the current checkout, push it under a new tag, and
+attach that tag as the resource, which replaces the pod:
+
+.. code-block:: bash
+
+   cd ~/gopkg-charm/app
+   rm -f gopkg_0.1_$(dpkg --print-architecture).rock
+   ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
+   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
+     oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
+     docker://localhost:32000/gopkg:0.1-1
+   juju attach-resource gopkg-k8s app-image=localhost:32000/gopkg:0.1-1
+   microk8s kubectl -n gopkg-k8s rollout status statefulset/gopkg-k8s --timeout=15m
+
+The application stays ``active`` while its pod is replaced, so the last
+command, not ``juju status``, tells you when the new image is running. Then
+repeat the wait loop from the guide.
 
 For every ingress integrator setting, see the `NGINX ingress integrator
 configuration reference

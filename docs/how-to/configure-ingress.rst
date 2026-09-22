@@ -1,17 +1,17 @@
 .. _configure-ingress:
 
 .. meta::
-   :description: Route external HTTP traffic to gopkg-charmed with the NGINX ingress integrator, match the workload hostname, add DNS, and enable HTTPS.
+   :description: Route external HTTP traffic to gopkg-k8s with the NGINX ingress integrator, match the workload hostname, add DNS, and enable HTTPS.
 
 How to configure ingress
 ========================
 
-Ingress is what makes ``gopkg-charmed`` reachable from outside the Kubernetes
+Ingress is what makes ``gopkg-k8s`` reachable from outside the Kubernetes
 cluster under a chosen hostname. Set the routing rules on the ingress
 integrator, keep the workload hostname in step with them, then point DNS at
 the ingress controller and terminate TLS there for production.
 
-These steps assume that ``gopkg-charmed`` and ``nginx-ingress-integrator``
+These steps assume that ``gopkg-k8s`` and ``nginx-ingress-integrator``
 are deployed and integrated, as they are after the deployment steps of
 :ref:`deploy-and-verify-on-kubernetes` and before its clean-up section. For
 how the components fit together, read :ref:`Ingress <ingress>`.
@@ -52,7 +52,7 @@ deployment, set both to the public hostname:
 
 .. code-block:: bash
 
-   juju config gopkg-charmed hostname=${INGRESS_HOST}
+   juju config gopkg-k8s hostname=${INGRESS_HOST}
 
 Wait for both applications to settle:
 
@@ -65,7 +65,7 @@ Wait for both applications to settle:
 .. SPREAD SKIP END
 
 .. SPREAD
-   juju wait-for application gopkg-charmed \
+   juju wait-for application gopkg-k8s \
      --query='status=="active"' --timeout=15m
    juju wait-for application nginx-ingress-integrator \
      --query='status=="active"' --timeout=15m
@@ -80,7 +80,7 @@ resource:
 .. code-block:: bash
 
    juju status --relations
-   microk8s kubectl -n gopkg-charmed describe ingress
+   microk8s kubectl -n gopkg-k8s describe ingress
 
 Then test both workload behavior and metadata through ingress. The
 documentation hostname does not resolve to your machine, so ``--resolve``
@@ -113,7 +113,7 @@ For production, replace the documentation hostname with a domain you control:
 1. Find the external IP address or hostname of the ingress controller.
 2. Create an ``A`` or ``AAAA`` record, or an appropriate ``CNAME`` record, with
    your DNS provider.
-3. Set ``service-hostname`` and the ``gopkg-charmed`` ``hostname`` option to
+3. Set ``service-hostname`` and the ``gopkg-k8s`` ``hostname`` option to
    that domain, as in the sections above.
 4. Wait for DNS changes to propagate.
 5. Verify that ports 80 and 443 reach the ingress controller.
@@ -130,13 +130,13 @@ TLS terminates at the ingress controller (see :ref:`Ingress <ingress>`), so
 the certificate must include the public hostname in its subject alternative
 names. Store the certificate and private key in a Kubernetes TLS secret in the
 same namespace as the Juju model, then configure the integrator with the secret
-name. For example, for the ``gopkg-charmed`` model namespace:
+name. For example, for the ``gopkg-k8s`` model namespace:
 
 .. SPREAD SKIP
 
 .. code-block:: bash
 
-   microk8s kubectl -n gopkg-charmed create secret tls gopkg-tls \
+   microk8s kubectl -n gopkg-k8s create secret tls gopkg-tls \
      --cert=path/to/fullchain.pem \
      --key=path/to/private-key.pem
    juju config nginx-ingress-integrator tls-secret-name=gopkg-tls

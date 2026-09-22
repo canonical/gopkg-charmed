@@ -5,16 +5,21 @@
 # See https://canonical.com/juju/docs/charmcraft/4/reference/files/charmcraft-yaml-file/ for guidance.
 # For questions or help, visit https://matrix.to/#/#12-factor-charms:ubuntu.com 
 
-name: gopkg-charmed
+name: gopkg-k8s
 
 type: charm
 
 base: ubuntu@24.04
 
-title: gopkg.in 12-Factor Operator
+title: gopkg.in - a 12-Factor Application
 
 # the platforms this charm should be built on and run on.
 # you can check your architecture with `dpkg --print-architecture`
+#
+# Both architectures build locally. The published charm and its app-image
+# resource are amd64 only: the build plan in artifacts.yaml decides that, not
+# this list. Building on an architecture missing here fails with "No build
+# matches the current execution environment".
 platforms:
   amd64:
   arm64:
@@ -31,12 +36,14 @@ description: |
   workload with Juju-native configuration and integrations.
 
 links:
-  source:
-    - https://github.com/canonical/gopkg-charmed
-  issues:
-    - https://github.com/canonical/gopkg-charmed/issues
-  # Point at the published documentation once it is publicly reachable.
-  documentation: https://github.com/canonical/gopkg-charmed#readme
+  # One URL each, as plain strings: the Charmhub listing review reads every
+  # value here as a single URL and reports a list as unreachable.
+  source: https://github.com/canonical/gopkg-charmed
+  issues: https://github.com/canonical/gopkg-charmed/issues
+  website: https://gopkg.in
+  # The documentation is moving to https://canonical.com/juju/docs/gopkg-charm/
+  # (ISD-6478). Until then it is on Read the Docs behind Canonical SSO.
+  documentation: https://canonical-gopkg-charm.readthedocs-hosted.com/latest/
   contact:
     - https://matrix.to/#/#charmhub-charmdev:ubuntu.com
     - minh.nguyen@canonical.com

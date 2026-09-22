@@ -212,8 +212,9 @@ func observeHTTP(next http.Handler) http.Handler {
 		}
 
 		duration := time.Since(started)
-		applicationMetrics.httpRequests.WithLabelValues(req.Method, route, strconv.Itoa(writer.statusCode)).Inc()
-		applicationMetrics.httpRequestDuration.WithLabelValues(req.Method, route).Observe(duration.Seconds())
+		method := requestMethod(req)
+		applicationMetrics.httpRequests.WithLabelValues(method, route, strconv.Itoa(writer.statusCode)).Inc()
+		applicationMetrics.httpRequestDuration.WithLabelValues(method, route).Observe(duration.Seconds())
 
 		if route != "health_check" {
 			logger.Info(
@@ -226,6 +227,17 @@ func observeHTTP(next http.Handler) http.Handler {
 			)
 		}
 	})
+}
+
+// requestMethod maps the request method to one of a fixed set of label
+// values. The service answers GET, HEAD and POST; any other token a client
+// sends would otherwise create a new time series per distinct value.
+func requestMethod(req *http.Request) string {
+	switch req.Method {
+	case http.MethodGet, http.MethodHead, http.MethodPost:
+		return req.Method
+	}
+	return "other"
 }
 
 // requestRoute classifies a request into one of a fixed set of route names,

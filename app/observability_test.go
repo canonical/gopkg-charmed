@@ -120,18 +120,49 @@ func TestRequestRoute(t *testing.T) {
 	}
 }
 
+func TestRequestMethod(t *testing.T) {
+	tests := []struct {
+		method string
+		want   string
+	}{
+		{http.MethodGet, "GET"},
+		{http.MethodHead, "HEAD"},
+		{http.MethodPost, "POST"},
+		{http.MethodPut, "other"},
+		{http.MethodDelete, "other"},
+		{http.MethodOptions, "other"},
+		{"get", "other"},
+		{"BREW", "other"},
+	}
+	for _, test := range tests {
+		t.Run(test.method, func(t *testing.T) {
+			req := httptest.NewRequest(test.method, "/yaml.v2", nil)
+			if got := requestMethod(req); got != test.want {
+				t.Errorf("requestMethod(%q): got %q, want %q", test.method, got, test.want)
+			}
+		})
+	}
+}
+
 func TestRequestsAreCountedPerRoute(t *testing.T) {
 	withFreshMetrics(t)
 	handler := newHTTPHandler("/metrics")
 
 	serve(handler, "/health-check")
 	serve(handler, "/unsupported")
+	handler.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("BREW", "/health-check", nil))
 
 	if got := testutil.ToFloat64(applicationMetrics.httpRequests.WithLabelValues("GET", "health_check", "200")); got != 1 {
 		t.Errorf("health_check counter: got %v, want 1", got)
 	}
 	if got := testutil.ToFloat64(applicationMetrics.httpRequests.WithLabelValues("GET", "not_found", "404")); got != 1 {
 		t.Errorf("not_found counter: got %v, want 1", got)
+	}
+	if got := testutil.ToFloat64(applicationMetrics.httpRequests.WithLabelValues("other", "health_check", "200")); got != 1 {
+		t.Errorf("other-method counter: got %v, want 1", got)
+	}
+	if got := testutil.CollectAndCount(applicationMetrics.httpRequests); got != 3 {
+		t.Errorf("distinct request series: got %d, want 3 (unknown methods must not add series)", got)
 	}
 }
 

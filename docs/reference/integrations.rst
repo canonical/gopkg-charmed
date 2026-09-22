@@ -60,8 +60,9 @@ Metrics
 
 Besides the standard Go runtime and process collectors, the service exposes
 the following metrics. Label values are bounded: routes are a fixed set of
-names, and import paths, repository names, client addresses, and error text
-are never labels.
+names, the method is one of ``GET``, ``HEAD``, ``POST`` or ``other``, and
+import paths, repository names, client addresses, and error text are never
+labels.
 
 .. list-table::
    :header-rows: 1

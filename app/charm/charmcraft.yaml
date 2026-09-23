@@ -31,9 +31,25 @@ summary: A 12-Factor charm for the gopkg.in versioned import-path service.
 
 # (Required)
 description: |
-  Deploy and operate gopkg.in on Kubernetes with a 12-Factor workflow.
-  This charm uses the Go framework extension and manages the gopkg.in
-  workload with Juju-native configuration and integrations.
+  gopkg.in gives Go programs stable, major-version-specific import paths. An
+  import such as gopkg.in/yaml.v2 names major version 2 of the go-yaml/yaml
+  repository; the service resolves it to the newest matching tag on GitHub,
+  answers the Go tool's go-import discovery request, and relays the Git
+  fetch. Code that already imports these paths keeps needing the service,
+  because Go modules did not retire import paths that were published before
+  them.
+
+  This charm deploys and operates that service on Kubernetes with Juju. It
+  runs the workload as a rock, sets the public hostname the service writes
+  into its go-import metadata, connects it to an ingress, and integrates it
+  with the Canonical Observability Stack for metrics, logs, a dashboard and
+  alert rules.
+
+  Canonical maintains this charm to run the public gopkg.in service. A
+  deployment serves imports of the hostname it is configured with, not of
+  gopkg.in itself, so anyone can operate their own copy under their own
+  name: as a mirror for a network that cannot reach gopkg.in, or to offer
+  versioned import paths for GitHub repositories under another domain.
 
 links:
   # One URL each, as plain strings: the Charmhub listing review reads every

@@ -1,8 +1,10 @@
 name: Documentation tests
 
 on:
+  # No base-branch filter: pull requests stacked on another branch must run
+  # the documentation tests too, or a stacked change to a guide is never
+  # exercised until it is retargeted at main.
   pull_request:
-    branches: [main]
     paths:
       - "docs/how-to/**"
       - "docs/tutorials/**"

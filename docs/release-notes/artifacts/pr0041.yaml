@@ -1,0 +1,25 @@
+version_schema: 2
+
+changes:
+  - title: Pointed the documentation links at the public documentation site
+    author: minulo
+    type: bugfix
+    description: The charm's documentation link, the charm README, the repository README and the contributing guide pointed at the Read the Docs address, which requires a Canonical login. They now point at https://canonical.com/juju/docs/gopkg-charm/latest/, which is public. The charm README's integrations table is a list now, because Charmhub renders README tables as literal text.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/41"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false
+  - title: Ran the documentation tests on pull requests against any branch
+    author: minulo
+    type: bugfix
+    description: The documentation tests only ran for pull requests targeting main, so a pull request stacked on another branch never exercised the guides until it was retargeted. They now run for every pull request that touches the guides, the charm or the test definitions.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/41"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

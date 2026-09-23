@@ -36,8 +36,8 @@ In this documentation
       :link: tutorials
       :link-type: ref
 
-      **Start here**: build, deploy, and verify ``gopkg-k8s`` on
-      Kubernetes from a fresh environment.
+      **Start here**: deploy and verify ``gopkg-k8s`` on Kubernetes from
+      a fresh environment.
 
    .. grid-item-card:: How-to guides
       :link: how-to-guides

@@ -3,9 +3,10 @@
 
 summary: Execute documentation commands - deployment tutorial, from a bare system
 
-# A green run takes 20-40 min, and over an hour when the runner's network
-# is degraded; the tutorial's build retries can add up to four failed packs
-# (1-10 min each) on top.
+# A green run takes 20-40 min (the setup guide's snap installs, the
+# controller bootstrap and the deployment), and over an hour when the
+# runner's network is degraded. The tutorial deploys the published charm and
+# builds nothing.
 kill-timeout: 120m
 
 # Cold start: no concierge, no pre-installed tools. The documentation's own

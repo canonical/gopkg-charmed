@@ -9,12 +9,12 @@ Platforms and prerequisites
 Supported architectures
 -----------------------
 
-The guides build and run the rock and the charm on both AMD64 and ARM64, and
-``app/rockcraft.yaml`` and ``app/charm/charmcraft.yaml`` declare both. CI
-builds and publishes AMD64 only, so the charm and the ``app-image`` resource
-on Charmhub are AMD64. Build locally to run on ARM64. The observability
-charms are published for AMD64 only, so :ref:`integrate-with-cos` needs an
-AMD64 machine.
+The charm and its ``app-image`` resource on Charmhub are built for AMD64
+only, so the tutorial, which deploys them, needs an AMD64 machine. Building
+from source works on AMD64 and ARM64: ``app/rockcraft.yaml`` and
+``app/charm/charmcraft.yaml`` declare both, and :ref:`improve-code` covers
+the build. The observability charms are published for AMD64 only, so
+:ref:`integrate-with-cos` needs an AMD64 machine as well.
 
 Required tooling for charm deployment
 -------------------------------------

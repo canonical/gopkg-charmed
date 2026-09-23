@@ -239,6 +239,11 @@ Check that both applications are active and that the integration exists:
 
    juju status --relations
 
+.. SPREAD
+   juju status --relations | grep -F 'nginx-ingress-integrator:ingress' \
+     | grep -F 'gopkg-k8s:ingress' | grep -Fw regular
+.. SPREAD END
+
 The output looks like this once the deployment has settled; if a status is
 still ``waiting`` or ``maintenance``, run the command again after a minute:
 
@@ -316,14 +321,15 @@ rebuild:
    juju config nginx-ingress-integrator service-hostname=${INGRESS_HOST}
    juju config gopkg-k8s hostname=${INGRESS_HOST}
 
-The name is not arbitrary. A Go module's import path must equal the
-``module`` line of its ``go.mod``, and ``gopkg.in/yaml.v2`` declares
-``module gopkg.in/yaml.v2``, so the Go tool accepts that package only under
-the ``gopkg.in`` name: served as ``gopkg.example.com/yaml.v2``, it downloads
-but is rejected with ``module declares its path as: gopkg.in/yaml.v2``. A
-deployment under a name of your own serves packages whose ``go.mod`` names
-that domain, or packages that have none; to serve the packages the public
-``gopkg.in`` is known for, it must answer as ``gopkg.in``.
+The name is not arbitrary. Every Go module states its own name in its
+``go.mod`` file, and the Go tool refuses a module that it fetched under a
+different name. ``yaml.v2`` calls itself ``gopkg.in/yaml.v2``, so a
+deployment named ``gopkg.example.com`` can hand the package out, but the Go
+tool then rejects it with ``module declares its path as: gopkg.in/yaml.v2``.
+A deployment under a name of your own can serve packages that use that name
+in their ``go.mod``, or old packages that have no ``go.mod`` at all. To
+serve the packages the public ``gopkg.in`` is known for, it must be called
+``gopkg.in``.
 
 .. SPREAD
    juju wait-for application gopkg-k8s \
@@ -354,11 +360,16 @@ prefix.
 Fetch a module with the Go tool
 -------------------------------
 
-The Go tool has no ``--resolve`` option, and neither has git, which it runs
-to clone a package. Point the name at your machine in ``/etc/hosts``
-instead, so that every program on it reaches your deployment as
-``gopkg.in``, and repeat the health check without ``--resolve`` to see the
-entry work:
+Until now, ``--resolve`` told curl to send its requests for the hostname to
+your own machine, ``127.0.0.1``, instead of looking the name up. The Go tool
+and git have no such option: given ``gopkg.in``, they look the name up and
+reach the public service. To send them to your deployment instead, add a
+line to ``/etc/hosts``, the file every program on the machine checks before
+asking DNS. With ``gopkg.in`` mapped to ``127.0.0.1`` there, anything that
+connects to ``gopkg.in`` reaches the ingress controller on your machine
+while still asking for the name ``gopkg.in``, which is what the routing
+rule matches. Add the line, then repeat the health check without
+``--resolve`` to see it work:
 
 .. code-block:: bash
 
@@ -391,14 +402,23 @@ Create a Go module with a program that imports ``gopkg.in/yaml.v2``:
    EOF
 
 Fetch the module. Three environment variables keep the Go tool on your
-deployment: ``GOPRIVATE`` stops it from asking the public module proxy and
-checksum database about ``gopkg.in`` paths, which would bypass your
-deployment; ``GOINSECURE`` lets it accept the certificate the ingress
-controller presents on port 443, a self-signed placeholder because nothing
-in this tutorial issued one for ``gopkg.in``; and ``GIT_SSL_NO_VERIFY`` does
-the same for git, which clones from the ``https://gopkg.in/yaml.v2`` address
-that the ``go-import`` metadata names. The last two disable certificate
-checks, so set them only against a deployment you run yourself, as here:
+deployment. The last two switch off certificate checks, so set them only
+for a deployment you run yourself, as here:
+
+``GOPRIVATE=gopkg.in``
+  Fetch ``gopkg.in`` paths from their source rather than through the public
+  module proxy and checksum database. Without it, the proxy answers and
+  your deployment is never asked.
+
+``GOINSECURE=gopkg.in``
+  Accept the certificate the ingress controller presents on port 443. It is
+  a self-signed placeholder, because nothing in this tutorial issued a
+  certificate for ``gopkg.in``.
+
+``GIT_SSL_NO_VERIFY=true``
+  The same for git, which the Go tool runs to clone from the
+  ``https://gopkg.in/yaml.v2`` address that the ``go-import`` metadata
+  names.
 
 .. code-block:: bash
 
@@ -415,11 +435,19 @@ records the newest v2 tag in ``go.mod``:
    go: downloading gopkg.in/yaml.v2 v2.4.0
    go: added gopkg.in/yaml.v2 v2.4.0
 
+.. SPREAD
+   grep -F 'gopkg.in/yaml.v2 v2' go.mod
+.. SPREAD END
+
 Build and run the program:
 
 .. code-block:: bash
 
    go run .
+
+.. SPREAD
+   go run . | grep -Fx gopkg.in/yaml.v2
+.. SPREAD END
 
 It prints ``gopkg.in/yaml.v2``. Nothing so far shows where the package came
 from, so read the service's request counters through the ingress.

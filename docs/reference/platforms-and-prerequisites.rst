@@ -16,20 +16,25 @@ from source works on AMD64 and ARM64: ``app/rockcraft.yaml`` and
 the build. The observability charms are published for AMD64 only, so
 :ref:`integrate-with-cos` needs an AMD64 machine as well.
 
-Required tooling for charm deployment
--------------------------------------
+Required tooling
+----------------
 
-The guides install these tools from the following snap channels:
+The tutorial installs these snaps:
+
+- ``juju`` from ``3/stable``
+- ``microk8s`` from ``1.36-strict/stable``
+
+Building from source, covered by :ref:`set-up-a-development-environment` and
+:ref:`improve-code`, adds:
 
 - ``rockcraft`` from ``latest/stable``
 - ``charmcraft`` from ``latest/stable``
-- ``juju`` from ``3/stable``
-- ``microk8s`` from ``1.36-strict/stable``
 - ``lxd`` from its default channel, initialized with ``lxd init --auto``
+- ``go`` from ``latest/stable``, and ``tox`` for the charm tests
 
-Both craft tools need their experimental extensions enabled, which the guides
-do with ``ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true`` and
-``CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``.
+Both craft tools need their experimental extensions enabled, which the
+contributor guide does with ``ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``
+and ``CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``.
 
 The documentation tests last verified the guides with Charmcraft 4.4.2,
 Rockcraft 1.20.0, Juju 3.6.28, MicroK8s 1.36.2, LXD 5.21.7, and Go 1.26.7
@@ -44,9 +49,6 @@ and ``paas-charm`` 1.x.
 MicroK8s add-ons
 ----------------
 
-The following add-ons must be enabled before deploying:
-
-- ``dns``
-- ``hostpath-storage``
-- ``registry``
-- ``ingress``
+The tutorial enables ``dns``, ``hostpath-storage``, and ``ingress``. Building
+from source also needs ``registry``, the local image registry on port 32000
+that receives the rock.

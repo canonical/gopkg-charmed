@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Folded the environment-setup guide into the tutorial
+    author: minulo
+    type: minor
+    description: The tutorial now installs Juju and MicroK8s itself and carries its own prerequisites, so the environment-setup guide is gone from the how-to section; its full version, with the build tooling, is the contributor page "Set up a development environment". Both documentation-test chains start at the tutorial. The old address redirects.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/47"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

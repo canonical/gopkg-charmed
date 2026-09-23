@@ -1,14 +1,15 @@
-.. _set-up-a-local-linux-environment:
+.. _set-up-a-development-environment:
 
 .. meta::
-   :description: Prepare an Ubuntu environment with the tools and resources required to build, deploy, and test gopkg-k8s.
+   :description: Prepare an Ubuntu environment with the tools required to build, test, and deploy gopkg-k8s from source.
 
-How to set up a local Linux environment
-=======================================
+Set up a development environment
+================================
 
 A consistent Ubuntu environment keeps local builds and tests aligned with CI.
 Prepare a virtual machine with the tools needed to build, deploy, and test
-``gopkg-k8s``.
+``gopkg-k8s`` from source. To deploy the published charm instead, the
+prerequisites of :ref:`deploy-and-verify-on-kubernetes` are all you need.
 
 Prerequisites
 -------------
@@ -34,14 +35,10 @@ add-ons listen on ports 80, 443, and 32000 of the workstation.
 Create and enter a VM
 ---------------------
 
-.. SPREAD SKIP
-
 .. code-block:: bash
 
    multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
    multipass shell charm-dev
-
-.. SPREAD SKIP END
 
 Make the repository available
 -----------------------------
@@ -50,8 +47,6 @@ Choose one of these options.
 
 To mount an existing checkout from the host, leave the VM, run this command on
 the host, and then enter the VM again:
-
-.. SPREAD SKIP
 
 .. code-block:: bash
 
@@ -65,8 +60,6 @@ Alternatively, clone the repository inside the VM:
 .. code-block:: bash
 
    git clone https://github.com/canonical/gopkg-charmed.git gopkg-charm
-
-.. SPREAD SKIP END
 
 Whichever option you chose, enter and verify the repository before continuing:
 
@@ -108,8 +101,6 @@ your user to both:
 
 Log out of the VM so the new group memberships apply:
 
-.. SPREAD SKIP
-
 .. code-block:: bash
 
    exit
@@ -120,12 +111,6 @@ command there to open a new one:
 .. code-block:: bash
 
    multipass shell charm-dev
-
-.. SPREAD SKIP END
-
-.. SPREAD
-   # spread-session-break
-.. SPREAD END
 
 Confirm the new group memberships in the new session, then initialize LXD:
 
@@ -214,6 +199,8 @@ The first command prints one path per tool, ``dpkg`` prints ``amd64`` or
 Next steps
 ----------
 
-- Follow the step-by-step tutorial :ref:`deploy-and-verify-on-kubernetes`
-  to build, deploy, and verify the charm in this environment.
+- Build and deploy from source, and run every check, with
+  :ref:`improve-code`.
 - Run the integration tests with :ref:`full-integration-suite-local`.
+- Deploy the published charm instead with
+  :ref:`deploy-and-verify-on-kubernetes`.

@@ -1,9 +1,9 @@
 # Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-summary: Execute documentation commands - deployment tutorial, from a bare system
+summary: Execute documentation commands - the tutorial, from a bare system
 
-# A green run takes 20-40 min (the setup guide's snap installs, the
+# A green run takes 20-40 min (the tutorial's snap installs, the
 # controller bootstrap and the deployment), and over an hour when the
 # runner's network is degraded. The tutorial deploys the published charm and
 # builds nothing.
@@ -25,8 +25,11 @@ kill-timeout: 120m
 #     lookups to the host resolver, which answers from /etc/hosts, and the
 #     mirror serves requests for either Host name. The guard makes this a
 #     no-op on machines that do not use the Azure mirror.
-#   - The chown and symlink stand in for the guide's `multipass mount`
-#     step, which the guide marks SPREAD SKIP.
+#   - The chown and symlink stand in for the checkout a contributor mounts
+#     into the VM. The tutorial and how-to chains no longer use it, and the
+#     LXD rules above only matter for builds, which these chains no longer
+#     do; both stay because they are harmless and a chain that builds would
+#     need them again.
 prepare: |
   if grep -qs azure.archive.ubuntu.com /etc/apt/apt-mirrors.txt; then
     mirror="$(getent ahostsv4 azure.archive.ubuntu.com | awk 'NR == 1 { print $1 }')"
@@ -47,5 +50,4 @@ prepare: |
 
 execute: |
   "${SPREAD_PATH}/tests/spread/documentation/run-docs.sh" \
-    docs/how-to/set-up-a-local-linux-environment.rst \
     docs/tutorials/deploy-and-verify-on-kubernetes.rst

@@ -18,6 +18,7 @@ and integration tests.
 Follow both paths when code and documentation change together, or when a
 documentation command affects the running service.
 
+Both paths start from :ref:`set-up-a-development-environment`.
 :ref:`full-integration-suite-local` runs the Juju integration suite by hand,
 and :ref:`ci-workflows` describes what CI runs on each change.
 
@@ -26,6 +27,7 @@ and :ref:`ci-workflows` describes what CI runs on each change.
 .. toctree::
 	:maxdepth: 1
 
+	set-up-a-development-environment
 	improve-documentation
 	improve-code
 	run-full-juju-integration-suite-locally

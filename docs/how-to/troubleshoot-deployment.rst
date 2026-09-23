@@ -6,8 +6,8 @@
 How to troubleshoot deployment issues
 =====================================
 
-Before troubleshooting, verify the baseline environment with
-:ref:`set-up-a-local-linux-environment`. Each entry below names the symptom,
+Before troubleshooting, verify the environment with the prerequisites of
+:ref:`deploy-and-verify-on-kubernetes`. Each entry below names the symptom,
 the usual cause, and the fix.
 
 Juju cannot access MicroK8s

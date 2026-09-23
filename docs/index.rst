@@ -17,9 +17,16 @@ lifecycle management, on Kubernetes platforms from `MicroK8s
 Kubernetes <https://ubuntu.com/kubernetes>`_ and public-cloud Kubernetes
 offerings.
 
-The charm is useful to platform engineers, DevOps engineers, and SRE teams
-who need to operate ``gopkg.in`` reliably, and to maintainers of Go software
-that depends on ``gopkg.in`` import paths.
+``gopkg.in`` gives Go programs stable, major-version-specific import paths:
+``gopkg.in/yaml.v2`` resolves to the newest v2 tag of the ``go-yaml/yaml``
+repository. Canonical maintains this charm to run the public ``gopkg.in``
+service. The service writes the hostname it is configured with into its
+``go-import`` metadata, so a deployment serves imports of that hostname, not
+of ``gopkg.in``: code that already imports ``gopkg.in/...`` keeps using the
+public service. Operate your own copy to mirror ``gopkg.in`` inside a network
+that cannot reach it, or to offer versioned import paths for GitHub
+repositories under your own domain. :ref:`gopkg-service` explains how the
+service resolves an import.
 
 In this documentation
 ---------------------

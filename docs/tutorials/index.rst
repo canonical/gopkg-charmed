@@ -1,7 +1,7 @@
 .. _tutorials:
 
 .. meta::
-	:description: Follow an end-to-end tutorial to deploy the published gopkg-k8s charm on Kubernetes and verify it.
+	:description: Follow an end-to-end tutorial to deploy the published gopkg-k8s charm on Kubernetes, verify it, and fetch a module through it with the Go tool.
 
 Tutorial
 ========

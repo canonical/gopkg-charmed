@@ -23,6 +23,7 @@ Deploying the charm requires the following snaps:
 
 - ``juju`` from ``3/stable``
 - ``microk8s`` from ``1.36-strict/stable``
+- ``go`` from ``latest/stable``, for the module fetch at the end
 
 Building from source, covered by :ref:`set-up-a-development-environment` and
 :ref:`improve-code`, adds:
@@ -30,7 +31,7 @@ Building from source, covered by :ref:`set-up-a-development-environment` and
 - ``rockcraft`` from ``latest/stable``
 - ``charmcraft`` from ``latest/stable``
 - ``lxd`` from its default channel, initialized with ``lxd init --auto``
-- ``go`` from ``latest/stable``, and ``tox`` for the charm tests
+- ``tox`` for the charm tests
 
 Both craft tools need experimental extensions enabled, which
 requires ``ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``

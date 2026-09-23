@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Fetched a module with the Go tool at the end of the tutorial
+    author: minulo
+    type: minor
+    description: The tutorial now ends by switching the deployment to the gopkg.in name, pointing that name at the machine, and building a Go program whose gopkg.in/yaml.v2 import the Go tool fetches through the deployment, with the service's request counters as the proof. It explains why the name has to be gopkg.in, because a module's import path must match the module line of its go.mod, and installs the go snap and git for the step.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/46"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

@@ -1,7 +1,7 @@
 .. _deploy-and-verify-on-kubernetes:
 
 .. meta::
-   :description: Deploy the published gopkg-k8s charm on Kubernetes with Juju, publish the service under a hostname, and verify its go-import metadata.
+   :description: Deploy the published gopkg-k8s charm on Kubernetes with Juju, publish the service under a hostname, verify its go-import metadata, and fetch a module through it with the Go tool.
 
 Deploy and verify gopkg-k8s on Kubernetes
 =============================================
@@ -9,17 +9,17 @@ Deploy and verify gopkg-k8s on Kubernetes
 ``gopkg.in`` gives Go programs stable, major-version-specific import paths:
 ``gopkg.in/yaml.v2`` resolves to the newest v2 tag of the ``go-yaml/yaml``
 repository. By the end of this tutorial you will have your own copy of that
-service answering the Go tool under a configured hostname, running on
-Kubernetes under Juju, with the charm Canonical maintains to run the public
-``gopkg.in``. A deployment serves imports of its own hostname, so it is a
-mirror or a private import domain, not a replacement for the public service
-in code that already imports ``gopkg.in/...``.
+service running on Kubernetes under Juju, with the charm Canonical maintains
+to run the public ``gopkg.in``, and a Go program on your machine whose
+``gopkg.in/yaml.v2`` import the Go tool fetched through your copy rather
+than through the public service.
 
 The charm is published on `Charmhub <https://charmhub.io/gopkg-k8s>`_
 together with the container image it runs, so a deployment is a single
 ``juju deploy``. This tutorial deploys it on a local MicroK8s cluster,
-publishes the service under a hostname through an ingress, and verifies that
-the service answers the query the Go tool sends.
+publishes the service under a hostname through an ingress, verifies that
+the service answers the query the Go tool sends, then switches it to the
+``gopkg.in`` name and lets the Go tool fetch a module through it.
 
 What you'll do
 --------------
@@ -27,8 +27,9 @@ What you'll do
 1. Deploy the charm to a new model
 2. Publish the service under a hostname
 3. Verify the deployment
-4. Update the hostname
-5. Clean up
+4. Switch the hostname to gopkg.in
+5. Fetch a module with the Go tool
+6. Clean up
 
 Prerequisites
 -------------
@@ -56,11 +57,14 @@ your workstation. Install it by following :ref:`Install Multipass
 If your workstation already runs Ubuntu 24.04 LTS, you can skip the virtual
 machine and run the remaining steps directly on it. Be aware of what that
 means: the steps install snaps with ``sudo``, add your user to the
-``snap_microk8s`` group, and start a MicroK8s cluster whose ingress listens on
-ports 80 and 443 of the workstation.
+``snap_microk8s`` group, start a MicroK8s cluster whose ingress listens on
+ports 80 and 443 of the workstation, and point the name ``gopkg.in`` at the
+workstation itself in ``/etc/hosts`` until the clean-up section removes the
+entry.
 
-Install Juju and MicroK8s from their snaps, and curl for the checks later in
-the tutorial. The `Juju
+Install Juju, MicroK8s, and Go from their snaps, and curl and git from the
+Ubuntu archive: curl runs the checks later in the tutorial, and the Go tool
+clones packages with git. The `Juju
 <https://canonical.com/juju/docs/juju-cli/3.6/howto/manage-juju/>`_ and
 `MicroK8s <https://canonical.com/microk8s/docs/getting-started>`_
 documentation cover other ways to install them; the channels below are the
@@ -70,7 +74,8 @@ ones this tutorial was verified with, as listed in
 .. code-block:: bash
 
    sudo apt update
-   sudo apt install --yes curl
+   sudo apt install --yes curl git
+   sudo snap install go --classic
    sudo snap install juju --channel 3/stable
    sudo snap install microk8s --channel 1.36-strict/stable
 
@@ -293,23 +298,32 @@ The output is the meta tag:
 
    <meta name="go-import" content="gopkg.example.com/yaml.v2 git https://gopkg.example.com/yaml.v2">
 
-The first word of ``content`` is the import prefix. ``go get
-gopkg.example.com/yaml.v2`` only accepts the tag because that prefix matches
-the import path it asked for, which is why ``grep`` checks the whole content
-rather than only that a tag exists.
+The first word of ``content`` is the import prefix. The Go tool only accepts
+the tag when that prefix matches the import path it asked for, which is why
+``grep`` checks the whole content rather than only that a tag exists.
 
-Update the hostname
--------------------
+Switch the hostname to gopkg.in
+-------------------------------
 
 In production you set both hostname settings to your domain. Here, move
-them to a new name to see that the charms apply a configuration change to
-the running deployment without a rebuild:
+them to ``gopkg.in`` itself, which the next section needs, and see that the
+charms apply a configuration change to the running deployment without a
+rebuild:
 
 .. code-block:: bash
 
-   export INGRESS_HOST=staging.example.com
+   export INGRESS_HOST=gopkg.in
    juju config nginx-ingress-integrator service-hostname=${INGRESS_HOST}
    juju config gopkg-k8s hostname=${INGRESS_HOST}
+
+The name is not arbitrary. A Go module's import path must equal the
+``module`` line of its ``go.mod``, and ``gopkg.in/yaml.v2`` declares
+``module gopkg.in/yaml.v2``, so the Go tool accepts that package only under
+the ``gopkg.in`` name: served as ``gopkg.example.com/yaml.v2``, it downloads
+but is rejected with ``module declares its path as: gopkg.in/yaml.v2``. A
+deployment under a name of your own serves packages whose ``go.mod`` names
+that domain, or packages that have none; to serve the packages the public
+``gopkg.in`` is known for, it must answer as ``gopkg.in``.
 
 .. SPREAD
    juju wait-for application gopkg-k8s \
@@ -334,8 +348,97 @@ Query the new name until the new value appears:
      done
    '
 
-The output is the ``go-import`` meta tag with ``staging.example.com`` as the
-import prefix.
+The output is the ``go-import`` meta tag with ``gopkg.in`` as the import
+prefix.
+
+Fetch a module with the Go tool
+-------------------------------
+
+The Go tool has no ``--resolve`` option, and neither has git, which it runs
+to clone a package. Point the name at your machine in ``/etc/hosts``
+instead, so that every program on it reaches your deployment as
+``gopkg.in``, and repeat the health check without ``--resolve`` to see the
+entry work:
+
+.. code-block:: bash
+
+   echo "127.0.0.1 gopkg.in" | sudo tee -a /etc/hosts
+   curl --fail --silent --show-error http://gopkg.in/health-check | grep -Fx ok
+
+Create a Go module with a program that imports ``gopkg.in/yaml.v2``:
+
+.. code-block:: bash
+
+   mkdir -p ~/gopkg-try
+   cd ~/gopkg-try
+   go mod init example.com/try
+   cat > main.go <<'EOF'
+   package main
+
+   import (
+       "fmt"
+
+       "gopkg.in/yaml.v2"
+   )
+
+   func main() {
+       var doc map[string]string
+       if err := yaml.Unmarshal([]byte("source: gopkg.in/yaml.v2"), &doc); err != nil {
+           panic(err)
+       }
+       fmt.Println(doc["source"])
+   }
+   EOF
+
+Fetch the module. Three environment variables keep the Go tool on your
+deployment: ``GOPRIVATE`` stops it from asking the public module proxy and
+checksum database about ``gopkg.in`` paths, which would bypass your
+deployment; ``GOINSECURE`` lets it accept the certificate the ingress
+controller presents on port 443, a self-signed placeholder because nothing
+in this tutorial issued one for ``gopkg.in``; and ``GIT_SSL_NO_VERIFY`` does
+the same for git, which clones from the ``https://gopkg.in/yaml.v2`` address
+that the ``go-import`` metadata names. The last two disable certificate
+checks, so set them only against a deployment you run yourself, as here:
+
+.. code-block:: bash
+
+   export GOPRIVATE=gopkg.in GOINSECURE=gopkg.in GIT_SSL_NO_VERIFY=true
+   go get gopkg.in/yaml.v2
+
+The Go tool queries ``https://gopkg.in/yaml.v2?go-get=1``, reads the
+``go-import`` tag you checked earlier, clones the repository it names, and
+records the newest v2 tag in ``go.mod``:
+
+.. terminal::
+   :output-only:
+
+   go: downloading gopkg.in/yaml.v2 v2.4.0
+   go: added gopkg.in/yaml.v2 v2.4.0
+
+Build and run the program:
+
+.. code-block:: bash
+
+   go run .
+
+It prints ``gopkg.in/yaml.v2``. Nothing so far shows where the package came
+from, so read the service's request counters through the ingress.
+``git_upload_pack`` is the route that serves a clone, and only git calls it:
+
+.. code-block:: bash
+
+   curl --fail --silent --show-error http://gopkg.in/metrics \
+     | grep '^gopkg_http_requests_total{.*route="git_upload_pack"'
+
+The output is that counter with a value of at least 1. The exact value
+depends on how many fetches the Go tool split the work into, and it also
+fetched ``gopkg.in/check.v1``, a test dependency of ``yaml.v2``, the same
+way:
+
+.. terminal::
+   :output-only:
+
+   gopkg_http_requests_total{method="POST",route="git_upload_pack",status_code="200"} 3
 
 Clean up
 --------
@@ -360,6 +463,13 @@ If you no longer need the Juju controller either, remove it as well:
 
 Both commands wait until the resources are gone and fail if they cannot
 remove them.
+
+Remove the ``/etc/hosts`` entry so that ``gopkg.in`` resolves to the public
+service again. The variables you exported last only for the shell session:
+
+.. code-block:: bash
+
+   sudo sed -i '/^127.0.0.1 gopkg.in$/d' /etc/hosts
 
 If you created a Multipass VM for this tutorial, delete it from the host once
 you no longer need it:

@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Moved the contributor pages out of the how-to and reference sections and dropped the generic charms-and-rocks page
+    author: minulo
+    type: minor
+    description: The CI workflows reference and the guide to running the Juju integration suite locally are now in the contributor section, and the generic introduction to Juju, charms and rocks is replaced by links to the Juju, Charmcraft and Rockcraft documentation. Old addresses redirect.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/45"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

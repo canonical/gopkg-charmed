@@ -8,3 +8,6 @@
 
 "contribute/improve-documentation-and-tutorial-tests.rst" "contribute/improve-documentation.rst"
 "how-to/deploy-locally-with-microk8s.rst" "tutorials/deploy-and-verify-on-kubernetes.rst"
+"how-to/run-full-juju-integration-suite-locally.rst" "contribute/run-full-juju-integration-suite-locally.rst"
+"reference/ci-workflows.rst" "contribute/ci-workflows.rst"
+"explanation/juju-charms-and-rocks.rst" "explanation/gopkg-service.rst"

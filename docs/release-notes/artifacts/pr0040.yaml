@@ -1,0 +1,25 @@
+version_schema: 2
+
+changes:
+  - title: Bounded the HTTP method label on request metrics
+    author: minulo
+    type: bugfix
+    description: The method label on the gopkg_http_requests_total and gopkg_http_request_duration_seconds metrics carried the request method exactly as the client sent it, so any client could create new time series by sending arbitrary method tokens. The label is now one of GET, HEAD, POST or other.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/40"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false
+  - title: Pinned the charm CI to the Python of the charm base
+    author: minulo
+    type: bugfix
+    description: The charm lint and unit jobs now install Python 3.12, the version shipped with the ubuntu@24.04 base that app/charm/tox.ini targets, instead of the newest Python the runner offers, and Renovate no longer proposes newer interpreters for those jobs. Bump the pin together with the charm base.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/40"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

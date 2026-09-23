@@ -23,12 +23,12 @@ integration, scaling, and more. For gopkg-k8s, this includes:
   dashboard, and alert rules
 
 For information about how to deploy, integrate, and manage this charm, see the
-official [gopkg-k8s documentation](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/).
+official [gopkg-k8s documentation](https://canonical.com/juju/docs/gopkg-charm/latest/).
 
 ## Get started
 
 You need a Juju 3.6 controller on a Kubernetes cloud. The
-[tutorial](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/tutorials/deploy-and-verify-on-kubernetes/)
+[tutorial](https://canonical.com/juju/docs/gopkg-charm/latest/tutorials/deploy-and-verify-on-kubernetes/)
 sets one up on MicroK8s and builds the charm from source; to deploy the
 published charm instead, run:
 
@@ -66,7 +66,7 @@ juju config nginx-ingress-integrator service-hostname=go.example.com
 juju config gopkg-k8s hostname=go.example.com
 ```
 
-See [Configure the hostname and check go-import metadata](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/how-to/configure-hostname-and-check-go-import/).
+See [Configure the hostname and check go-import metadata](https://canonical.com/juju/docs/gopkg-charm/latest/how-to/configure-hostname-and-check-go-import/).
 
 #### Serve metrics on a separate port
 
@@ -77,7 +77,7 @@ the port that ingress publishes:
 juju config gopkg-k8s metrics-port=9102
 ```
 
-See [Integrate with the Canonical Observability Stack](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/how-to/integrate-with-cos/).
+See [Integrate with the Canonical Observability Stack](https://canonical.com/juju/docs/gopkg-charm/latest/how-to/integrate-with-cos/).
 
 You can check out the full list of
 [configuration options](https://charmhub.io/gopkg-k8s/configurations) and
@@ -85,25 +85,32 @@ You can check out the full list of
 
 ## Integrations
 
-| Endpoint | Interface | Required | Purpose |
-|---|---|---|---|
-| `ingress` | `ingress` | For external access | Routes HTTP traffic to the service through an ingress charm such as [nginx-ingress-integrator](https://charmhub.io/nginx-ingress-integrator) |
-| `logging` | `loki_push_api` | No | Forwards the service's JSON logs and its Loki alert rules to [Loki](https://charmhub.io/loki-k8s) |
-| `metrics-endpoint` | `prometheus_scrape` | No | Scrape job for the service's metrics and its alert rules, for [Prometheus](https://charmhub.io/prometheus-k8s) |
-| `grafana-dashboard` | `grafana_dashboard` | No | The **gopkg Overview** and **Go Operator** dashboards, for [Grafana](https://charmhub.io/grafana-k8s) |
+This charm can be integrated with other Juju charms and services:
+
+* [NGINX ingress integrator](https://charmhub.io/nginx-ingress-integrator)
+  over `ingress` (interface `ingress`): routes external HTTP traffic to the
+  service. Required to reach the service from outside the cluster.
+* [Loki](https://charmhub.io/loki-k8s) over `logging` (interface
+  `loki_push_api`): receives the service's JSON logs and its Loki alert rules.
+* [Prometheus](https://charmhub.io/prometheus-k8s) over `metrics-endpoint`
+  (interface `prometheus_scrape`): scrapes the service's metrics and loads its
+  alert rules.
+* [Grafana](https://charmhub.io/grafana-k8s) over `grafana-dashboard`
+  (interface `grafana_dashboard`): receives the **gopkg Overview** and
+  **Go Operator** dashboards.
 
 You can find the full list of integrations
 [here](https://charmhub.io/gopkg-k8s/integrations).
 
 ## Learn more
 
-* [Read more](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/)
-* [Developer documentation](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/reference/integrations/):
+* [Read more](https://canonical.com/juju/docs/gopkg-charm/latest/)
+* [Developer documentation](https://canonical.com/juju/docs/gopkg-charm/latest/reference/integrations/):
   endpoints, metrics, logs, and alert rules, for charms that integrate with
   this one
 * [Official webpage](https://gopkg.in): the public gopkg.in service and its
   URL and version rules
-* [Troubleshooting](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/how-to/troubleshoot-deployment/)
+* [Troubleshooting](https://canonical.com/juju/docs/gopkg-charm/latest/how-to/troubleshoot-deployment/)
 
 ## Project and community
 

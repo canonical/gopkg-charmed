@@ -21,7 +21,7 @@ integration, scaling, and more. For gopkg-k8s, this includes:
   dashboard, and alert rules
 
 For information about how to deploy, integrate, and manage the charm, see the
-official [gopkg-k8s documentation](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/)
+official [gopkg-k8s documentation](https://canonical.com/juju/docs/gopkg-charm/latest/)
 and the [charm's README](app/charm/README.md), which is what
 [Charmhub](https://charmhub.io/gopkg-k8s) shows.
 
@@ -49,7 +49,7 @@ juju deploy gopkg-k8s --channel latest/edge
 
 The [charm's README](app/charm/README.md) continues with ingress and the
 hostname, and the
-[tutorial](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/tutorials/deploy-and-verify-on-kubernetes/)
+[tutorial](https://canonical.com/juju/docs/gopkg-charm/latest/tutorials/deploy-and-verify-on-kubernetes/)
 walks through the same deployment from source on MicroK8s, including building
 the rock and the charm.
 
@@ -92,11 +92,9 @@ ingress, and observability wiring).
 ## Documentation
 
 The documentation is in [docs/](docs/), based on the Canonical starter pack
-and published on Read the Docs at
-[canonical-gopkg-charm.readthedocs-hosted.com](https://canonical-gopkg-charm.readthedocs-hosted.com/latest/),
-which requires a Canonical login until the documentation moves to
-`canonical.com/juju/docs/gopkg-charm/`. It follows the
-[Diátaxis](https://diataxis.fr/) approach.
+and published at
+[canonical.com/juju/docs/gopkg-charm](https://canonical.com/juju/docs/gopkg-charm/latest/).
+It follows the [Diátaxis](https://diataxis.fr/) approach.
 
 To preview it locally before submitting changes:
 

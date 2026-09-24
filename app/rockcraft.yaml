@@ -18,3 +18,8 @@ parts:
   go-framework/install-app:
     build-environment:
       - CGO_ENABLED: "0"
+    # `go install` names the binary after the last element of the module
+    # path, gopkg-charmed, while the extension starts the rock's name, gopkg.
+    # This mapping keeps the service command and the image unchanged.
+    organize:
+      bin/gopkg-charmed: usr/local/bin/gopkg

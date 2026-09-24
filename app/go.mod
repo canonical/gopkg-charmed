@@ -1,4 +1,4 @@
-module github.com/niemeyer/gopkg
+module github.com/canonical/gopkg-charmed
 
 go 1.21.2
 

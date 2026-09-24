@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Explained what gopkg.in is for and who should run a deployment
+    author: minulo
+    type: minor
+    description: The charm's description, both READMEs, the documentation home page and the tutorial introduction now say what the gopkg.in service does for a Go program, that Canonical maintains the charm to run the public gopkg.in, and that a deployment serves imports of the hostname it is configured with, so a copy of your own is a mirror or a private import domain rather than a replacement for the public service.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/42"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

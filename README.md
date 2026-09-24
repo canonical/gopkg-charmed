@@ -11,6 +11,14 @@ repository. gopkg.in gives Go programs stable, major-version-specific import
 paths such as `gopkg.in/yaml.v2`; the source was imported from
 [niemeyer/gopkg](https://github.com/niemeyer/gopkg) and is maintained here.
 
+Canonical maintains this charm to run the public gopkg.in service. The
+service writes the hostname it is configured with into its `go-import`
+metadata, so a deployment serves imports of *that* hostname, not of
+`gopkg.in`: code that already imports `gopkg.in/...` keeps using the public
+service. Run your own copy to mirror gopkg.in inside a network that cannot
+reach it, or to offer versioned import paths for GitHub repositories under
+your own domain.
+
 Like any Juju charm, `gopkg-k8s` supports one-line deployment, configuration,
 integration, scaling, and more. For gopkg-k8s, this includes:
 

@@ -20,13 +20,12 @@ offerings.
 ``gopkg.in`` gives Go programs stable, major-version-specific import paths:
 ``gopkg.in/yaml.v2`` resolves to the newest v2 tag of the ``go-yaml/yaml``
 repository. Canonical maintains this charm to run the public ``gopkg.in``
-service. The service writes the hostname it is configured with into its
+service. The service writes the configured hostname into its
 ``go-import`` metadata, so a deployment serves imports of that hostname, not
 of ``gopkg.in``: code that already imports ``gopkg.in/...`` keeps using the
-public service. Operate your own copy to mirror ``gopkg.in`` inside a network
+public service. Operators use their own copy to mirror ``gopkg.in`` inside a network
 that cannot reach it, or to offer versioned import paths for GitHub
-repositories under your own domain. :ref:`gopkg-service` explains how the
-service resolves an import.
+repositories under their own domain. 
 
 In this documentation
 ---------------------

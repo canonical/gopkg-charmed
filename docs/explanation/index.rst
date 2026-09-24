@@ -14,7 +14,7 @@ Understand what the service does and how ``gopkg-k8s`` is exposed:
 - Follow request routing from the client to the workload in
   :doc:`Ingress <ingress>`.
 
-For Juju, charms, and rocks themselves, see the `Juju
+For more details on Juju, charms, and rocks, see the `Juju
 <https://canonical.com/juju/docs/juju-cli/3.6/reference/juju/>`_,
 `Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_ and
 `Rockcraft <https://ubuntu.com/containers/rockcraft/docs/latest/>`_

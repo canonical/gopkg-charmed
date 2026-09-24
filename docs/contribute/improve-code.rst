@@ -17,8 +17,8 @@ Complete :ref:`Set up a local Linux environment
 <set-up-a-local-linux-environment>` first.
 
 The Go service is under ``app/``. ``app/rockcraft.yaml`` packages it as a rock,
-and the charm under ``app/charm/`` operates that image with Juju. For what a
-rock and a charm are, see the `Rockcraft
+and the charm under ``app/charm/`` operates that image with Juju. For more details
+on rocks and charms, see the `Rockcraft
 <https://ubuntu.com/containers/rockcraft/docs/latest/explanation/rocks/>`_
 and `Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_
 documentation.

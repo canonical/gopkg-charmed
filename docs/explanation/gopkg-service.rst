@@ -75,7 +75,7 @@ integrations. Two operational facts follow from the service's job:
   option is described in :ref:`charm-configuration` and
   :ref:`configure-hostname-and-check-go-import`.
 
-For what a charm and a rock are, see the `Juju
+For more details on charms and rocks, see the `Juju
 <https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_,
 `Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_ and
 `Rockcraft

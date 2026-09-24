@@ -41,9 +41,7 @@ links:
   source: https://github.com/canonical/gopkg-charmed
   issues: https://github.com/canonical/gopkg-charmed/issues
   website: https://gopkg.in
-  # The documentation is moving to https://canonical.com/juju/docs/gopkg-charm/
-  # (ISD-6478). Until then it is on Read the Docs behind Canonical SSO.
-  documentation: https://canonical-gopkg-charm.readthedocs-hosted.com/latest/
+  documentation: https://canonical.com/juju/docs/gopkg-charm/latest/
   contact:
     - https://matrix.to/#/#charmhub-charmdev:ubuntu.com
     - minh.nguyen@canonical.com

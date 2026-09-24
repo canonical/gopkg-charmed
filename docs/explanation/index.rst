@@ -1,21 +1,24 @@
 .. _explanation:
 
 .. meta::
-	:description: Understand how gopkg.in resolves imports and how rocks, charms, Juju, and ingress package, operate, and expose gopkg-k8s.
+	:description: Understand how gopkg.in resolves imports and how ingress exposes gopkg-k8s.
 
 Explanation
 ===========
 
-Understand what the service does and how ``gopkg-k8s`` is packaged,
-operated, and exposed:
+Understand what the service does and how ``gopkg-k8s`` is exposed:
 
 - Learn what ``gopkg.in`` does for a Go program and why its import paths
   still matter in :doc:`How gopkg.in serves stable import paths
   <gopkg-service>`.
-- Learn the packaging and orchestration concepts in :doc:`Juju, charms, and
-  rocks <juju-charms-and-rocks>`.
 - Follow request routing from the client to the workload in
   :doc:`Ingress <ingress>`.
+
+For more details on Juju, charms, and rocks, see the `Juju
+<https://canonical.com/juju/docs/juju-cli/3.6/reference/juju/>`_,
+`Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_ and
+`Rockcraft <https://ubuntu.com/containers/rockcraft/docs/latest/>`_
+documentation.
 
 .. vale off
 
@@ -23,7 +26,6 @@ operated, and exposed:
 	:maxdepth: 1
 
 	gopkg-service
-	juju-charms-and-rocks
 	ingress
 
 .. vale on

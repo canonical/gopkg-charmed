@@ -44,7 +44,7 @@ In this documentation
       :link-type: ref
 
       **Step-by-step guides** for configuring ingress and the hostname,
-      running the test suite, and troubleshooting.
+      integrating with observability, and troubleshooting.
 
 .. grid:: 1 1 2 2
    :reverse:
@@ -53,15 +53,15 @@ In this documentation
       :link: reference
       :link-type: ref
 
-      **Technical information**: configuration options, supported platforms
-      and prerequisites, and CI workflows.
+      **Technical information**: configuration options, integration
+      endpoints, and supported platforms and prerequisites.
 
    .. grid-item-card:: Explanation
       :link: explanation
       :link-type: ref
 
       **Discussion and clarification** of how gopkg.in resolves imports and
-      how rocks, charms, Juju, and ingress fit together.
+      how ingress reaches the service.
 
 How this documentation is organized
 -----------------------------------
@@ -72,9 +72,9 @@ structure.
 - The :ref:`Tutorial <tutorials>` takes you step-by-step through a complete
   deployment of ``gopkg-k8s``.
 - :ref:`How-to guides <how-to-guides>` cover preparing an environment,
-  configuring the charm, testing it, and troubleshooting it.
-- :ref:`Reference <reference>` provides the configuration options, supported
-  platforms, and CI behavior.
+  configuring the charm, observing it, and troubleshooting it.
+- :ref:`Reference <reference>` provides the configuration options,
+  integration endpoints, and supported platforms.
 - :ref:`Explanation <explanation>` includes topic overviews, background and
   context, and detailed discussion.
 - :ref:`Release notes <release_notes_index>` hold the release history.

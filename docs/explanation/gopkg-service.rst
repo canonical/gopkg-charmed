@@ -75,9 +75,13 @@ integrations. Two operational facts follow from the service's job:
   option is described in :ref:`charm-configuration` and
   :ref:`configure-hostname-and-check-go-import`.
 
-See :doc:`Juju, charms, and rocks <juju-charms-and-rocks>` for the packaging
-and orchestration concepts, and :doc:`Ingress <ingress>` for how requests
-reach the service from outside the cluster.
+For more details on charms and rocks, see the `Juju
+<https://canonical.com/juju/docs/juju-cli/3.6/reference/charm/>`_,
+`Charmcraft <https://canonical.com/juju/docs/charmcraft/4/>`_ and
+`Rockcraft
+<https://ubuntu.com/containers/rockcraft/docs/latest/explanation/rocks/>`_
+documentation. See :doc:`Ingress <ingress>` for how requests reach the
+service from outside the cluster.
 
 How a deployment differs from gopkg.in
 --------------------------------------

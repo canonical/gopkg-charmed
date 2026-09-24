@@ -10,7 +10,7 @@ Supported architectures
 -----------------------
 
 The charm and its ``app-image`` resource on Charmhub are built for AMD64
-only, so the tutorial, which deploys them, needs an AMD64 machine. Building
+only. Building
 from source works on AMD64 and ARM64: ``app/rockcraft.yaml`` and
 ``app/charm/charmcraft.yaml`` declare both, and :ref:`improve-code` covers
 the build. The observability charms are published for AMD64 only, so

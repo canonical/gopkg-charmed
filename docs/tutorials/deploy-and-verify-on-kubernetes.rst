@@ -36,8 +36,7 @@ Prerequisites
 You need an AMD64 workstation and the environment from
 :ref:`set-up-a-local-linux-environment`. After following that guide, you'll
 have an Ubuntu environment with the required tools, and your user will belong
-to the MicroK8s group. The published charm and its image are built for AMD64
-only; to build them yourself, or to run them on ARM64, see
+to the MicroK8s group. For ARM64 support, see
 :ref:`improve-code`.
 
 Confirm that MicroK8s access is ready. This repeats the setup guide's check on
@@ -80,7 +79,7 @@ Charmhub supplies the charm and its ``app-image`` resource, the container
 image that carries the compiled ``gopkg.in`` service, so the command needs no
 ``--resource`` option. ``latest/edge`` receives a new revision from every
 change merged to the charm's main branch and is the only channel published
-today. Juju downloads the charm, pulls the image, and starts the workload; the
+currently. Juju downloads the charm, pulls the image, and starts the workload; the
 application reports ``waiting`` or ``maintenance`` until it is ready.
 
 Publish the service under a hostname

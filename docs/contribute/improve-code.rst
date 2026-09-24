@@ -98,7 +98,6 @@ the Rockcraft one:
 
    cd ~/gopkg-charm/app/charm
    CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
-   ls -1 gopkg-k8s_$(dpkg --print-architecture).charm
 
 Deploy the local charm with the image you pushed. Use a fresh model, or
 destroy the tutorial's first. The model constraint schedules the pods on your

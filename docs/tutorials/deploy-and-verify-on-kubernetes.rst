@@ -311,9 +311,13 @@ Switch the hostname to gopkg.in
 -------------------------------
 
 In production you set both hostname settings to your domain. Here, move
-them to ``gopkg.in`` itself, which the next section needs, and see that the
-charms apply a configuration change to the running deployment without a
-rebuild:
+them to ``gopkg.in`` itself, because the next section has the Go tool fetch
+``gopkg.in/yaml.v2``, and the Go tool accepts that package only under that
+name. The two settings move together: ``service-hostname`` decides which
+requests reach the service, and ``hostname`` is the name the service writes
+into its ``go-import`` metadata, so the deployment only works when they
+agree. The change also shows that the charms apply a configuration change
+to the running deployment without a rebuild:
 
 .. code-block:: bash
 
@@ -368,7 +372,9 @@ line to ``/etc/hosts``, the file every program on the machine checks before
 asking DNS. With ``gopkg.in`` mapped to ``127.0.0.1`` there, anything that
 connects to ``gopkg.in`` reaches the ingress controller on your machine
 while still asking for the name ``gopkg.in``, which is what the routing
-rule matches. Add the line, then repeat the health check without
+rule matches.
+
+Add the line, then repeat the health check without
 ``--resolve`` to see it work:
 
 .. code-block:: bash
@@ -401,24 +407,7 @@ Create a Go module with a program that imports ``gopkg.in/yaml.v2``:
    }
    EOF
 
-Fetch the module. Three environment variables keep the Go tool on your
-deployment. The last two switch off certificate checks, so set them only
-for a deployment you run yourself, as here:
-
-``GOPRIVATE=gopkg.in``
-  Fetch ``gopkg.in`` paths from their source rather than through the public
-  module proxy and checksum database. Without it, the proxy answers and
-  your deployment is never asked.
-
-``GOINSECURE=gopkg.in``
-  Accept the certificate the ingress controller presents on port 443. It is
-  a self-signed placeholder, because nothing in this tutorial issued a
-  certificate for ``gopkg.in``.
-
-``GIT_SSL_NO_VERIFY=true``
-  The same for git, which the Go tool runs to clone from the
-  ``https://gopkg.in/yaml.v2`` address that the ``go-import`` metadata
-  names.
+Fetch the module:
 
 .. code-block:: bash
 
@@ -438,6 +427,25 @@ records the newest v2 tag in ``go.mod``:
 .. SPREAD
    grep -F 'gopkg.in/yaml.v2 v2' go.mod
 .. SPREAD END
+
+The three environment variables keep the Go tool on your deployment. The
+last two switch off certificate checks, so set them only for a deployment
+you run yourself, as here:
+
+``GOPRIVATE=gopkg.in``
+  Fetch ``gopkg.in`` paths from their source rather than through the public
+  module proxy and checksum database. Without it, the proxy answers and
+  your deployment is never asked.
+
+``GOINSECURE=gopkg.in``
+  Accept the certificate the ingress controller presents on port 443. It is
+  a self-signed placeholder, because nothing in this tutorial issued a
+  certificate for ``gopkg.in``.
+
+``GIT_SSL_NO_VERIFY=true``
+  The same for git, which the Go tool runs to clone from the
+  ``https://gopkg.in/yaml.v2`` address that the ``go-import`` metadata
+  names.
 
 Build and run the program:
 

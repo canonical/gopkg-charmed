@@ -23,7 +23,10 @@ Deploying the charm requires the following snaps:
 
 - ``juju`` from ``3/stable``
 - ``microk8s`` from ``1.36-strict/stable``
-- ``go`` from ``latest/stable``, for the module fetch at the end
+
+Checking a deployment from the command line uses ``curl``, and using the
+service from a Go program, as the tutorial does in its last step, needs
+``go`` from ``latest/stable`` and ``git`` from the Ubuntu archive.
 
 Building from source, covered by :ref:`set-up-a-development-environment` and
 :ref:`improve-code`, adds:

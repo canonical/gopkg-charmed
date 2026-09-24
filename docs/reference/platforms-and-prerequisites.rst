@@ -19,7 +19,7 @@ the build. The observability charms are published for AMD64 only, so
 Required tooling
 ----------------
 
-The tutorial installs these snaps:
+Deploying the charm requires the following snaps:
 
 - ``juju`` from ``3/stable``
 - ``microk8s`` from ``1.36-strict/stable``
@@ -32,8 +32,8 @@ Building from source, covered by :ref:`set-up-a-development-environment` and
 - ``lxd`` from its default channel, initialized with ``lxd init --auto``
 - ``go`` from ``latest/stable``, and ``tox`` for the charm tests
 
-Both craft tools need their experimental extensions enabled, which the
-contributor guide does with ``ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``
+Both craft tools need experimental extensions enabled, which
+requires ``ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``
 and ``CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true``.
 
 The documentation tests last verified the guides with Charmcraft 4.4.2,
@@ -49,6 +49,12 @@ and ``paas-charm`` 1.x.
 MicroK8s add-ons
 ----------------
 
-The tutorial enables ``dns``, ``hostpath-storage``, and ``ingress``. Building
-from source also needs ``registry``, the local image registry on port 32000
-that receives the rock.
+A deployment on MicroK8s needs these add-ons:
+
+- ``dns``, which resolves names inside the cluster
+- ``hostpath-storage``, which provides the volumes the Juju controller
+  requests
+- ``ingress``, which runs the ingress controller that publishes the service
+
+Building from source also needs ``registry``, the local image registry on
+port 32000 that receives the rock.

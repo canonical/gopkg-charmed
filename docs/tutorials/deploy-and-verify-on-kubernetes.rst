@@ -77,14 +77,11 @@ ones this tutorial was verified with, as listed in
 MicroK8s only accepts commands from members of its group, so add your user to
 it, then log out of the VM so the membership applies:
 
-.. code-block:: bash
-
-   sudo adduser $USER snap_microk8s
-
 .. SPREAD SKIP
 
 .. code-block:: bash
 
+   sudo adduser $USER snap_microk8s
    exit
 
 ``exit`` ends the session and returns you to the host, so run the next
@@ -97,6 +94,7 @@ command there to open a new one:
 .. SPREAD SKIP END
 
 .. SPREAD
+   sudo adduser $USER snap_microk8s
    # spread-session-break
 .. SPREAD END
 

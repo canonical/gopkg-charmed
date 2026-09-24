@@ -30,7 +30,7 @@ and :ref:`ci-workflows` describes what CI runs on each change.
 	set-up-a-development-environment
 	improve-documentation
 	improve-code
-	run-full-juju-integration-suite-locally
+	Run the integration suite locally <run-full-juju-integration-suite-locally>
 	ci-workflows
 
 .. vale on

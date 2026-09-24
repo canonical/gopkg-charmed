@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Rewrote the tutorial around the published charm
+    author: minulo
+    type: minor
+    description: The tutorial deploys gopkg-k8s from Charmhub's latest/edge channel, which carries the charm and its app-image resource, instead of building the rock and the charm from source first. It needs an AMD64 machine, because the published charm is AMD64 only. Building from source, which also works on ARM64, moved to the contributor guide. The documentation tests therefore exercise the published charm; the integration tests still build and test the source tree.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/43"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

@@ -37,8 +37,7 @@ official [gopkg-k8s documentation](https://canonical.com/juju/docs/gopkg-charm/l
 
 You need a Juju 3.6 controller on a Kubernetes cloud. The
 [tutorial](https://canonical.com/juju/docs/gopkg-charm/latest/tutorials/deploy-and-verify-on-kubernetes/)
-sets one up on MicroK8s and builds the charm from source; to deploy the
-published charm instead, run:
+sets one up on MicroK8s from a fresh machine. Deploy the published charm:
 
 ```bash
 juju add-model gopkg-k8s

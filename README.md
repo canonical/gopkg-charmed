@@ -58,8 +58,9 @@ juju deploy gopkg-k8s --channel latest/edge
 The [charm's README](app/charm/README.md) continues with ingress and the
 hostname, and the
 [tutorial](https://canonical.com/juju/docs/gopkg-charm/latest/tutorials/deploy-and-verify-on-kubernetes/)
-walks through the same deployment from source on MicroK8s, including building
-the rock and the charm.
+walks through the same deployment on MicroK8s from a fresh machine. Building
+the rock and the charm from source is covered by the
+[contributor guide](docs/contribute/improve-code.rst).
 
 ### Run the service locally
 

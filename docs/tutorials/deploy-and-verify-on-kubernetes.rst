@@ -9,7 +9,7 @@ Deploy and verify gopkg-k8s on Kubernetes
 ``gopkg.in`` gives Go programs stable, major-version-specific import paths:
 ``gopkg.in/yaml.v2`` resolves to the newest v2 tag of the ``go-yaml/yaml``
 repository. By the end of this tutorial you will have your own copy of that
-service answering the Go tool under a hostname you choose, running on
+service answering the Go tool under a configured hostname, running on
 Kubernetes under Juju, with the charm Canonical maintains to run the public
 ``gopkg.in``. A deployment serves imports of its own hostname, so it is a
 mirror or a private import domain, not a replacement for the public service

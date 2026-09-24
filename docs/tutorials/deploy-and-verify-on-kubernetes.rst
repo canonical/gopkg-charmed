@@ -361,6 +361,30 @@ Query the new name until the new value appears:
 The output is the ``go-import`` meta tag with ``gopkg.in`` as the import
 prefix.
 
+One more restart follows. Once the integrator has applied the new routing
+rule, which can take up to two minutes, it sends ``gopkg-k8s`` the service's
+new address, and the charm restarts the service to pass the address on as
+the ``APP_BASE_URL`` environment variable. A restart during the next section
+would interrupt the download and reset the request counters that section
+reads.
+
+Wait for that restart:
+
+.. code-block:: bash
+
+   timeout 300 bash -c '
+     until juju ssh --container app gopkg-k8s/0 pebble plan \
+         | grep -F "APP_BASE_URL: http://${INGRESS_HOST}"; do
+       sleep 5
+     done
+   '
+   juju wait-for unit gopkg-k8s/0 --query='agent-status=="idle"' --timeout=5m
+
+``pebble plan`` prints the configuration that Pebble, the service manager in
+the workload container, runs the service with. The loop ends by printing the
+``APP_BASE_URL`` line once that configuration carries the new address, and
+``juju wait-for`` returns when the charm has finished restarting the service.
+
 Fetch a module with the Go tool
 -------------------------------
 

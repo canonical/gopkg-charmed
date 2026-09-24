@@ -11,3 +11,4 @@
 "how-to/run-full-juju-integration-suite-locally.rst" "contribute/run-full-juju-integration-suite-locally.rst"
 "reference/ci-workflows.rst" "contribute/ci-workflows.rst"
 "explanation/juju-charms-and-rocks.rst" "explanation/gopkg-service.rst"
+"how-to/set-up-a-local-linux-environment.rst" "contribute/set-up-a-development-environment.rst"

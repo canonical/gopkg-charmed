@@ -71,8 +71,8 @@ structure.
 
 - The :ref:`Tutorial <tutorials>` takes you step-by-step through a complete
   deployment of ``gopkg-k8s``.
-- :ref:`How-to guides <how-to-guides>` cover preparing an environment,
-  configuring the charm, observing it, and troubleshooting it.
+- :ref:`How-to guides <how-to-guides>` cover configuring the charm,
+  monitoring it, and troubleshooting it.
 - :ref:`Reference <reference>` provides the configuration options,
   integration endpoints, and supported platforms.
 - :ref:`Explanation <explanation>` includes topic overviews, background and

@@ -13,8 +13,7 @@ deploys the rock and charm.
 Prerequisites
 -------------
 
-Complete :ref:`Set up a local Linux environment
-<set-up-a-local-linux-environment>` first.
+Complete :ref:`set-up-a-development-environment` first.
 
 The Go service is under ``app/``. ``app/rockcraft.yaml`` packages it as a rock,
 and the charm under ``app/charm/`` operates that image with Juju. For more details

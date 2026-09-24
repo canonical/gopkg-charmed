@@ -17,7 +17,7 @@ with Juju, and execute the integration tests on Linux, on AMD64 or ARM64.
 Prerequisites
 -------------
 
-Complete :ref:`set-up-a-local-linux-environment`, which installs the tools
+Complete :ref:`set-up-a-development-environment`, which installs the tools
 this guide needs: 
 
 - ``microk8s`` 
@@ -62,7 +62,7 @@ Use the individual steps when you need fine-grained control, for example to
 rebuild only one artifact. Run them in the same shell: the last step uses a
 variable set in the step before it.
 
-Confirm the environment from :ref:`set-up-a-local-linux-environment`, and
+Confirm the environment from :ref:`set-up-a-development-environment`, and
 bootstrap a controller only if none exists yet:
 
 .. code-block:: bash

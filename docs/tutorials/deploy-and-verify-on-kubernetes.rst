@@ -33,24 +33,94 @@ What you'll do
 Prerequisites
 -------------
 
-You need an AMD64 workstation and the environment from
-:ref:`set-up-a-local-linux-environment`. After following that guide, you'll
-have an Ubuntu environment with the required tools, and your user will belong
-to the MicroK8s group. For ARM64 support, see
-:ref:`improve-code`.
+You need an AMD64 workstation with at least 4 CPU cores, 8 GB of RAM, 50 GB
+of disk space, and network access for snaps, Charmhub, and container images.
+The published charm and its image are built for AMD64 only; to build them
+yourself, or to run them on ARM64, see :ref:`improve-code`.
 
-Confirm that MicroK8s access is ready. This repeats the setup guide's check on
-purpose: a shell opened before you joined the group fails here rather than in
-the middle of the deployment:
+This tutorial uses `Multipass <https://canonical.com/multipass>`_ to create an
+Ubuntu 24.04 LTS virtual machine, so the same steps apply on Linux, macOS, and
+Windows hosts, and the VM keeps everything the tutorial installs separate from
+your workstation. Install it by following :ref:`Install Multipass
+<multipass:how-to-guides-install-multipass>`, then create and enter the VM:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
+   multipass shell charm-dev
+
+.. SPREAD SKIP END
+
+If your workstation already runs Ubuntu 24.04 LTS, you can skip the virtual
+machine and run the remaining steps directly on it. Be aware of what that
+means: the steps install snaps with ``sudo``, add your user to the
+``snap_microk8s`` group, and start a MicroK8s cluster whose ingress listens on
+ports 80 and 443 of the workstation.
+
+Install Juju and MicroK8s from their snaps, and curl for the checks later in
+the tutorial. The `Juju
+<https://canonical.com/juju/docs/juju-cli/3.6/howto/manage-juju/>`_ and
+`MicroK8s <https://canonical.com/microk8s/docs/getting-started>`_
+documentation cover other ways to install them; the channels below are the
+ones this tutorial was verified with, as listed in
+:ref:`platforms-and-prerequisites`:
+
+.. code-block:: bash
+
+   sudo apt update
+   sudo apt install --yes curl
+   sudo snap install juju --channel 3/stable
+   sudo snap install microk8s --channel 1.36-strict/stable
+
+MicroK8s only accepts commands from members of its group, so add your user to
+it, then log out of the VM so the membership applies:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   sudo adduser $USER snap_microk8s
+   exit
+
+``exit`` ends the session and returns you to the host, so run the next
+command there to open a new one:
+
+.. code-block:: bash
+
+   multipass shell charm-dev
+
+.. SPREAD SKIP END
+
+.. SPREAD
+   sudo adduser $USER snap_microk8s
+   # spread-session-break
+.. SPREAD END
+
+Confirm the membership in the new session, wait for the cluster, and enable
+the add-ons the deployment needs: ``dns`` resolves names inside the cluster,
+``hostpath-storage`` provides the volumes the Juju controller requests, and
+``ingress`` runs the ingress controller that publishes the service on ports
+80 and 443:
 
 .. code-block:: bash
 
    id -nG | grep -qw snap_microk8s
    microk8s status --wait-ready
+   sudo microk8s enable dns hostpath-storage ingress
+   microk8s status --wait-ready
 
-The group check prints nothing, and the status command reports ``microk8s is
-running`` with the add-ons listed. If either fails, see
-:ref:`troubleshoot-deployment`.
+The group check prints nothing, and the last command reports ``microk8s is
+running`` with the three add-ons under ``enabled``. If the group check fails,
+the shell predates the membership: log out and in again. See
+:ref:`troubleshoot-deployment` for other failures.
+
+.. note::
+
+   In an interactive shell, ``newgrp snap_microk8s`` applies the membership
+   without logging out. It starts a new shell, so any commands you paste
+   together with it run in the original shell, before the membership applies.
 
 Bootstrap a Juju controller on the MicroK8s cloud. The controller is the
 management service that every ``juju`` command talks to:

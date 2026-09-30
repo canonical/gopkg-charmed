@@ -53,7 +53,7 @@ architecture-matching rock, builds the charm, and runs the integration tox
 environment with ``CHARM_FILE`` and ``APP_IMAGE`` set.
 
 If ``rockcraft pack`` fails with a ``PermissionError`` under
-``app/charm/.tox``, see :ref:`troubleshoot-deployment`.
+``app/charm/.tox``, see :ref:`troubleshoot-development`.
 
 Run the suite manually
 ----------------------

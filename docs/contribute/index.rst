@@ -20,7 +20,9 @@ documentation command affects the running service.
 
 Both paths start from :ref:`set-up-a-development-environment`.
 :ref:`full-integration-suite-local` runs the Juju integration suite by hand,
-and :ref:`ci-workflows` describes what CI runs on each change.
+:ref:`ci-workflows` describes what CI runs on each change, and
+:ref:`troubleshoot-development` collects the failures that come up while
+building from source.
 
 .. vale off
 
@@ -32,5 +34,6 @@ and :ref:`ci-workflows` describes what CI runs on each change.
 	improve-code
 	Run the integration suite locally <run-full-juju-integration-suite-locally>
 	ci-workflows
+	troubleshoot-development
 
 .. vale on

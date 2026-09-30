@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Moved the build-from-source failures to a contributor troubleshooting page
+    author: minulo
+    type: minor
+    description: The four troubleshooting entries that only apply when building the rock and the charm from source (the local registry refusing connections, a build that does not match the machine's architecture, a rock build tripping on Python files from another OS, tox in a mounted checkout) now live on "Troubleshoot the development environment" under Contribute. "How to troubleshoot deployment issues" keeps the Juju, ingress, HTTPS, and observability entries for operators of the published charm.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/52"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

@@ -67,7 +67,7 @@ In this documentation
        | :ref:`Improve the code <improve-code>`
        | :ref:`Improve the documentation <improve-documentation>`
        | :ref:`CI workflows <ci-workflows>`
-       | :ref:`Troubleshoot the development environment <troubleshoot-development>`
+       | :ref:`Troubleshoot <troubleshoot-development>`
 
 How this documentation is organized
 -----------------------------------

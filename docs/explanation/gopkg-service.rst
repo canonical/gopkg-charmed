@@ -1,14 +1,14 @@
 .. _gopkg-service:
 
 .. meta::
-   :description: Understand what the gopkg.in service operated by gopkg-k8s does for Go programs, why its import paths still matter, and what the charm adds.
+   :description: Understand what the gopkg.in service operated by gopkg-k8s does for Go programs, why its import paths still matter, and how the charm runs it.
 
 How gopkg.in serves stable import paths
 =======================================
 
 ``gopkg.in`` is the Go service that ``gopkg-k8s`` operates. This page
 describes what the service does for a Go program that imports a ``gopkg.in``
-path, why those paths still matter, what the charm adds, and how a deployment
+path, why those paths still matter, how the charm runs it, and how a deployment
 differs from the public service. The URL patterns
 and version rules of the service itself are documented upstream on the
 `gopkg.in page <https://labix.org/gopkg.in>`_, which a deployment's front
@@ -66,8 +66,8 @@ clients perform the download.
 
 .. _gopkg-service-what-the-charm-adds:
 
-What the charm adds
--------------------
+How the charm runs the service
+------------------------------
 
 ``gopkg-k8s`` is the operational layer of the HTTP application:
 the service is packaged as a rock, Juju deploys the

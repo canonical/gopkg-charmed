@@ -3,28 +3,25 @@
 .. meta::
    :description: Move a gopkg-k8s deployment to a newer charm revision with juju refresh, wait for Juju to replace the workload, and verify the service through ingress.
 
-How to upgrade the charm
-========================
+How to upgrade
+==============
 
 A new revision of ``gopkg-k8s`` on Charmhub carries the charm and the
 ``app-image`` resource it runs, so one ``juju refresh`` upgrades both. The
 service keeps no persistent state, so there is nothing to back up or migrate.
 What an upgrade costs is availability: Juju replaces the pod, and the ingress
 keeps sending requests to the old pod's address until the new unit publishes
-its own, which can take up to four minutes. Upgrade in a quiet period, then
-verify the service as this guide does.
+its own.
 
-These steps assume that ``gopkg-k8s`` and ``nginx-ingress-integrator``
-are deployed and integrated, as they are after the deployment steps of
-:ref:`deploy-and-verify-on-kubernetes` and before its clean-up section, with
+This guide assumes that ``gopkg-k8s`` and ``nginx-ingress-integrator``
+are deployed and integrated, with
 the integrator's ``service-hostname`` exported as ``INGRESS_HOST``:
 
 .. code-block:: bash
 
    export INGRESS_HOST=gopkg.example.com
 
-Check the current and the available revision
---------------------------------------------
+Check the current and the available revision with:
 
 .. code-block:: bash
 
@@ -42,18 +39,9 @@ The ``Rev`` column of ``juju status`` is the revision the deployment runs, and
 
 ``juju info`` ends with every channel of the charm and the revision each one
 offers, in parentheses. A higher number on the deployment's channel means an
-upgrade is available:
+upgrade is available.
 
-.. terminal::
-   :output-only:
-
-   channels: |
-     latest/stable:     --
-     latest/candidate:  --
-     latest/beta:       --
-     latest/edge:       770f8476  2026-09-24  (5)  15MB  amd64  ubuntu@24.04
-
-Note the current revision: rolling back needs it.
+Note the current revision in case you need to roll back the upgrade.
 
 .. SPREAD
    previous=$(juju status gopkg-k8s --format=yaml | awk '/charm-rev:/ { print $2 - 1; exit }')
@@ -86,15 +74,7 @@ add ``--channel``, for example ``--channel latest/stable``; to move to one
 particular revision, add ``--revision``.
 
 Juju replaces the pod with the new revision's image. Wait until the
-application reports ``active`` again:
-
-.. SPREAD SKIP
-
-.. code-block:: bash
-
-   juju status --watch 2s
-
-.. SPREAD SKIP END
+application reports ``active`` again using ``juju status``.
 
 .. SPREAD
    sleep 30
@@ -148,11 +128,11 @@ that the upgraded service answers package requests:
 The output is the ``go-import`` meta tag. If the loop gives up or a check
 fails, see :ref:`troubleshoot-deployment`.
 
-Roll back
----------
+Roll back an upgrade
+--------------------
 
-If the new revision misbehaves, refresh to the revision you noted at the
-start, then wait and verify as above:
+If you need to roll back, refresh to the revision you noted at the
+start:
 
 .. SPREAD SKIP
 

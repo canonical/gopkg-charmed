@@ -75,9 +75,8 @@ structure.
 
 - The :ref:`Tutorial <tutorials>` takes you step-by-step through a first
   deployment of ``gopkg-k8s``.
-- :ref:`How-to guides <how-to-guides>` assume you have basic familiarity with
-  ``gopkg-k8s``. Learn how to complete specific tasks when setting up,
-  operating, and maintaining a deployment.
+- :ref:`How-to guides <how-to-guides>` cover practical tasks for configuring,
+  operating, and maintaining your ``gopkg-k8s`` deployment.
 - :ref:`Reference <reference>` provides technical information to look up
   while you work, such as configuration options, integrations, and supported
   platforms.

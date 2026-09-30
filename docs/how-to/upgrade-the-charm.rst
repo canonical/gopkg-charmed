@@ -69,9 +69,27 @@ Juju names the revision it added:
    Added charm-hub charm "gopkg-k8s", revision 5 in channel latest/edge, to the model
 
 If the deployment already runs that revision, it prints ``charm "gopkg-k8s":
-already up-to-date`` instead and changes nothing. To follow another channel,
-add ``--channel``, for example ``--channel latest/stable``; to move to one
-particular revision, add ``--revision``.
+already up-to-date`` instead and changes nothing.
+
+To follow another channel, add ``--channel``:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   juju refresh gopkg-k8s --channel latest/stable
+
+.. SPREAD SKIP END
+
+To move to one particular revision, add ``--revision``:
+
+.. SPREAD SKIP
+
+.. code-block:: bash
+
+   juju refresh gopkg-k8s --revision <revision>
+
+.. SPREAD SKIP END
 
 Juju replaces the pod with the new revision's image. Wait until the
 application reports ``active`` again using ``juju status``.
@@ -102,8 +120,7 @@ The ``Rev`` column shows the revision that ``juju refresh`` named.
 Then check the service through ingress. After Juju replaces the pod, the
 integrator continues routing requests to the old address until the new unit
 publishes its address. This can take up to four minutes, during which requests
-fail with ``502``, ``503``, or ``504``. Query until the health check answers
-(the loop gives up after ten minutes):
+fail with ``502``, ``503``, or ``504``. Query until the health check answers:
 
 .. code-block:: bash
 
@@ -115,8 +132,9 @@ fail with ``502``, ``503``, or ``504``. Query until the health check answers
      done
    '
 
-The output is ``ok``. Finally, send the query the Go tool sends, to confirm
-that the upgraded service answers package requests:
+The output is ``ok``. The loop gives up after ten minutes. Finally, send the
+query the Go tool sends, to confirm that the upgraded service answers package
+requests:
 
 .. code-block:: bash
 
@@ -142,8 +160,9 @@ start:
 
 .. SPREAD SKIP END
 
-The application keeps following its channel: a later ``juju refresh`` without
-options moves it to the channel's newest revision again.
+The application keeps following its channel: a later ``juju refresh
+gopkg-k8s``, without ``--channel`` or ``--revision``, moves it to the channel's
+newest revision again.
 
 If you deploy with the Terraform module in ``terraform/``, its ``revision``
 variable pins a revision and ``null`` follows ``channel``; see the module's

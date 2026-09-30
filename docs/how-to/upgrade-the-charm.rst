@@ -119,11 +119,11 @@ The ``Rev`` column shows the revision that ``juju refresh`` named.
    test "${current}" -gt "${previous}"
 .. SPREAD END
 
-Then check the service through ingress. The integrator routes requests to the
-address the unit published over the ingress relation, and the new unit
-publishes its address up to four minutes after the pod is replaced; until
-then, requests fail with ``502``, ``503``, or ``504``. Query until the health
-check answers (the loop gives up after ten minutes):
+Then check the service through ingress. After Juju replaces the pod, the
+integrator continues routing requests to the old address until the new unit
+publishes its address. This can take up to four minutes, during which requests
+fail with ``502``, ``503``, or ``504``. Query until the health check answers
+(the loop gives up after ten minutes):
 
 .. code-block:: bash
 

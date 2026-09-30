@@ -103,15 +103,17 @@ Spread backend, starting from a bare system: the guides' own commands install
 the tools, enable MicroK8s, bootstrap Juju, and build the rock and charm from
 source.
 
-The guides run in prerequisite order. Every test starts with the tutorial.
-The second continues into the ingress, hostname, and observability how-to
-guides against the deployment the tutorial leaves behind, and the third into
-the ingress and upgrade guides, where it steps the deployment back one
-revision so that the upgrade has something to do. Two sentinels
-control the boundaries: a page's clean-up commands, marked by
+There are three tests. Each runs on its own bare machine and does not depend
+on the others. The how-to guides assume an existing deployment, so each how-to
+test first runs the tutorial to create one, then runs its guides in
+prerequisite order. The first test runs the tutorial alone; the second
+continues into the ingress, hostname, and observability how-to guides; the
+third continues into the ingress and upgrade guides, where it steps the
+deployment back one revision so that the upgrade has something to do. Two
+sentinels control the boundaries: a page's clean-up commands, marked by
 ``# spread-teardown``, run only when that page is last in its chain, so the
-tutorial test destroys what it created while the how-to test keeps the
-deployment; and each ``# spread-session-break`` a guide emits starts a fresh
+tutorial test destroys what it created while the how-to tests keep their
+deployments; and each ``# spread-session-break`` a guide emits starts a fresh
 login shell, mirroring the reader logging out and back in.
 
 Automatic and manual linkage

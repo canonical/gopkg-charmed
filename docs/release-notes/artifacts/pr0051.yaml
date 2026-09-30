@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Led the home page with a table of domains
+    author: minulo
+    type: minor
+    description: The home page's "In this documentation" section is now a table with one row per domain of concern (getting started, deployment, operations, versioned import paths, integrations, design, security, development), each linking to the pages and sections that cover it, in place of the four Diátaxis cards. "How this documentation is organized" says what each section contains.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/51"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

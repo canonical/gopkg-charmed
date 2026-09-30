@@ -11,7 +11,7 @@ A new revision of ``gopkg-k8s`` on Charmhub carries the charm and the
 service keeps no persistent state, so there is nothing to back up or migrate.
 What an upgrade costs is availability: Juju replaces the pod, and the ingress
 keeps sending requests to the old pod's address until the new unit publishes
-its own, which takes one to four minutes. Upgrade in a quiet period, then
+its own, which can take up to four minutes. Upgrade in a quiet period, then
 verify the service as this guide does.
 
 These steps assume that ``gopkg-k8s`` and ``nginx-ingress-integrator``
@@ -121,7 +121,7 @@ The ``Rev`` column shows the revision that ``juju refresh`` named.
 
 Then check the service through ingress. The integrator routes requests to the
 address the unit published over the ingress relation, and the new unit
-publishes its address one to four minutes after the pod is replaced; until
+publishes its address up to four minutes after the pod is replaced; until
 then, requests fail with ``502``, ``503``, or ``504``. Query until the health
 check answers (the loop gives up after ten minutes):
 

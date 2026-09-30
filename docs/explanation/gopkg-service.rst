@@ -14,6 +14,8 @@ and version rules of the service itself are documented upstream on the
 `gopkg.in page <https://labix.org/gopkg.in>`_, which a deployment's front
 page redirects to.
 
+.. _gopkg-service-why:
+
 Why gopkg.in exists
 -------------------
 
@@ -31,6 +33,8 @@ applications and libraries still need ``gopkg.in`` to resolve them to the
 right repository and version. ``gopkg-k8s`` keeps that contract
 available; the service is not a second package manager and does not replace
 Go's module tooling.
+
+.. _gopkg-service-what-it-does:
 
 What the service does
 ---------------------
@@ -60,6 +64,8 @@ For a request such as ``gopkg.in/yaml.v2``, the service:
 The importing code keeps its ``gopkg.in`` path; the standard Go and Git
 clients perform the download.
 
+.. _gopkg-service-what-the-charm-adds:
+
 What the charm adds
 -------------------
 
@@ -82,6 +88,8 @@ For more details on charms and rocks, see the `Juju
 <https://ubuntu.com/containers/rockcraft/docs/latest/explanation/rocks/>`_
 documentation. See :doc:`Ingress <ingress>` for how requests reach the
 service from outside the cluster.
+
+.. _gopkg-service-differences:
 
 How a deployment differs from gopkg.in
 --------------------------------------

@@ -385,6 +385,8 @@ the workload container, runs the service with. The loop ends by printing the
 ``APP_BASE_URL`` line once that configuration carries the new address, and
 ``juju wait-for`` returns when the charm has finished restarting the service.
 
+.. _tutorial-fetch-module:
+
 Fetch a module with the Go tool
 -------------------------------
 

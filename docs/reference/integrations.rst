@@ -55,6 +55,8 @@ ingress publishes. The path must be absolute and must not be ``/`` or
 ``/health-check``. See :ref:`charmcraft:go-framework-extension-config-options`
 for every framework option.
 
+.. _integrations-metrics:
+
 Metrics
 -------
 
@@ -100,6 +102,8 @@ The ``route`` label takes one of ``health_check``, ``root_redirect``,
 ``go_get``, ``package_page``, ``git_info_refs``, ``git_upload_pack``, and
 ``not_found``.
 
+.. _integrations-logs:
+
 Logs
 ----
 
@@ -108,6 +112,8 @@ records carry ``method``, ``path``, ``route``, ``status_code``, and
 ``duration_ms``; health checks are not logged. Failures are recorded at
 level ``ERROR``, and a fatal start-up or server error is logged as
 ``application stopped`` before the process exits.
+
+.. _integrations-alert-rules:
 
 Alert rules
 -----------

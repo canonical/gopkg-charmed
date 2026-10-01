@@ -105,6 +105,8 @@ For access from another machine, use the address of the machine or load
 balancer that exposes the controller instead of ``127.0.0.1``, and make sure
 that network firewalls allow the port.
 
+.. _configure-ingress-dns:
+
 Set up production DNS
 ---------------------
 
@@ -122,6 +124,8 @@ The way an external address is assigned depends on the Kubernetes platform.
 A managed cloud commonly provisions a load balancer. A local or bare-metal
 cluster may require a node address, port forwarding, or a load-balancer
 implementation such as MetalLB.
+
+.. _configure-ingress-https:
 
 Enable HTTPS
 ------------

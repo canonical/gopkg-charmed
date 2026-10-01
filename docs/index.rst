@@ -25,43 +25,48 @@ service. The service writes the configured hostname into its
 of ``gopkg.in``: code that already imports ``gopkg.in/...`` keeps using the
 public service. Operators use their own copy to mirror ``gopkg.in`` inside a network
 that cannot reach it, or to offer versioned import paths for GitHub
-repositories under their own domain. 
+repositories under their own domain.
 
 In this documentation
 ---------------------
 
-.. grid:: 1 1 2 2
+.. list-table::
+   :header-rows: 0
+   :widths: 10 25
 
-   .. grid-item-card:: Tutorial
-      :link: tutorials
-      :link-type: ref
-
-      **Start here**: deploy and verify ``gopkg-k8s`` on Kubernetes from
-      a fresh environment.
-
-   .. grid-item-card:: How-to guides
-      :link: how-to-guides
-      :link-type: ref
-
-      **Step-by-step guides** for configuring ingress and the hostname,
-      integrating with observability, and troubleshooting.
-
-.. grid:: 1 1 2 2
-   :reverse:
-
-   .. grid-item-card:: Reference
-      :link: reference
-      :link-type: ref
-
-      **Technical information**: configuration options, integration
-      endpoints, and supported platforms and prerequisites.
-
-   .. grid-item-card:: Explanation
-      :link: explanation
-      :link-type: ref
-
-      **Discussion and clarification** of how gopkg.in resolves imports and
-      how ingress reaches the service.
+   * - **Get started**
+     - :ref:`Deploy and verify gopkg-k8s on Kubernetes <deploy-and-verify-on-kubernetes>`
+   * - **Deployment**
+     - :ref:`Platforms and prerequisites <platforms-and-prerequisites>`
+       | :ref:`Configure ingress <configure-ingress>`
+       | :ref:`Configure hostname <configure-hostname-and-check-go-import>`
+       | :ref:`Set up production DNS <configure-ingress-dns>`
+       | :ref:`Charm configuration <charm-configuration>`
+   * - **Operations**
+     - :ref:`Integrate with the Canonical Observability Stack <integrate-with-cos>`
+       | :ref:`Troubleshoot deployment issues <troubleshoot-deployment>`
+       | :ref:`Integration endpoints <integrations>`
+       | :ref:`Metrics <integrations-metrics>`
+       | :ref:`Logs <integrations-logs>`
+       | :ref:`Alert rules <integrations-alert-rules>`
+   * - **Versioned import paths**
+     - :ref:`Why gopkg.in exists <gopkg-service-why>`
+       | :ref:`What the service does <gopkg-service-what-it-does>`
+       | :ref:`Fetch a module with the Go tool <tutorial-fetch-module>`
+       | :ref:`How a deployment differs from gopkg.in <gopkg-service-differences>`
+   * - **Design**
+     - :ref:`How a request reaches the workload <ingress-request-path>`
+       | :ref:`The two hostname settings <ingress-two-hostnames>`
+       | :ref:`How the charm runs the service <gopkg-service-what-the-charm-adds>`
+   * - **Security**
+     - :ref:`Enable HTTPS <configure-ingress-https>`
+       | :ref:`Where TLS terminates <ingress-tls>`
+       | :ref:`Keep the metrics endpoint off the public hostname <cos-metrics-port>`
+   * - **Development**
+     - :ref:`Set up a development environment <set-up-a-development-environment>`
+       | :ref:`Improve the code <improve-code>`
+       | :ref:`Improve the documentation <improve-documentation>`
+       | :ref:`CI workflows <ci-workflows>`
 
 How this documentation is organized
 -----------------------------------
@@ -69,14 +74,17 @@ How this documentation is organized
 This documentation uses the `Diátaxis <https://diataxis.fr/>`_ documentation
 structure.
 
-- The :ref:`Tutorial <tutorials>` takes you step-by-step through a complete
+- The :ref:`Tutorial <tutorials>` takes you step-by-step through a first
   deployment of ``gopkg-k8s``.
-- :ref:`How-to guides <how-to-guides>` cover configuring the charm,
-  monitoring it, and troubleshooting it.
-- :ref:`Reference <reference>` provides the configuration options,
-  integration endpoints, and supported platforms.
-- :ref:`Explanation <explanation>` includes topic overviews, background and
-  context, and detailed discussion.
+- :ref:`How-to guides <how-to-guides>` cover practical tasks for configuring,
+  operating, and maintaining your ``gopkg-k8s`` deployment.
+- :ref:`Reference <reference>` provides technical information to look up
+  while you work, such as configuration options, integrations, and supported
+  platforms.
+- :ref:`Explanation <explanation>` includes background, context, and
+  discussion of the concepts and design behind the charm.
+- :ref:`Contribute <contribute>` guides developers who want to change the
+  charm or its documentation.
 - :ref:`Release notes <release_notes_index>` hold the release history.
 
 Contributing to this documentation

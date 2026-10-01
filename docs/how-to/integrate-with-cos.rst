@@ -146,6 +146,8 @@ JSON log record per request other than a health check when filtered by
 ``juju_application="gopkg-k8s"``. Press Ctrl-C in the second terminal to
 stop the port forward; nothing else needs cleaning up.
 
+.. _cos-metrics-port:
+
 Keep the metrics endpoint off the public hostname
 -------------------------------------------------
 

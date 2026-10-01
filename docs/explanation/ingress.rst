@@ -15,6 +15,8 @@ For a complete deployment, follow :ref:`deploy-and-verify-on-kubernetes`. To
 change the routing rules, add DNS, or enable HTTPS, follow
 :ref:`configure-ingress`.
 
+.. _ingress-request-path:
+
 How a request reaches the workload
 ----------------------------------
 
@@ -71,6 +73,8 @@ ingress controller binds ports 80 and 443 on the node itself, loopback
 included. From another machine, the same request must target the address of
 the machine or load balancer that exposes the controller.
 
+.. _ingress-two-hostnames:
+
 The two hostname settings
 -------------------------
 
@@ -87,6 +91,8 @@ For a normal deployment, both are set to the public hostname. They can differ
 for testing: clients then enter through the ingress hostname, but responses
 advertise the workload hostname. Changing one setting does not update the
 other, which is why :ref:`configure-ingress` sets both.
+
+.. _ingress-tls:
 
 Where TLS terminates
 --------------------

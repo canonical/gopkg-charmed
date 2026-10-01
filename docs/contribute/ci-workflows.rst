@@ -105,7 +105,7 @@ source.
 
 There are three tests. Each runs on its own bare machine and does not depend
 on the others. The how-to guides assume an existing deployment, so each how-to
-test first runs the tutorial to create one, then runs its guides in
+test first runs the tutorial to create the deployment, then runs its guides in
 prerequisite order. The first test runs the tutorial alone; the second
 continues into the ingress, hostname, and observability how-to guides; the
 third continues into the ingress and upgrade guides, where it steps the

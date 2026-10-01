@@ -44,6 +44,7 @@ In this documentation
        | :ref:`Charm configuration <charm-configuration>`
    * - **Operations**
      - :ref:`Integrate with the Canonical Observability Stack <integrate-with-cos>`
+       | :ref:`Upgrade <upgrade-the-charm>`
        | :ref:`Troubleshoot deployment issues <troubleshoot-deployment>`
        | :ref:`Integration endpoints <integrations>`
        | :ref:`Metrics <integrations-metrics>`

@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Named COS Lite in the observability guide
+    author: minulo
+    type: minor
+    description: The observability guide deploys Prometheus, Loki, and Grafana, which make up COS Lite, but called them the Canonical Observability Stack. The guide, its entries in the how-to index and on the home page, and the troubleshooting entry for a blocked charm now say COS Lite, and the guide notes that the full COS keeps metrics in Mimir, fed by an OpenTelemetry Collector, so its steps do not apply to the full COS as written.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/55"
+      related_doc:
+      related_issue:
+    visibility: public
+    highlight: false

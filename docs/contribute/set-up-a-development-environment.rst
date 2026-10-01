@@ -204,3 +204,4 @@ Next steps
 - Run the integration tests with :ref:`full-integration-suite-local`.
 - Deploy the published charm instead with
   :ref:`deploy-and-verify-on-kubernetes`.
+- If a build or test fails, see :ref:`troubleshoot-development`.

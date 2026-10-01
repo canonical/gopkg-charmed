@@ -32,6 +32,7 @@ In this documentation
 
 .. list-table::
    :header-rows: 0
+   :widths: 10 25
 
    * - **Get started**
      - :ref:`Deploy and verify gopkg-k8s on Kubernetes <deploy-and-verify-on-kubernetes>`

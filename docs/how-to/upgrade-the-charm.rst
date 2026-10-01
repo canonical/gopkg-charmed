@@ -91,6 +91,14 @@ To move to one particular revision, add ``--revision``:
 
 .. SPREAD SKIP END
 
+If you deployed with the Terraform module in ``terraform/`` and set its
+``revision`` variable, upgrade by changing ``revision`` and running
+``terraform apply`` instead: the next apply would revert a ``juju refresh``
+made by hand. With ``revision`` left ``null``, Terraform takes the channel's
+newest revision only at the first deployment; upgrade with ``juju refresh`` as
+above, and Terraform shows no change for it afterwards. See the module's
+``README.md``.
+
 Juju replaces the pod with the new revision's image. Wait until the
 application reports ``active`` again using ``juju status``.
 
@@ -165,7 +173,3 @@ start:
 The application keeps following its channel: a later ``juju refresh
 gopkg-k8s``, without ``--channel`` or ``--revision``, moves it to the channel's
 newest revision again.
-
-If you deploy with the Terraform module in ``terraform/``, its ``revision``
-variable pins a revision and ``null`` follows ``channel``; see the module's
-``README.md``.

@@ -43,7 +43,7 @@ In this documentation
        | :ref:`Set up production DNS <configure-ingress-dns>`
        | :ref:`Charm configuration <charm-configuration>`
    * - **Operations**
-     - :ref:`Integrate with the Canonical Observability Stack <integrate-with-cos>`
+     - :ref:`Integrate with COS Lite <integrate-with-cos>`
        | :ref:`Upgrade <upgrade-the-charm>`
        | :ref:`Troubleshoot deployment issues <troubleshoot-deployment>`
        | :ref:`Integration endpoints <integrations>`

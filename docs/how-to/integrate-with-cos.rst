@@ -1,25 +1,29 @@
 .. _integrate-with-cos:
 
 .. meta::
-   :description: Connect gopkg-k8s to Prometheus, Loki, and Grafana, verify that its metrics are scraped, and keep the metrics endpoint off the public hostname.
+   :description: Connect gopkg-k8s to COS Lite (Prometheus, Loki, and Grafana), verify that its metrics are scraped, and keep the metrics endpoint off the public hostname.
 
-How to integrate with the Canonical Observability Stack
-=======================================================
+How to integrate with COS Lite
+==============================
 
 ``gopkg-k8s`` exposes Prometheus metrics, forwards its structured logs,
 and ships a Grafana dashboard and alert rules. Integrate its
 ``metrics-endpoint``, ``logging``, and ``grafana-dashboard`` endpoints with
-the Canonical Observability Stack (COS) to use them. For what each endpoint
+COS Lite, the lightweight Canonical Observability Stack (COS) built on
+Prometheus, Loki, and Grafana, to use them. For what each endpoint
 carries and the metrics and alert rules the charm provides, see
 :ref:`integrations`.
 
 These steps assume that ``gopkg-k8s`` and ``nginx-ingress-integrator``
 are deployed and integrated, as they are after the deployment steps of
 :ref:`deploy-and-verify-on-kubernetes` and before its clean-up section. They
-deploy the three COS charms into the same model, which is enough to see the
-integrations work locally. A production deployment keeps COS in its own
-model and integrates through cross-model offers; the `COS documentation
+deploy the three COS Lite charms into the same model, which is enough to see
+the integrations work locally. A production deployment keeps COS Lite in its
+own model and integrates through cross-model offers; the `COS documentation
 <https://documentation.ubuntu.com/observability/>`_ describes that layout.
+The full COS keeps metrics in Mimir, which receives them from an
+OpenTelemetry Collector instead of scraping them, so these steps do not apply
+to it as written.
 
 Deploy the observability charms
 -------------------------------
@@ -56,24 +60,24 @@ Wait until every application is active:
    done
 .. SPREAD END
 
-The COS charms take a few minutes, and each restarts its own pod once after
-it first reports active. If one of them stays ``blocked`` with ``Kubernetes
-resources patch failed: Unauthorized`` for more than a couple of minutes, it
-has hit a known race and will not recover by itself: follow
+The COS Lite charms take a few minutes, and each restarts its own pod once
+after it first reports active. If one of them stays ``blocked`` with
+``Kubernetes resources patch failed: Unauthorized`` for more than a couple of
+minutes, it has hit a known race and will not recover by itself: follow
 :ref:`cos-charm-blocked-patch-unauthorized` to redeploy that charm, then
 continue here.
 
 Verify that Prometheus scrapes the service
 ------------------------------------------
 
-Prometheus scrapes ``/metrics`` on the application port of every unit. Ask
-its API for the ``up`` series of the application; a value of ``1`` means the
-last scrape succeeded. Reach the API through the Kubernetes Service that Juju
-maintains for ``prometheus-k8s``. Its address is the one ``juju status``
-shows for the application, and it survives pod replacement, which the COS
-charms trigger shortly after they first report active, when they set
-resource limits on their own pods. The loop retries until the first scrape
-completes and gives up after ten minutes:
+Prometheus scrapes ``/metrics`` on the application port of every unit. Ask its
+API for the ``up`` series of the application; a value of ``1`` means the last
+scrape succeeded. Reach the API through the Kubernetes Service that Juju
+maintains for ``prometheus-k8s``. Its address is the one ``juju status`` shows
+for the application, and it survives pod replacement, which the COS Lite
+charms trigger shortly after they first report active, when they set resource
+limits on their own pods. The loop retries until the first scrape completes
+and gives up after ten minutes:
 
 .. code-block:: bash
 

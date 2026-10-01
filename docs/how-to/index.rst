@@ -14,6 +14,6 @@ guide continues from the deployment of :ref:`deploy-and-verify-on-kubernetes`.
 
    Configure ingress <configure-ingress>
    Configure hostname <configure-hostname-and-check-go-import>
-   Integrate with the Canonical Observability Stack <integrate-with-cos>
+   Integrate with COS Lite <integrate-with-cos>
    Upgrade <upgrade-the-charm>
    Troubleshoot deployment issues <troubleshoot-deployment>

@@ -178,17 +178,17 @@ is in the wrong namespace, or ``tls-secret-name`` does not match the secret.
 
 .. _cos-charm-blocked-patch-unauthorized:
 
-COS charm blocked on a Kubernetes patch
----------------------------------------
+COS Lite charm blocked on a Kubernetes patch
+--------------------------------------------
 
 **Symptom:** after :ref:`integrate-with-cos`, ``grafana-k8s``,
 ``prometheus-k8s``, or ``loki-k8s`` stays ``blocked`` with ``Kubernetes
 resources patch failed: Unauthorized`` while the others are ``active``.
 
-**Cause:** shortly after it first reports active, each COS charm patches its
-own StatefulSet to set resource limits. Occasionally the Kubernetes API
-rejects the service-account token the unit presents for that patch. This is
-a race between Juju and the charm, not a problem with ``gopkg-k8s`` or the
+**Cause:** shortly after it first reports active, each COS Lite charm patches
+its own StatefulSet to set resource limits. Occasionally the Kubernetes API
+rejects the service-account token the unit presents for that patch. This is a
+race between Juju and the charm, not a problem with ``gopkg-k8s`` or the
 integration, and the charm does not retry on its own, so the unit stays
 blocked indefinitely.
 

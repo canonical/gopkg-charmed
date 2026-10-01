@@ -132,7 +132,9 @@ fail with ``502``, ``503``, or ``504``. Query until the health check answers:
      done
    '
 
-The output is ``ok``. The loop gives up after ten minutes. Finally, send the
+The output is ``ok``. The loop gives up after ten minutes.
+
+Finally, send the
 query the Go tool sends, to confirm that the upgraded service answers package
 requests:
 

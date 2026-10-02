@@ -11,28 +11,18 @@ README deployment guide). Configuration via environment variables:
               automatic discovery from ``build/artifacts.build.yaml``
               (default when neither is available: localhost:32000/gopkg:0.1)
 
-Tests are moving from pytest-operator to Jubilant: ``gopkg_app`` deploys the
-charm into pytest-jubilant's ``juju`` model; ``model`` and ``app`` serve the
-modules that still use pytest-operator.
+Tests use Jubilant: ``gopkg_app`` deploys the charm into pytest-jubilant's
+``juju`` model.
 """
 
 import glob
 import logging
 import os
 import platform
-import subprocess
 from pathlib import Path
 
 import jubilant
-
-# python-libjuju types, not ops.model: pytest-operator's ops_test.model is a
-# juju.model.Model (which has deploy/wait_for_idle); the similarly named
-# charm-side ops.model.Model does not.
-import juju.application
-import juju.model
 import pytest
-import pytest_asyncio
-import pytest_operator.plugin
 import yaml
 
 _log = logging.getLogger(__name__)
@@ -124,41 +114,3 @@ def gopkg_app_fixture(juju: jubilant.Juju) -> str:
         print(juju.debug_log(limit=200))
         raise
     return APP_NAME
-
-
-@pytest_asyncio.fixture(scope="module", name="model")
-async def model_fixture(ops_test: pytest_operator.plugin.OpsTest) -> juju.model.Model:
-    """The current test model."""
-    assert ops_test.model
-    return ops_test.model
-
-
-@pytest_asyncio.fixture(scope="module", name="app")
-async def app_fixture(model: juju.model.Model) -> juju.application.Application:
-    """The deployed gopkg-k8s application."""
-    charm_file = _find_charm_file()
-    app_image = _resolve_app_image()
-    # Fresh per-run models default to amd64 pods; match the actual host so
-    # the pod can schedule on arm64 dev VMs and amd64 CI runners alike.
-    arch = _ARCH_MAP.get(platform.machine(), "amd64")
-    await model.set_constraints({"arch": arch})
-    application = await model.deploy(
-        f"./{charm_file}",
-        application_name=APP_NAME,
-        resources={"app-image": app_image},
-    )
-    try:
-        await model.wait_for_idle(apps=[application.name], status="active", timeout=15 * 60)
-    except Exception:
-        # Surface the real cause in CI logs: spread destroys the model after
-        # the run, so this is the only chance to see the hook traceback.
-        log = subprocess.run(
-            ["juju", "debug-log", "-m", model.name, "--replay", "--no-tail"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        print("==== juju debug-log (tail) ====")
-        print(log.stdout[-8000:])
-        raise
-    return application

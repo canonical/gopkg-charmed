@@ -78,7 +78,7 @@ COS is not bundled. Instead, pass offer URLs for the pieces you want:
 
 ```hcl
 logging_offer_url           = "admin/cos.loki-logging"
-metrics_offer_url           = "admin/cos.prometheus-scrape"
+metrics_offer_url           = "admin/cos.prometheus-metrics-endpoint"
 grafana_dashboard_offer_url = "admin/cos.grafana-dashboards"
 ```
 

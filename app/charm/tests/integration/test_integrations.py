@@ -63,6 +63,11 @@ async def ingress_fixture(
             "path-routes": "/",
             "rewrite-enabled": "false",
             "ingress-class": INGRESS_CLASS,
+            # paas-charm requests strip-prefix, which turns on the integrator's
+            # regex paths. Cilium matches a regex path against the whole URL
+            # path, so "/" would route only the root; a prefix path routes every
+            # path on both Cilium and nginx.
+            "use-regex": "false",
         },
     )
     # The service never reads the Host header: it renders its own `hostname`

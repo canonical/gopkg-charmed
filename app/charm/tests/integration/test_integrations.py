@@ -14,7 +14,6 @@ are skipped on arm64 hosts such as an Apple Silicon Multipass VM; the ingress
 test runs on both architectures.
 """
 
-import asyncio
 import logging
 import os
 import platform
@@ -23,10 +22,8 @@ import subprocess
 import time
 import typing
 
-import juju.application
-import juju.model
+import jubilant
 import pytest
-import pytest_asyncio
 import requests
 
 logger = logging.getLogger(__name__)
@@ -48,12 +45,10 @@ requires_amd64 = pytest.mark.skipif(
 )
 
 
-@pytest_asyncio.fixture(scope="module", name="ingress")
-async def ingress_fixture(
-    model: juju.model.Model, app: juju.application.Application
-) -> juju.application.Application:
+@pytest.fixture(scope="module", name="ingress")
+def ingress_fixture(juju: jubilant.Juju, gopkg_app: str) -> str:
     """nginx-ingress-integrator, configured as in the tutorial apart from path-routes."""
-    ingress = await model.deploy(
+    juju.deploy(
         INGRESS_CHARM,
         channel=INGRESS_CHANNEL,
         trust=True,
@@ -74,14 +69,16 @@ async def ingress_fixture(
     # The service never reads the Host header: it renders its own `hostname`
     # option into go-import metadata. Routing and metadata are separate
     # settings, so the tutorial sets both to the same name.
-    await app.set_config({"hostname": INGRESS_HOST})
-    await model.integrate(f"{app.name}:ingress", f"{ingress.name}:ingress")
-    await model.wait_for_idle(apps=[app.name, ingress.name], status="active", timeout=15 * 60)
-    return ingress
+    juju.config(gopkg_app, {"hostname": INGRESS_HOST})
+    juju.integrate(f"{gopkg_app}:ingress", f"{INGRESS_CHARM}:ingress")
+    juju.wait(
+        lambda status: jubilant.all_active(status, gopkg_app, INGRESS_CHARM), timeout=15 * 60
+    )
+    return INGRESS_CHARM
 
 
-async def _stuck_in_patch_race(
-    model: juju.model.Model, names: tuple[str, ...], timeout: int, grace: int = 120
+def _stuck_in_patch_race(
+    juju: jubilant.Juju, names: tuple[str, ...], timeout: int, grace: int = 120
 ) -> list[str]:
     """Wait until every application in ``names`` is active.
 
@@ -92,17 +89,17 @@ async def _stuck_in_patch_race(
     deadline = time.monotonic() + timeout
     first_seen: dict[str, float] = {}
     while time.monotonic() < deadline:
-        status = await model.get_status()
+        status = juju.status()
         all_active = True
         stuck: list[str] = []
         for name in names:
-            application = status.applications.get(name)
+            application = status.apps.get(name)
             units = list(application.units.values()) if application else []
-            if not units or any(unit.workload_status.status != "active" for unit in units):
+            if not units or any(unit.workload_status.current != "active" for unit in units):
                 all_active = False
             if any(
-                unit.workload_status.status == "blocked"
-                and "Unauthorized" in (unit.workload_status.info or "")
+                unit.workload_status.current == "blocked"
+                and "Unauthorized" in unit.workload_status.message
                 for unit in units
             ):
                 first_seen.setdefault(name, time.monotonic())
@@ -114,12 +111,12 @@ async def _stuck_in_patch_race(
             return []
         if stuck:
             return stuck
-        await asyncio.sleep(15)
+        time.sleep(15)
     raise AssertionError(f"timed out after {timeout}s waiting for {names} to become active")
 
 
-@pytest_asyncio.fixture(scope="module", name="cos")
-async def cos_fixture(model: juju.model.Model) -> dict[str, juju.application.Application]:
+@pytest.fixture(scope="module", name="cos")
+def cos_fixture(juju: jubilant.Juju) -> None:
     """Loki, Prometheus and Grafana from COS, deployed side by side.
 
     A COS charm occasionally ends up blocked with "... patch failed:
@@ -130,11 +127,10 @@ async def cos_fixture(model: juju.model.Model) -> dict[str, juju.application.App
     application once instead of failing every test in the module.
     """
     names = (LOKI, PROMETHEUS, GRAFANA)
-    apps = {}
     for name in names:
-        apps[name] = await model.deploy(name, channel=COS_CHANNEL, trust=True)
+        juju.deploy(name, channel=COS_CHANNEL, trust=True)
     for attempt in (1, 2):
-        stuck = await _stuck_in_patch_race(model, names, timeout=20 * 60)
+        stuck = _stuck_in_patch_race(juju, names, timeout=20 * 60)
         if not stuck:
             break
         if attempt == 2:
@@ -143,27 +139,23 @@ async def cos_fixture(model: juju.model.Model) -> dict[str, juju.application.App
             )
         logger.warning("%s blocked by the Kubernetes patch race; redeploying once", stuck)
         for name in stuck:
-            await model.remove_application(
-                name, block_until_done=True, destroy_storage=True, force=True
-            )
-            apps[name] = await model.deploy(name, channel=COS_CHANNEL, trust=True)
-    await model.wait_for_idle(apps=list(names), status="active", timeout=5 * 60)
-    return apps
+            juju.remove_application(name, destroy_storage=True, force=True)
+            juju.wait(lambda status, name=name: name not in status.apps, timeout=10 * 60)
+            juju.deploy(name, channel=COS_CHANNEL, trust=True)
+    juju.wait(lambda status: jubilant.all_active(status, *names), timeout=5 * 60)
 
 
-async def _unit_address(model: juju.model.Model, app: juju.application.Application) -> str:
-    status = await model.get_status()
-    return status.applications[app.name].units[f"{app.name}/0"].address
+def _unit_address(juju: jubilant.Juju, app: str) -> str:
+    return juju.status().apps[app].units[f"{app}/0"].address
 
 
-async def _ingress_address(model: juju.model.Model, ingress: juju.application.Application) -> str:
+def _ingress_address(juju: jubilant.Juju, ingress: str) -> str:
     """Return the ingress controller's address that the integrator reports.
 
-    The integrator's status reads "Ingress IP(s): <address>, ...". MicroK8s's
-    nginx listens on the host, so 127.0.0.1 is the fallback.
+    The integrator's unit status reads "Ingress IP(s): <address>, ...".
+    MicroK8s's nginx listens on the host, so 127.0.0.1 is the fallback.
     """
-    status = await model.get_status()
-    message = status.applications[ingress.name].status.info or ""
+    message = juju.status().apps[ingress].units[f"{ingress}/0"].workload_status.message
     match = re.search(r"Ingress IP\(s\): ([^,\s]+)", message)
     return match.group(1) if match else "127.0.0.1"
 
@@ -186,8 +178,8 @@ def _kubectl_report(namespace: str) -> str:
     return "\n".join(report)
 
 
-async def _get_through_ingress(
-    model: juju.model.Model, address: str, path: str, params: dict[str, str] | None = None
+def _get_through_ingress(
+    juju: jubilant.Juju, address: str, path: str, params: dict[str, str] | None = None
 ) -> requests.Response:
     """Request ``path`` through the ingress controller until it answers 200.
 
@@ -213,23 +205,21 @@ async def _get_through_ingress(
         if answer != last:
             logger.info("%s through %s: %s", path, address, answer)
             last = answer
-        await asyncio.sleep(10)
+        time.sleep(10)
     raise AssertionError(
         f"{path} did not answer 200 through {address} within 5 minutes; last: {last}\n"
-        f"{_kubectl_report(model.name)}"
+        f"{_kubectl_report(juju.model or '')}"
     )
 
 
-async def _related(model: juju.model.Model, app_a: str, app_b: str) -> bool:
-    status = await model.get_status()
-    for relation in status.relations:
-        applications = {endpoint.application for endpoint in relation.endpoints}
-        if {app_a, app_b} <= applications:
-            return True
-    return False
+def _related(juju: jubilant.Juju, app_a: str, app_b: str) -> bool:
+    relations = juju.status().apps[app_a].relations
+    return any(
+        relation.related_app == app_b for related in relations.values() for relation in related
+    )
 
 
-async def _wait_until(
+def _wait_until(
     probe: typing.Callable[[], typing.Any], what: str, timeout: int = 5 * 60, interval: int = 10
 ) -> typing.Any:
     """Poll ``probe`` until it returns a truthy value; HTTP errors are retried."""
@@ -243,17 +233,13 @@ async def _wait_until(
         else:
             if result:
                 return result
-        await asyncio.sleep(interval)
+        time.sleep(interval)
     raise AssertionError(
         f"timed out after {timeout}s waiting for {what}; last error: {last_error}"
     )
 
 
-async def test_ingress_routes_to_the_service(
-    model: juju.model.Model,
-    app: juju.application.Application,
-    ingress: juju.application.Application,
-) -> None:
+def test_ingress_routes_to_the_service(juju: jubilant.Juju, ingress: str) -> None:
     """
     arrange: given the charm integrated with nginx-ingress-integrator routing
         gopkg.example.com to it
@@ -262,19 +248,15 @@ async def test_ingress_routes_to_the_service(
     assert: the response is 200 with the body "ok", so the ingress relation
         carries the service's address and port to the integrator.
     """
-    assert ingress.status == "active"
-    address = await _ingress_address(model, ingress)
+    assert juju.status().apps[ingress].app_status.current == "active"
+    address = _ingress_address(juju, ingress)
 
-    response = await _get_through_ingress(model, address, "/health-check")
+    response = _get_through_ingress(juju, address, "/health-check")
 
     assert response.text == "ok"
 
 
-async def test_ingress_serves_go_import_for_the_routed_host(
-    model: juju.model.Model,
-    app: juju.application.Application,
-    ingress: juju.application.Application,
-) -> None:
+def test_ingress_serves_go_import_for_the_routed_host(juju: jubilant.Juju, ingress: str) -> None:
     """
     arrange: given the charm integrated with nginx-ingress-integrator routing
         gopkg.example.com to it, and its hostname option set to the same name
@@ -285,10 +267,10 @@ async def test_ingress_serves_go_import_for_the_routed_host(
         path it asked for, so a health check alone cannot prove that
         `go get gopkg.example.com/yaml.v2` would work.
     """
-    assert ingress.status == "active"
-    address = await _ingress_address(model, ingress)
+    assert juju.status().apps[ingress].app_status.current == "active"
+    address = _ingress_address(juju, ingress)
 
-    response = await _get_through_ingress(model, address, "/yaml.v2", params={"go-get": "1"})
+    response = _get_through_ingress(juju, address, "/yaml.v2", params={"go-get": "1"})
 
     tag = re.search(r'<meta name="go-import" content="([^"]*)"', response.text)
     assert tag, f"no go-import meta tag in:\n{response.text}"
@@ -299,26 +281,20 @@ async def test_ingress_serves_go_import_for_the_routed_host(
 
 
 @requires_amd64
-async def test_logging_integration_settles(
-    app: juju.application.Application,
-    model: juju.model.Model,
-    cos: dict[str, juju.application.Application],
-) -> None:
+def test_logging_integration_settles(juju: jubilant.Juju, gopkg_app: str, cos: None) -> None:
     """
     arrange: given the charm and loki-k8s deployed in the same model
     act: when the charm's logging endpoint is integrated with Loki's
     assert: both applications return to active, and a request to the service
         shows up in Loki as a log stream labelled with the application name.
     """
-    loki = cos[LOKI]
-
-    await model.integrate(f"{app.name}:logging", f"{loki.name}:logging")
-    await model.wait_for_idle(apps=[app.name, loki.name], status="active", timeout=15 * 60)
-    assert await _related(model, app.name, loki.name)
+    juju.integrate(f"{gopkg_app}:logging", f"{LOKI}:logging")
+    juju.wait(lambda status: jubilant.all_active(status, gopkg_app, LOKI), timeout=15 * 60)
+    assert _related(juju, gopkg_app, LOKI)
     # Any non-health request writes one structured log record to stdout,
     # which Pebble forwards to Loki with the unit's Juju topology labels.
-    app_address = await _unit_address(model, app)
-    loki_address = await _unit_address(model, loki)
+    app_address = _unit_address(juju, gopkg_app)
+    loki_address = _unit_address(juju, LOKI)
     requests.get(f"http://{app_address}:8080/", timeout=10, allow_redirects=False)
 
     def log_stream_labelled_with_app() -> list[str] | None:
@@ -327,21 +303,15 @@ async def test_logging_integration_settles(
         )
         response.raise_for_status()
         values = response.json().get("data") or []
-        return values if app.name in values else None
+        return values if gopkg_app in values else None
 
-    labels = await _wait_until(
-        log_stream_labelled_with_app, f"Loki to receive logs from {app.name}"
-    )
+    labels = _wait_until(log_stream_labelled_with_app, f"Loki to receive logs from {gopkg_app}")
 
-    assert app.name in labels
+    assert gopkg_app in labels
 
 
 @requires_amd64
-async def test_metrics_endpoint_is_scraped(
-    app: juju.application.Application,
-    model: juju.model.Model,
-    cos: dict[str, juju.application.Application],
-) -> None:
+def test_metrics_endpoint_is_scraped(juju: jubilant.Juju, gopkg_app: str, cos: None) -> None:
     """
     arrange: given the charm and prometheus-k8s deployed in the same model
     act: when the charm's metrics-endpoint is integrated with Prometheus
@@ -349,31 +319,27 @@ async def test_metrics_endpoint_is_scraped(
         healthy scrape target labelled with the charm's application name,
         so the workload's metrics endpoint is really being scraped.
     """
-    prometheus = cos[PROMETHEUS]
-
-    await model.integrate(f"{app.name}:metrics-endpoint", f"{prometheus.name}:metrics-endpoint")
-    await model.wait_for_idle(apps=[app.name, prometheus.name], status="active", timeout=15 * 60)
-    address = await _unit_address(model, prometheus)
+    juju.integrate(f"{gopkg_app}:metrics-endpoint", f"{PROMETHEUS}:metrics-endpoint")
+    juju.wait(lambda status: jubilant.all_active(status, gopkg_app, PROMETHEUS), timeout=15 * 60)
+    address = _unit_address(juju, PROMETHEUS)
 
     def healthy_scrape_target() -> list[dict[str, typing.Any]] | None:
         response = requests.get(f"http://{address}:9090/api/v1/targets", timeout=10)
         response.raise_for_status()
         targets = response.json()["data"]["activeTargets"]
-        matching = [t for t in targets if t["labels"].get("juju_application") == app.name]
+        matching = [t for t in targets if t["labels"].get("juju_application") == gopkg_app]
         return matching if matching and all(t["health"] == "up" for t in matching) else None
 
-    targets = await _wait_until(
-        healthy_scrape_target, f"a healthy Prometheus scrape target for {app.name}"
+    targets = _wait_until(
+        healthy_scrape_target, f"a healthy Prometheus scrape target for {gopkg_app}"
     )
 
     assert targets
 
 
 @requires_amd64
-async def test_grafana_dashboard_integration_settles(
-    app: juju.application.Application,
-    model: juju.model.Model,
-    cos: dict[str, juju.application.Application],
+def test_grafana_dashboard_integration_settles(
+    juju: jubilant.Juju, gopkg_app: str, cos: None
 ) -> None:
     """
     arrange: given the charm and grafana-k8s deployed in the same model
@@ -381,9 +347,7 @@ async def test_grafana_dashboard_integration_settles(
     assert: both applications return to active and the relation is
         established.
     """
-    grafana = cos[GRAFANA]
+    juju.integrate(f"{gopkg_app}:grafana-dashboard", f"{GRAFANA}:grafana-dashboard")
+    juju.wait(lambda status: jubilant.all_active(status, gopkg_app, GRAFANA), timeout=15 * 60)
 
-    await model.integrate(f"{app.name}:grafana-dashboard", f"{grafana.name}:grafana-dashboard")
-    await model.wait_for_idle(apps=[app.name, grafana.name], status="active", timeout=15 * 60)
-
-    assert await _related(model, app.name, grafana.name)
+    assert _related(juju, gopkg_app, GRAFANA)

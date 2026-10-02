@@ -22,13 +22,13 @@ environment:
 
 integration-suites:
   app/charm/tests/integration/:
-    summary: gopkg charm pytest-operator integration tests
+    summary: gopkg charm integration tests (Jubilant)
     working-dir: app/charm/
     auto-discover: true
     backends:
       - integration-test
     pytest-arguments-template: |
-      --keep-models
+      --no-juju-teardown
     # Canonical Kubernetes's Cilium ingress is not the cluster's default
     # class, so it ignores an Ingress that names no class.
     pytest-environment-template: |

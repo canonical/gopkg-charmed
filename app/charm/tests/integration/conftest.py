@@ -10,6 +10,10 @@ README deployment guide). Configuration via environment variables:
 - APP_IMAGE:  OCI image reference for the app-image resource; overrides
               automatic discovery from ``build/artifacts.build.yaml``
               (default when neither is available: localhost:32000/gopkg:0.1)
+
+Tests are moving from pytest-operator to Jubilant: ``gopkg_app`` deploys the
+charm into pytest-jubilant's ``juju`` model; ``model`` and ``app`` serve the
+modules that still use pytest-operator.
 """
 
 import glob
@@ -19,17 +23,21 @@ import platform
 import subprocess
 from pathlib import Path
 
+import jubilant
+
 # python-libjuju types, not ops.model: pytest-operator's ops_test.model is a
 # juju.model.Model (which has deploy/wait_for_idle); the similarly named
 # charm-side ops.model.Model does not.
 import juju.application
 import juju.model
+import pytest
 import pytest_asyncio
 import pytest_operator.plugin
 import yaml
 
 _log = logging.getLogger(__name__)
 
+APP_NAME = "gopkg-k8s"
 _DEFAULT_APP_IMAGE = "localhost:32000/gopkg:0.1"
 _ARCH_MAP = {"aarch64": "arm64", "x86_64": "amd64"}
 
@@ -71,16 +79,8 @@ def _resolve_app_image() -> str:
     return _DEFAULT_APP_IMAGE
 
 
-@pytest_asyncio.fixture(scope="module", name="model")
-async def model_fixture(ops_test: pytest_operator.plugin.OpsTest) -> juju.model.Model:
-    """The current test model."""
-    assert ops_test.model
-    return ops_test.model
-
-
-@pytest_asyncio.fixture(scope="module", name="app")
-async def app_fixture(model: juju.model.Model) -> juju.application.Application:
-    """The deployed gopkg-k8s application."""
+def _find_charm_file() -> str:
+    """Return the path of the packed gopkg charm to deploy."""
     charm_file = os.environ.get("CHARM_FILE")
     if not charm_file:
         # charm-ci builds the charm in a separate phase and places it in the
@@ -101,7 +101,42 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
             "No charm file found. Set CHARM_FILE environment variable or "
             "run `charmcraft pack` to generate gopkg-k8s_*.charm in the working directory."
         )
+    return charm_file
 
+
+@pytest.fixture(scope="module", name="gopkg_app")
+def gopkg_app_fixture(juju: jubilant.Juju) -> str:
+    """Deploy gopkg-k8s into the module's model and return its application name."""
+    # Fresh per-run models default to amd64 pods; match the actual host so
+    # the pod can schedule on arm64 dev VMs and amd64 CI runners alike.
+    juju.model_constraints({"arch": _ARCH_MAP.get(platform.machine(), "amd64")})
+    juju.deploy(
+        Path(_find_charm_file()).resolve(),
+        app=APP_NAME,
+        resources={"app-image": _resolve_app_image()},
+    )
+    try:
+        juju.wait(lambda status: jubilant.all_active(status, APP_NAME), timeout=15 * 60)
+    except Exception:
+        # Surface the real cause in CI logs: spread destroys the model after
+        # the run, so this is the only chance to see the hook traceback.
+        print("==== juju debug-log (tail) ====")
+        print(juju.debug_log(limit=200))
+        raise
+    return APP_NAME
+
+
+@pytest_asyncio.fixture(scope="module", name="model")
+async def model_fixture(ops_test: pytest_operator.plugin.OpsTest) -> juju.model.Model:
+    """The current test model."""
+    assert ops_test.model
+    return ops_test.model
+
+
+@pytest_asyncio.fixture(scope="module", name="app")
+async def app_fixture(model: juju.model.Model) -> juju.application.Application:
+    """The deployed gopkg-k8s application."""
+    charm_file = _find_charm_file()
     app_image = _resolve_app_image()
     # Fresh per-run models default to amd64 pods; match the actual host so
     # the pod can schedule on arm64 dev VMs and amd64 CI runners alike.
@@ -109,7 +144,7 @@ async def app_fixture(model: juju.model.Model) -> juju.application.Application:
     await model.set_constraints({"arch": arch})
     application = await model.deploy(
         f"./{charm_file}",
-        application_name="gopkg-k8s",
+        application_name=APP_NAME,
         resources={"app-image": app_image},
     )
     try:

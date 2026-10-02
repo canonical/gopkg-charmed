@@ -12,8 +12,8 @@ Integration tests
 Workflow: ``.github/workflows/integration-test.yaml``
 
 This workflow builds the rock and the charm for AMD64, then runs the Juju
-integration suite in ``app/charm/tests/integration`` on a fresh MicroK8s
-cloud. It reuses
+integration suite in ``app/charm/tests/integration`` on a fresh Canonical
+Kubernetes cloud. It reuses
 Canonical's shared workflow,
 ``canonical/charm-ci/.github/workflows/integration-test.yml``, pinned to a
 specific commit, and runs each test module as its own job.

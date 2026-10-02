@@ -16,6 +16,7 @@ test runs on both architectures.
 
 import asyncio
 import logging
+import os
 import platform
 import re
 import time
@@ -32,6 +33,9 @@ logger = logging.getLogger(__name__)
 INGRESS_HOST = "gopkg.example.com"
 INGRESS_CHARM = "nginx-ingress-integrator"
 INGRESS_CHANNEL = "latest/stable"
+# Empty uses the cluster's default ingress class, which MicroK8s's nginx is.
+# CI sets "cilium" for Canonical Kubernetes (see spread.yaml).
+INGRESS_CLASS = os.environ.get("INGRESS_CLASS", "")
 COS_CHANNEL = "2/stable"
 LOKI = "loki-k8s"
 PROMETHEUS = "prometheus-k8s"
@@ -58,6 +62,7 @@ async def ingress_fixture(
             "service-hostname": INGRESS_HOST,
             "path-routes": "/",
             "rewrite-enabled": "false",
+            "ingress-class": INGRESS_CLASS,
         },
     )
     # The service never reads the Host header: it renders its own `hostname`
@@ -145,6 +150,18 @@ async def _unit_address(model: juju.model.Model, app: juju.application.Applicati
     return status.applications[app.name].units[f"{app.name}/0"].address
 
 
+async def _ingress_address(model: juju.model.Model, ingress: juju.application.Application) -> str:
+    """Return the ingress controller's address that the integrator reports.
+
+    The integrator's status reads "Ingress IP(s): <address>, ...". MicroK8s's
+    nginx listens on the host, so 127.0.0.1 is the fallback.
+    """
+    status = await model.get_status()
+    message = status.applications[ingress.name].status.info or ""
+    match = re.search(r"Ingress IP\(s\): ([^,\s]+)", message)
+    return match.group(1) if match else "127.0.0.1"
+
+
 async def _related(model: juju.model.Model, app_a: str, app_b: str) -> bool:
     status = await model.get_status()
     for relation in status.relations:
@@ -175,7 +192,9 @@ async def _wait_until(
 
 
 async def test_ingress_routes_to_the_service(
-    app: juju.application.Application, ingress: juju.application.Application
+    model: juju.model.Model,
+    app: juju.application.Application,
+    ingress: juju.application.Application,
 ) -> None:
     """
     arrange: given the charm integrated with nginx-ingress-integrator routing
@@ -186,10 +205,11 @@ async def test_ingress_routes_to_the_service(
         carries the service's address and port to the integrator.
     """
     assert ingress.status == "active"
+    address = await _ingress_address(model, ingress)
 
     def health_through_ingress() -> requests.Response | None:
         response = requests.get(
-            "http://127.0.0.1/health-check", headers={"Host": INGRESS_HOST}, timeout=10
+            f"http://{address}/health-check", headers={"Host": INGRESS_HOST}, timeout=10
         )
         return response if response.status_code == 200 else None
 
@@ -199,7 +219,9 @@ async def test_ingress_routes_to_the_service(
 
 
 async def test_ingress_serves_go_import_for_the_routed_host(
-    app: juju.application.Application, ingress: juju.application.Application
+    model: juju.model.Model,
+    app: juju.application.Application,
+    ingress: juju.application.Application,
 ) -> None:
     """
     arrange: given the charm integrated with nginx-ingress-integrator routing
@@ -212,10 +234,11 @@ async def test_ingress_serves_go_import_for_the_routed_host(
         `go get gopkg.example.com/yaml.v2` would work.
     """
     assert ingress.status == "active"
+    address = await _ingress_address(model, ingress)
 
     def go_import_through_ingress() -> requests.Response | None:
         response = requests.get(
-            "http://127.0.0.1/yaml.v2",
+            f"http://{address}/yaml.v2",
             params={"go-get": "1"},
             headers={"Host": INGRESS_HOST},
             timeout=10,

@@ -19,6 +19,7 @@ import logging
 import os
 import platform
 import re
+import subprocess
 import time
 import typing
 
@@ -167,6 +168,58 @@ async def _ingress_address(model: juju.model.Model, ingress: juju.application.Ap
     return match.group(1) if match else "127.0.0.1"
 
 
+def _kubectl_report(namespace: str) -> str:
+    """Return what kubectl shows about the ingress path, for failure messages."""
+    report = []
+    for args in (
+        ["get", "ingress,service,endpoints", "-n", namespace, "-o", "wide"],
+        ["get", "service,endpoints", "cilium-ingress", "-n", "kube-system", "-o", "wide"],
+    ):
+        try:
+            result = subprocess.run(
+                ["kubectl", *args], capture_output=True, text=True, timeout=30, check=False
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            report.append(f"$ kubectl {' '.join(args)}\n{exc}")
+        else:
+            report.append(f"$ kubectl {' '.join(args)}\n{result.stdout}{result.stderr}")
+    return "\n".join(report)
+
+
+async def _get_through_ingress(
+    model: juju.model.Model, address: str, path: str, params: dict[str, str] | None = None
+) -> requests.Response:
+    """Request ``path`` through the ingress controller until it answers 200.
+
+    On timeout, the error shows the last answer and the cluster's ingress
+    objects, because spread discards the cluster after the run.
+    """
+    deadline = time.monotonic() + 5 * 60
+    last = "no request completed"
+    while time.monotonic() < deadline:
+        try:
+            response = requests.get(
+                f"http://{address}{path}",
+                params=params,
+                headers={"Host": INGRESS_HOST},
+                timeout=10,
+            )
+        except requests.RequestException as exc:
+            answer = repr(exc)
+        else:
+            if response.status_code == 200:
+                return response
+            answer = f"HTTP {response.status_code}: {response.text[:200]!r}"
+        if answer != last:
+            logger.info("%s through %s: %s", path, address, answer)
+            last = answer
+        await asyncio.sleep(10)
+    raise AssertionError(
+        f"{path} did not answer 200 through {address} within 5 minutes; last: {last}\n"
+        f"{_kubectl_report(model.name)}"
+    )
+
+
 async def _related(model: juju.model.Model, app_a: str, app_b: str) -> bool:
     status = await model.get_status()
     for relation in status.relations:
@@ -212,13 +265,7 @@ async def test_ingress_routes_to_the_service(
     assert ingress.status == "active"
     address = await _ingress_address(model, ingress)
 
-    def health_through_ingress() -> requests.Response | None:
-        response = requests.get(
-            f"http://{address}/health-check", headers={"Host": INGRESS_HOST}, timeout=10
-        )
-        return response if response.status_code == 200 else None
-
-    response = await _wait_until(health_through_ingress, "the ingress to route /health-check")
+    response = await _get_through_ingress(model, address, "/health-check")
 
     assert response.text == "ok"
 
@@ -241,16 +288,7 @@ async def test_ingress_serves_go_import_for_the_routed_host(
     assert ingress.status == "active"
     address = await _ingress_address(model, ingress)
 
-    def go_import_through_ingress() -> requests.Response | None:
-        response = requests.get(
-            f"http://{address}/yaml.v2",
-            params={"go-get": "1"},
-            headers={"Host": INGRESS_HOST},
-            timeout=10,
-        )
-        return response if response.status_code == 200 else None
-
-    response = await _wait_until(go_import_through_ingress, "the ingress to route /yaml.v2")
+    response = await _get_through_ingress(model, address, "/yaml.v2", params={"go-get": "1"})
 
     tag = re.search(r'<meta name="go-import" content="([^"]*)"', response.text)
     assert tag, f"no go-import meta tag in:\n{response.text}"

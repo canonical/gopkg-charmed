@@ -52,7 +52,7 @@ requires_amd64 = pytest.mark.skipif(
 async def ingress_fixture(
     model: juju.model.Model, app: juju.application.Application
 ) -> juju.application.Application:
-    """nginx-ingress-integrator, configured as in the tutorial and integrated."""
+    """nginx-ingress-integrator, configured as in the tutorial apart from path-routes."""
     ingress = await model.deploy(
         INGRESS_CHARM,
         channel=INGRESS_CHANNEL,
@@ -61,14 +61,14 @@ async def ingress_fixture(
         # to "/", so the service would answer its root redirect for every URL.
         config={
             "service-hostname": INGRESS_HOST,
-            "path-routes": "/",
+            # paas-charm requests strip-prefix, which makes the integrator write
+            # its paths as regular expressions (use-regex=false cannot override
+            # that). Cilium matches a regex against the whole URL path, so "/"
+            # would route only the root; "/.*" routes every path on both Cilium
+            # and nginx.
+            "path-routes": "/.*",
             "rewrite-enabled": "false",
             "ingress-class": INGRESS_CLASS,
-            # paas-charm requests strip-prefix, which turns on the integrator's
-            # regex paths. Cilium matches a regex path against the whole URL
-            # path, so "/" would route only the root; a prefix path routes every
-            # path on both Cilium and nginx.
-            "use-regex": "false",
         },
     )
     # The service never reads the Host header: it renders its own `hostname`

@@ -12,6 +12,13 @@ backends:
     type: integration-test
     systems:
       - ubuntu-24.04
+  # The same suite on Juju 4; integration-test above runs Juju 3, as PS7 does.
+  integration-test-juju4:
+    type: integration-test
+    systems:
+      - ubuntu-24.04
+    environment:
+      CONCIERGE: concierge-juju4.yaml
   docs:
     type: opcli-minimal
     systems:
@@ -27,6 +34,7 @@ integration-suites:
     auto-discover: true
     backends:
       - integration-test
+      - integration-test-juju4
     pytest-arguments-template: |
       --no-juju-teardown
     # Canonical Kubernetes's Cilium ingress is not the cluster's default

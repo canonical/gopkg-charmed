@@ -16,7 +16,8 @@ integration suite in ``app/charm/tests/integration`` on a fresh Canonical
 Kubernetes cloud. It reuses
 Canonical's shared workflow,
 ``canonical/charm-ci/.github/workflows/integration-test.yml``, pinned to a
-specific commit, and runs each test module as its own job.
+specific commit, and runs each test module as its own job, once on Juju 3
+and once on Juju 4.
 
 Current behavior:
 

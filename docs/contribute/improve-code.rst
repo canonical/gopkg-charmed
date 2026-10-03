@@ -42,15 +42,10 @@ Next, run the charm checks:
    cd ~/gopkg-charm/app/charm
    tox -e lint,unit,static
 
-Finally, rebuild, deploy, and test the rock and charm:
-
-.. code-block:: bash
-
-   cd ~/gopkg-charm
-   app/charm/tests/integration/run_full_local_suite.sh
-
-Success ends with ``Full local Juju integration suite completed``. For manual
-steps, see :ref:`full-integration-suite-local`.
+Finally, rebuild, deploy, and test the rock and charm with the Juju
+integration suite. The suite runs on Canonical Kubernetes, as CI does, which
+cannot run next to the MicroK8s in this VM, so run it in a separate, fresh
+VM by following :ref:`full-integration-suite-local`.
 
 Build and deploy from source
 ----------------------------

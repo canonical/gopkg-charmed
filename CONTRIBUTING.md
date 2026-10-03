@@ -160,9 +160,12 @@ cd app
 test -z "$(gofmt -l .)" && go vet ./... && go build ./... && go test -race ./...
 cd charm
 tox -e lint,unit,static
-cd ../..
-app/charm/tests/integration/run_full_local_suite.sh
 ```
+
+Then run the Juju integration suite with
+`app/charm/tests/integration/run_full_local_suite.sh`. It runs on Canonical
+Kubernetes, as CI does, so it needs its own fresh VM; see
+[Run the integration suite locally](docs/contribute/run-full-juju-integration-suite-locally.rst).
 
 ## Charmhub listing review
 

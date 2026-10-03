@@ -31,8 +31,9 @@ logger = logging.getLogger(__name__)
 INGRESS_HOST = "gopkg.example.com"
 INGRESS_CHARM = "nginx-ingress-integrator"
 INGRESS_CHANNEL = "latest/stable"
-# Empty uses the cluster's default ingress class, which MicroK8s's nginx is.
-# CI sets "cilium" for Canonical Kubernetes (see spread.yaml).
+# Empty uses the cluster's default ingress class, which MicroK8s's ingress
+# add-on provides. CI and run_full_local_suite.sh set "cilium" for Canonical
+# Kubernetes (see spread.yaml).
 INGRESS_CLASS = os.environ.get("INGRESS_CLASS", "")
 COS_CHANNEL = "2/stable"
 LOKI = "loki-k8s"
@@ -153,7 +154,8 @@ def _ingress_address(juju: jubilant.Juju, ingress: str) -> str:
     """Return the ingress controller's address that the integrator reports.
 
     The integrator's unit status reads "Ingress IP(s): <address>, ...".
-    MicroK8s's nginx listens on the host, so 127.0.0.1 is the fallback.
+    MicroK8s's ingress controller listens on the host, so 127.0.0.1 is the
+    fallback.
     """
     message = juju.status().apps[ingress].units[f"{ingress}/0"].workload_status.message
     match = re.search(r"Ingress IP\(s\): ([^,\s]+)", message)

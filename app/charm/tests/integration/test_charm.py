@@ -3,25 +3,21 @@
 
 """Integration tests for the gopkg charm."""
 
-import juju.application
-import juju.model
+import jubilant
 import requests
 
 
-async def test_deploy_and_health_check(
-    app: juju.application.Application, model: juju.model.Model
-) -> None:
+def test_deploy_and_health_check(juju: jubilant.Juju, gopkg_app: str) -> None:
     """
     arrange: given the packed gopkg charm and rock image
     act: when the charm is deployed and its health endpoint is requested
     assert: one unit is active and answers 200 with the body "ok".
     """
-    assert app.status == "active"
+    app = juju.status().apps[gopkg_app]
+    assert app.app_status.current == "active"
     assert len(app.units) == 1
 
-    status = await model.get_status()
-    unit_status = status.applications[app.name].units[f"{app.name}/0"]
-    address = unit_status.address
+    address = app.units[f"{gopkg_app}/0"].address
 
     response = requests.get(f"http://{address}:8080/health-check", timeout=10)
 
@@ -29,9 +25,7 @@ async def test_deploy_and_health_check(
     assert response.text == "ok"
 
 
-async def test_metrics_endpoint_serves_application_metrics(
-    app: juju.application.Application, model: juju.model.Model
-) -> None:
+def test_metrics_endpoint_serves_application_metrics(juju: jubilant.Juju, gopkg_app: str) -> None:
     """
     arrange: given the deployed charm, whose metrics-port option defaults to
         the application port
@@ -40,8 +34,7 @@ async def test_metrics_endpoint_serves_application_metrics(
     assert: the metrics endpoint answers 200 with Go runtime metrics and the
         request counter that the health check just incremented.
     """
-    status = await model.get_status()
-    address = status.applications[app.name].units[f"{app.name}/0"].address
+    address = juju.status().apps[gopkg_app].units[f"{gopkg_app}/0"].address
     requests.get(f"http://{address}:8080/health-check", timeout=10)
 
     response = requests.get(f"http://{address}:8080/metrics", timeout=10)

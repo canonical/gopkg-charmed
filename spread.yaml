@@ -26,6 +26,17 @@ backends:
 
 environment:
   CONCIERGE: concierge-lxd.yaml
+  # From charm-ci's spread.yaml template. charm-ci's workflows set
+  # OPCLI_GIT_REF to the commit they are pinned to; this passes it into the
+  # test machine, which otherwise installs opcli from charm-ci's main.
+  OPCLI_GIT_REF: '$(HOST: echo "${OPCLI_GIT_REF:-main}")'
+
+# From charm-ci's spread.yaml template: keep these out of the project copy.
+exclude:
+  - .git
+  - .tox
+  - .venv
+  - .*_cache
 
 integration-suites:
   app/charm/tests/integration/:

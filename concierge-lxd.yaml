@@ -14,19 +14,27 @@ providers:
   lxd:
     enable: true
     bootstrap: false
-  microk8s:
+  # Canonical Kubernetes, configured like charm-ci's examples/concierge-k8s.yaml.
+  # Ingress is Cilium's controller behind a load balancer from the L2 pool;
+  # local-storage backs the COS charms' volumes.
+  k8s:
     enable: true
     bootstrap: true
-    # Same channel the documentation instructs readers to install
-    # (docs/how-to/set-up-a-local-linux-environment.rst, Step 3).
-    channel: 1.36-strict/stable
-    addons:
-      - dns
-      - hostpath-storage
-      - registry
-      - ingress
+    bootstrap-constraints:
+      root-disk: "2G"
+    features:
+      load-balancer:
+        l2-mode: "true"
+        cidrs: "10.43.45.0/28"
+      local-storage: {}
+      network: {}
+      ingress: {}
 
 host:
+  # skopeo loads the rock into a local registry when CI cannot push it to
+  # GHCR, such as for pull requests from forks.
+  packages:
+    - skopeo
   snaps:
     charmcraft:
       channel: latest/stable

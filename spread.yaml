@@ -3,6 +3,9 @@
 project: gopkg-k8s
 path: /home/ubuntu/proj
 version: 1
+# test_integrations deploys five charms, which leaves little room under
+# spread's default 15 minutes; charm-ci's examples use the same limit.
+kill-timeout: 60m
 
 backends:
   integration-test:
@@ -26,6 +29,10 @@ integration-suites:
       - integration-test
     pytest-arguments-template: |
       --keep-models
+    # Canonical Kubernetes's Cilium ingress is not the cluster's default
+    # class, so it ignores an Ingress that names no class.
+    pytest-environment-template: |
+      INGRESS_CLASS=cilium
 
 suites:
   tests/spread/documentation/:

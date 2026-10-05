@@ -2,98 +2,91 @@
 .. _full-integration-suite-local:
 
 .. meta::
-   :description: Build the rock and charm, deploy them with Juju, and run the full gopkg-k8s integration suite locally.
+   :description: Run the gopkg-k8s Juju integration suite locally with tox, in a Multipass VM prepared with charm-ci's tools.
 
 How to run the full Juju integration suite locally
 ==================================================
 
-The full suite catches failures across packaging, deployment, and service
-behavior before they reach CI. It verifies that the rock and charm build for
-your architecture, that Juju can deploy the charm with the local image
-resource, and that the integration tests reach active status and validate
-service behavior. Run one script to build the rock and charm, deploy them
-with Juju, and execute the integration tests on Linux, on AMD64 or ARM64.
+The integration tests deploy the charm with Juju and check each of its
+integrations, as :ref:`ci-workflows` describes. CI runs them with Canonical's
+`charm-ci <https://github.com/canonical/charm-ci>`_; locally, run them with
+``tox -e integration``. The tests take the charm and its image from
+``build/artifacts.build.yaml`` through charm-ci's ``pytest`` plugin, so the steps
+below build both and prepare the machine with charm-ci's ``opcli`` tool and
+the concierge file CI uses.
 
-Prerequisites
+Create a VM
+-----------
+
+The charm and the observability charms the tests deploy are published for
+AMD64. On an AMD64 host, create and enter a fresh Ubuntu 24.04 LTS VM with
+`Multipass <https://canonical.com/multipass>`_, sized like the GitHub runners
+CI uses. On an Apple Silicon Mac, rely on your pull request's CI run.
+
+.. code-block:: bash
+
+   multipass launch 24.04 --cpus 4 --memory 16G --disk 50G --name gopkg-suite
+   multipass shell gopkg-suite
+
+Keep it separate from the VM in :ref:`set-up-a-development-environment`: the
+steps below install Canonical Kubernetes, which cannot run next to MicroK8s.
+
+Inside the VM, clone the repository:
+
+.. code-block:: bash
+
+   git clone https://github.com/canonical/gopkg-charmed.git gopkg-charm
+
+To test changes that are not on GitHub yet, mount your checkout instead, as
+:ref:`set-up-a-development-environment` describes, with ``gopkg-suite`` as
+the VM name.
+
+Install charm-ci's tools
+------------------------
+
+Install ``opcli`` from the charm-ci release that the integration test
+workflow pins, then the tools it drives:
+
+.. code-block:: bash
+
+   sudo snap install astral-uv --classic
+   uv tool install "opcli[cli] @ git+https://github.com/canonical/charm-ci.git@v1.0.1"
+   export PATH="$HOME/.local/bin:$PATH"
+   opcli install all
+
+``opcli install all`` adds your user to the ``lxd`` group. Leave the VM with
+``exit`` and enter it again with ``multipass shell gopkg-suite`` so the
+membership applies.
+
+Build and prepare
+-----------------
+
+Build the rock and the charm from ``artifacts.yaml``, prepare the VM from the
+concierge file CI uses for Juju 3, and push the rock to a local registry:
+
+.. code-block:: bash
+
+   cd ~/gopkg-charm
+   opcli artifacts build
+   opcli env provision -c concierge-lxd.yaml
+   opcli artifacts push-images --missing-registry deploy
+
+To test on Juju 4, as the second CI run does, use another VM and
+``concierge-juju4.yaml``.
+
+Run the tests
 -------------
-
-Complete :ref:`set-up-a-development-environment`, which installs the tools
-this guide needs: 
-
-- ``microk8s`` 
-- ``juju``
-- ``rockcraft``
-- ``charmcraft``
-- ``tox``
-
-The suite requires Linux; on macOS or Windows, run it inside a
-Multipass VM.
-
-Besides the charm itself, the suite deploys ``nginx-ingress-integrator``,
-``loki-k8s``, ``prometheus-k8s``, and ``grafana-k8s`` from Charmhub, so the
-machine needs internet access and the memory recommended in the setup guide.
-The three observability charms are published for amd64 only; on an arm64
-host, such as an Apple Silicon VM, their tests are skipped and the rest of
-the suite runs.
-
-Run the full suite
-------------------
-
-From the repository root, run:
-
-.. code-block:: bash
-
-   cd ~/gopkg-charm
-   app/charm/tests/integration/run_full_local_suite.sh
-
-The script verifies the operating system and the required commands, detects
-the architecture, ensures MicroK8s readiness and the required add-ons,
-ensures that a Juju controller is available, builds and pushes the
-architecture-matching rock, builds the charm, and runs the integration tox
-environment with ``CHARM_FILE`` and ``APP_IMAGE`` set.
-
-If ``rockcraft pack`` fails with a ``PermissionError`` under
-``app/charm/.tox``, see :ref:`troubleshoot-development`.
-
-Run the suite manually
-----------------------
-
-Use the individual steps when you need fine-grained control, for example to
-rebuild only one artifact. Run them in the same shell: the last step uses a
-variable set in the step before it.
-
-Confirm the environment from :ref:`set-up-a-development-environment`, and
-bootstrap a controller only if none exists yet:
-
-.. code-block:: bash
-
-   cd ~/gopkg-charm
-   microk8s status --wait-ready
-   curl --fail --silent --show-error --retry 30 --retry-delay 2 \
-     --retry-all-errors http://127.0.0.1:32000/v2/
-   juju controllers >/dev/null 2>&1 || juju bootstrap microk8s dev
-
-Build the rock and push it to the local registry:
-
-.. code-block:: bash
-
-   cd ~/gopkg-charm/app
-   ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
-   rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
-     oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
-     docker://localhost:32000/gopkg:0.1
-
-Build the charm:
 
 .. code-block:: bash
 
    cd ~/gopkg-charm/app/charm
-   CHARMCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true charmcraft pack
+   INGRESS_CLASS=cilium tox -e integration
 
-Run the integration tests against the charm and image you just built:
+``INGRESS_CLASS=cilium`` is the value CI passes from ``spread.yaml``: the
+Cilium ingress controller of Canonical Kubernetes is not the cluster's default
+ingress class. Each test module deploys into its own temporary model.
 
-.. code-block:: bash
-
-   CHARM_FILE=$(ls -1 gopkg-k8s_*.charm | head -n1)
-   CHARM_FILE="$CHARM_FILE" APP_IMAGE=localhost:32000/gopkg:0.1 \
-     tox --workdir ~/.cache/gopkg-charm-tox -e integration
+After changing the service, the rock, or the charm, run
+``opcli artifacts build`` and
+``opcli artifacts push-images --missing-registry deploy`` again from the
+repository root before the tests.

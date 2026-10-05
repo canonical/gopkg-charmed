@@ -42,15 +42,9 @@ Next, run the charm checks:
    cd ~/gopkg-charm/app/charm
    tox -e lint,unit,static
 
-Finally, rebuild, deploy, and test the rock and charm:
-
-.. code-block:: bash
-
-   cd ~/gopkg-charm
-   app/charm/tests/integration/run_full_local_suite.sh
-
-Success ends with ``Full local Juju integration suite completed``. For manual
-steps, see :ref:`full-integration-suite-local`.
+Finally, rebuild, deploy, and test the rock and charm with the Juju
+integration suite: ``tox -e integration``, in a separate Multipass VM on an
+AMD64 host prepared as :ref:`full-integration-suite-local` describes.
 
 Build and deploy from source
 ----------------------------

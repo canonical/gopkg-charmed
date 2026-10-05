@@ -23,7 +23,8 @@ jobs:
       actions: read
     with:
       working-directory: .
-      spread-jobs-include: "integration-test-ci:*"
+      # Both integration backends (Juju 3 and Juju 4), not the docs backend.
+      spread-jobs-include: "integration-test*-ci:*"
     secrets: inherit
 
   required_status_checks:

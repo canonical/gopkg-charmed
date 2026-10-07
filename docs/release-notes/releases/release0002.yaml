@@ -1,0 +1,54 @@
+# --- Information about release ----
+
+version_schema: 3
+
+# Four-digit release number; it names the rendered page
+# (release-notes-<NNNN>.md) and its anchor.
+release_number: "0002"
+
+# Workload name and version, for example "gopkg.in 1.0".
+workload_with_version: gopkg.in 0.1
+
+# Optional paragraph after the introduction, for what sets this release apart.
+summary: >-
+  This is the first release since the
+  {ref}`initial documentation baseline <release_notes_release_notes_0001>`.
+  The charm is now published to the latest/edge channel on every push to main,
+  and it integrates with the Canonical Observability Stack through metrics,
+  structured logs, a Grafana dashboard, and alert rules. The documentation
+  gained a rewritten tutorial around the published charm, guides for
+  upgrading the charm and for integrating with COS Lite, and Terraform
+  modules for deploying with Juju.
+
+# Rows of the requirements table, for example "3.6", "MicroK8s 1.36", "24.04".
+juju_version: "3.6"
+kubernetes_version: MicroK8s 1.36
+ubuntu_version: "24.04"
+
+# Change artifacts included in the release, for example pr0027.yaml.
+# pr0027.yaml is covered by the hand-written release-notes-0001.rst.
+included_changes:
+  - pr0002.yaml
+  - pr0004.yaml
+  - pr0010.yaml
+  - pr0011.yaml
+  - pr0012.yaml
+  - pr0013.yaml
+  - pr0023.yaml
+  - pr0032.yaml
+  - pr0035.yaml
+  - pr0040.yaml
+  - pr0041.yaml
+  - pr0042.yaml
+  - pr0043.yaml
+  - pr0045.yaml
+  - pr0046.yaml
+  - pr0047.yaml
+  - pr0051.yaml
+  - pr0052.yaml
+  - pr0053.yaml
+  - pr0055.yaml
+
+# Charm revisions covered by the release.
+earliest_revision: 1
+latest_revision: 8

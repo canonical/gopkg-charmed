@@ -59,14 +59,14 @@ To publish the release notes for a release:
    [`docs/release-notes/template/_release-artifact-template.yaml`](docs/release-notes/template/_release-artifact-template.yaml)
    to `docs/release-notes/releases/release<NNNN>.yaml`, where `<NNNN>` is the
    next release number, and fill it in, listing the change artifacts the
-   release includes.
+   release includes and the requirements-table versions. Set `highlight: true`
+   in the change artifacts that belong under "Main features".
 2. Merge it to `main`. The "Create release notes" workflow renders
    `docs/release-notes/release-notes-<NNNN>.md` from
    `docs/release-notes/template/release-template.md.j2` and opens a pull
    request with the page.
-3. In that pull request, complete the requirements table and the known
-   issues, and add the page to the "Releases" list and the toctree in
-   `docs/release-notes/index.rst`.
+3. In that pull request, review the page and list any known issues. The
+   release notes index picks up the page by itself.
 
 The rendered pages are published in the
 [documentation](docs/release-notes/index.rst).

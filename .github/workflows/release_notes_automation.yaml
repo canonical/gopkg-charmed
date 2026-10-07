@@ -9,6 +9,10 @@ on:
 
 jobs:
   release-notes:
+    # The repo's default GITHUB_TOKEN is read-only; the shared workflow pushes a branch and opens a PR.
+    permissions:
+      contents: write
+      pull-requests: write
     uses: canonical/release-notes-automation/.github/workflows/action.yml@main
     secrets: inherit
     with:

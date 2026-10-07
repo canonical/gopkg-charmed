@@ -1,6 +1,6 @@
 # --- Information about release ----
 
-version_schema: 2
+version_schema: 3
 
 # Four-digit release number; it names the rendered page
 # (release-notes-<NNNN>.md) and its anchor.
@@ -8,6 +8,14 @@ release_number:
 
 # Workload name and version, for example "gopkg.in 1.0".
 workload_with_version:
+
+# Optional paragraph after the introduction, for what sets this release apart.
+summary:
+
+# Rows of the requirements table, for example "3.6", "MicroK8s 1.36", "24.04".
+juju_version:
+kubernetes_version:
+ubuntu_version:
 
 # Change artifacts included in the release, for example pr0027.yaml.
 included_changes:

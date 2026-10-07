@@ -18,10 +18,9 @@ for release.
 Releases
 --------
 
-* :ref:`gopkg-k8s release notes - initial documentation baseline <release_notes_release_notes_0001>`
-
 .. toctree::
-	:hidden:
 	:maxdepth: 1
+	:glob:
+	:reversed:
 
-	Initial documentation baseline <release-notes-0001>
+	release-notes-*

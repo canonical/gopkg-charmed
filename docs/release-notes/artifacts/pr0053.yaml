@@ -4,11 +4,11 @@ changes:
   - title: Added a how-to guide for upgrading the charm
     author: minulo
     type: minor
-    description: The new guide, How to upgrade the charm, explains what juju refresh does for gopkg-k8s (a revision carries the charm and its app-image resource, and there is no state to migrate), how to compare the running revision with the one the channel offers, how to wait for Juju to replace the pod, how to verify the service through ingress afterwards, and how to roll back. It states the cost of an upgrade up front, which is that requests through ingress fail for one to four minutes until the new unit publishes its address. A third documentation-test chain runs the guide on every change.
+    description: The new guide, How to upgrade the charm, explains what `juju refresh` does for gopkg-k8s (a revision carries the charm and its app-image resource, and there is no state to migrate), how to compare the running revision with the one the channel offers, how to wait for Juju to replace the pod, how to verify the service through ingress afterwards, and how to roll back. It states the cost of an upgrade up front, which is that requests through ingress fail for one to four minutes until the new unit publishes its address. A third documentation-test chain runs the guide on every change.
     urls:
       pr:
         - "https://github.com/canonical/gopkg-charmed/pull/53"
       related_doc:
       related_issue:
     visibility: public
-    highlight: false
+    highlight: true

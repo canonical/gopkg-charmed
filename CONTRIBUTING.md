@@ -160,9 +160,11 @@ cd app
 test -z "$(gofmt -l .)" && go vet ./... && go build ./... && go test -race ./...
 cd charm
 tox -e lint,unit,static
-cd ../..
-app/charm/tests/integration/run_full_local_suite.sh
 ```
+
+Then run the Juju integration suite with `tox -e integration`, in a separate
+Multipass VM on an AMD64 host prepared as described in
+[Run the integration suite locally](docs/contribute/run-full-juju-integration-suite-locally.rst).
 
 ## Charmhub listing review
 

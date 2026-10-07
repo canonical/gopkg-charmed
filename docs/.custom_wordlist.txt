@@ -77,3 +77,6 @@ Di[áa]taxis
 preconfigured
 venv
 rtd
+hardcoding
+READMEs
+minulo

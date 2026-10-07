@@ -1,6 +1,6 @@
 # --- Information about release ----
 
-version_schema: 2
+version_schema: 3
 
 # Four-digit release number; it names the rendered page
 # (release-notes-<NNNN>.md) and its anchor.

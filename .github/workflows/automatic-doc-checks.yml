@@ -21,3 +21,5 @@ concurrency:
 jobs:
   rtd-workflows:
     uses: canonical/operator-workflows/.github/workflows/docs_rtd.yaml@main
+    with:
+      python-version: '3.12'

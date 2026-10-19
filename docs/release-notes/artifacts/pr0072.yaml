@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Moved the documentation tooling to centrally managed Copier template
+    author: swetha1654
+    type: minor
+    description: The documentation tooling now comes from the centrally managed platform-engineering-documentation-files Copier template, and a scheduled workflow keeps it in sync. There is no change to the charm or its documentation content.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/72"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

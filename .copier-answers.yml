@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: d2d1381
+_commit: 3ebfd46
 _src_path: gh:canonical/platform-engineering-documentation-files.git
 author: Canonical Ltd.
 discourse: https://discourse.charmhub.io
@@ -18,7 +18,7 @@ mattermost: ''
 new_domain: canonical.com/juju/docs/gopkg-charm
 ogp_image: https://assets.ubuntu.com/v1/cc828679-docs_illustration.svg
 old_domain: canonical-gopkg-charm.readthedocs-hosted.com
-product_page: github.com/canonical/gopkg-charmed
+product_page: charmhub.io/gopkg-k8s
 product_tag: ''
 project: gopkg charm
 repo_default_branch: main

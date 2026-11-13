@@ -24,6 +24,9 @@ Current behavior:
 
 - runs on every pull request, on every push to ``main``, and every Saturday
   at 15:00 UTC
+- each test module logs the Juju version of its model and fails unless the
+  major version is the one its spread backend expects: 3 for
+  ``integration-test``, 4 for ``integration-test-juju4``
 - ``test_charm.py`` deploys the charm with the freshly built image and checks
   that one unit becomes active, answers the health check, and serves
   metrics

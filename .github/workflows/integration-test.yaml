@@ -23,7 +23,8 @@ jobs:
       actions: read
     with:
       working-directory: .
-      # Both integration backends (Juju 3 and Juju 4), not the docs backend.
+      # The Juju 3 and Juju 4 backends. Not the docs backend, and not
+      # juju4-candidate, which integration-test-juju-candidate.yaml runs.
       spread-jobs-include: "integration-test*-ci:*"
     secrets: inherit
 

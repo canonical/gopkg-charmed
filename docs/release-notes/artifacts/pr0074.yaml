@@ -1,0 +1,14 @@
+version_schema: 2
+
+changes:
+  - title: Checked the Juju version in each integration test job
+    author: minulo
+    type: minor
+    description: The integration tests run once on Juju 3 and once on Juju 4. Each test module now logs the Juju version of its model and fails if the major version is not the one its job is meant to test, so a job that ends up on the wrong Juju fails instead of passing. There is no change to the charm.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/74"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

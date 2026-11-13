@@ -41,6 +41,24 @@ Current behavior:
   channel, which is published for amd64 only, so those tests are skipped on
   arm64 hosts
 
+Integration tests on Juju release candidates
+--------------------------------------------
+
+Workflow: ``.github/workflows/integration-test-juju-candidate.yaml``
+
+This workflow runs the same integration suite on Juju's ``4/candidate``
+channel, so that a Juju release candidate which breaks the charm shows up
+before the release reaches ``4/stable``. It runs the ``juju4-candidate``
+spread backend, which ``concierge-juju4-candidate.yaml`` provisions.
+
+Current behavior:
+
+- runs every Sunday at 15:00 UTC, on demand, and on pull requests that change
+  the workflow or its concierge file; other pull requests do not run it
+- while ``4/candidate`` holds no release, the snap store installs the
+  ``4/stable`` release instead, so the run tests the same Juju as the Juju 4
+  run of the integration tests
+
 Charm publication
 -----------------
 

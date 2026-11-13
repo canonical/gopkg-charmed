@@ -2,7 +2,8 @@
 # See LICENSE file for licensing details.
 #
 # Concierge provisioning config for the integration tests on Juju 4.
-# Same as concierge-lxd.yaml apart from the Juju channel; keep the two in step.
+# Same as concierge-lxd.yaml and concierge-juju4-candidate.yaml apart from the
+# Juju channel; keep the three in step.
 
 juju:
   channel: 4.0/stable

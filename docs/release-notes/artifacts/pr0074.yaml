@@ -12,3 +12,14 @@ changes:
       related_issue:
     visibility: internal
     highlight: false
+  - title: Added a weekly integration test run on Juju 4 release candidates
+    author: minulo
+    type: minor
+    description: A new workflow runs the integration tests every Sunday on Juju's 4/candidate channel, so a Juju release candidate that breaks the charm shows up before the release reaches 4/stable. Pull requests do not run it unless they change its configuration. There is no change to the charm.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/74"
+      related_doc:
+      related_issue:
+    visibility: internal
+    highlight: false

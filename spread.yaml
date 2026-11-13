@@ -25,6 +25,17 @@ backends:
     environment:
       CONCIERGE: concierge-juju4.yaml
       EXPECTED_JUJU_MAJOR: "4"
+  # The same suite on Juju 4 release candidates, run weekly by
+  # integration-test-juju-candidate.yaml. Its name stays outside
+  # integration-test.yaml's "integration-test*-ci:*" filter, so pull requests
+  # do not run it.
+  juju4-candidate:
+    type: integration-test
+    systems:
+      - ubuntu-24.04
+    environment:
+      CONCIERGE: concierge-juju4-candidate.yaml
+      EXPECTED_JUJU_MAJOR: "4"
   docs:
     type: opcli-minimal
     systems:
@@ -52,6 +63,7 @@ integration-suites:
     backends:
       - integration-test
       - integration-test-juju4
+      - juju4-candidate
     pytest-arguments-template: |
       --no-juju-teardown
     # Canonical Kubernetes's Cilium ingress is not the cluster's default

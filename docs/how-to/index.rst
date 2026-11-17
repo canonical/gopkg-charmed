@@ -30,6 +30,6 @@ diagnose deployment failures.
 .. toctree::
    :maxdepth: 1
 
-   Integrate with COS Lite <integrate-with-cos>
+   Integrate with COS <integrate-with-cos>
    Upgrade <upgrade-the-charm>
    Troubleshoot deployment issues <troubleshoot-deployment>

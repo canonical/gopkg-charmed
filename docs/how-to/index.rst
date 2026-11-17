@@ -24,7 +24,7 @@ advertises to Go clients.
 Operations and maintenance
 --------------------------
 
-Monitor the service with COS Lite, upgrade it to a newer charm revision, and
+Monitor the service with COS, upgrade it to a newer charm revision, and
 diagnose deployment failures.
 
 .. toctree::

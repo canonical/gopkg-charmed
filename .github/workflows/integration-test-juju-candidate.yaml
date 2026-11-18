@@ -1,0 +1,30 @@
+name: Integration Tests (Juju 4 candidate)
+
+# The integration suite on Juju 4's candidate channel, so that a Juju release
+# candidate which breaks the charm shows up before it reaches 4/stable. It is
+# not a pull request check: it runs weekly, on demand, and on pull requests
+# that change its own configuration.
+on:
+  schedule:
+    # Weekly on Sunday at 3pm UTC, the day after the main integration run
+    - cron: "0 15 * * SUN"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/integration-test-juju-candidate.yaml
+      - concierge-juju4-candidate.yaml
+
+jobs:
+  juju-candidate:
+    uses: canonical/charm-ci/.github/workflows/integration-test.yml@14b1cf49d48b9d5b96192d9bca2890c98b7295cf # v1.0.2
+    # Same grants as integration-test.yaml: build pushes the rock to ghcr
+    # (packages: write) and the test jobs read workflow artifacts (actions: read).
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+    with:
+      working-directory: .
+      # Only the candidate backend; integration-test.yaml runs the others.
+      spread-jobs-include: "juju4-candidate-ci:*"
+    secrets: inherit

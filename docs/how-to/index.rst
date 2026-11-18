@@ -6,14 +6,30 @@
 How-to guides
 =============
 
-Choose a configuration, observability, upgrade, or troubleshooting task. Each
-guide continues from the deployment of :ref:`deploy-and-verify-on-kubernetes`.
+Task-based procedures for exposing the ``gopkg-k8s`` charm to Go clients and
+operating it in a Juju-managed Kubernetes environment.
+
+Ingress and networking
+----------------------
+
+Make the service reachable from outside the cluster and set the hostname it
+advertises to Go clients.
 
 .. toctree::
    :maxdepth: 1
 
    Configure ingress <configure-ingress>
    Configure hostname <configure-hostname-and-check-go-import>
-   Integrate with COS Lite <integrate-with-cos>
+
+Operations and maintenance
+--------------------------
+
+Monitor the service with COS, upgrade it to a newer charm revision, and
+diagnose deployment failures.
+
+.. toctree::
+   :maxdepth: 1
+
+   Integrate with COS <integrate-with-cos>
    Upgrade <upgrade-the-charm>
    Troubleshoot deployment issues <troubleshoot-deployment>

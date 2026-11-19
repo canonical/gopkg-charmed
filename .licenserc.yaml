@@ -43,4 +43,5 @@ header:
       - 'app/go.mod'
       - 'app/go.sum'
       - 'app/snapcraft.yaml'
+      - 'app/charm/uv.lock'
     comment: on-failure

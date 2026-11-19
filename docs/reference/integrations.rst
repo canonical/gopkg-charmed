@@ -47,7 +47,8 @@ Observability options
 ---------------------
 
 ``metrics-port`` (default ``8080``, the application port) and
-``metrics-path`` (default ``/metrics``) are framework options that reach the
+``metrics-path`` (default ``/metrics``) are set in the charm's
+``paas-config.yaml``, not with ``juju config``, and reach the
 service as ``APP_METRICS_PORT`` and ``APP_METRICS_PATH``. When the port
 differs from the application port, the service opens a second listener that
 serves only the metrics path, which keeps the endpoint off the port that

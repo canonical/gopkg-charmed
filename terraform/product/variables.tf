@@ -28,7 +28,7 @@ variable "gopkg" {
     app_name    = optional(string, "gopkg")
     channel     = optional(string, "latest/edge")
     revision    = optional(number, null)
-    base        = optional(string, "ubuntu@24.04")
+    base        = optional(string, "ubuntu@26.04")
     config      = optional(map(string), {})
     constraints = optional(string, "")
     units       = optional(number, 1)

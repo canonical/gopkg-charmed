@@ -53,8 +53,9 @@ https://charmhub.io/gopkg-k8s/configurations once published):
 | `app-secret-key` | Juju user secret (`secret:<id>`) holding the application secret key. If unset, the charm generates one. |
 
 The application port and the metrics port and path are no longer charm
-options: since paas-charm 2.0 they are set in `app/charm/paas-config.yaml`
-and fall back to the Go framework defaults (`8080`, `8080`, `/metrics`).
+options: since paas-charm 2.0 they are set at build time in
+`app/charm/paas-config.yaml` to the Go framework defaults (`8080`, `8080`,
+`/metrics`), and changing them needs a repack.
 
 ## Outputs
 

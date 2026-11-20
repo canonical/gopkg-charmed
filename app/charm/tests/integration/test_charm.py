@@ -27,8 +27,8 @@ def test_deploy_and_health_check(juju: jubilant.Juju, gopkg_app: str) -> None:
 
 def test_metrics_endpoint_serves_application_metrics(juju: jubilant.Juju, gopkg_app: str) -> None:
     """
-    arrange: given the deployed charm, whose metrics-port option defaults to
-        the application port
+    arrange: given the deployed charm, whose paas-config.yaml sets metrics-port
+        to the application port
     act: when the health endpoint and then the framework's default metrics path
         are requested on that port
     assert: the metrics endpoint answers 200 with Go runtime metrics and the

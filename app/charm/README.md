@@ -78,11 +78,9 @@ See [Configure the hostname and check go-import metadata](https://canonical.com/
 #### Serve metrics on a separate port
 
 By default the Prometheus metrics share the application port. To keep them off
-the port that ingress publishes:
-
-```bash
-juju config gopkg-k8s metrics-port=9102
-```
+the port that ingress publishes, set `metrics-port: 9102` in
+`app/charm/paas-config.yaml`, then repack the charm and `juju refresh` it; the
+metrics port is no longer a `juju config` option.
 
 See [Integrate with the Canonical Observability Stack](https://canonical.com/juju/docs/gopkg-charm/latest/how-to/integrate-with-cos/).
 

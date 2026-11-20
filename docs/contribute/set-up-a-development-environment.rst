@@ -20,13 +20,13 @@ architecture. Your workstation should have at least 4 CPU cores, 8 GB of RAM,
 dependencies, and OCI images.
 
 This guide uses `Multipass <https://canonical.com/multipass>`_ to create an
-Ubuntu 24.04 LTS virtual machine. Multipass runs on Linux, macOS, and Windows,
+Ubuntu 26.04 LTS virtual machine. Multipass runs on Linux, macOS, and Windows,
 so the same steps apply on every host, and the VM keeps everything the guide
 installs separate from your workstation. Install it by following
 :ref:`Install Multipass <multipass:how-to-guides-install-multipass>` before
 continuing.
 
-If your workstation already runs Ubuntu 24.04 LTS, you can skip the virtual
+If your workstation already runs Ubuntu 26.04 LTS, you can skip the virtual
 machine and run the remaining steps directly on it. Be aware of what that
 means: the steps install packages and snaps with ``sudo``, add your user to
 the ``snap_microk8s`` and ``lxd`` groups, and start a MicroK8s cluster whose
@@ -37,7 +37,7 @@ Create and enter a VM
 
 .. code-block:: bash
 
-   multipass launch 24.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
+   multipass launch 26.04 --cpus 4 --disk 50G --memory 8G --name charm-dev
    multipass shell charm-dev
 
 Make the repository available
@@ -74,7 +74,7 @@ Install required tools
 ----------------------
 
 Building, deploying, and testing ``gopkg-k8s`` needs Go for the service,
-Python 3.12 and tox for the charm tests, Rockcraft and Charmcraft to build the
+Python 3.14 and tox for the charm tests, Rockcraft and Charmcraft to build the
 rock and the charm (both build inside LXD), Juju and MicroK8s to deploy them,
 and curl and git for the commands in the guides.
 :ref:`platforms-and-prerequisites` lists the channels and the versions the
@@ -83,7 +83,7 @@ guides were last verified with. Install everything:
 .. code-block:: bash
 
    sudo apt update
-   sudo apt install --yes curl git python3.12-venv tox
+   sudo apt install --yes curl git python3.14-venv tox
    sudo snap install go --classic
    sudo snap install lxd
    sudo snap install rockcraft --classic

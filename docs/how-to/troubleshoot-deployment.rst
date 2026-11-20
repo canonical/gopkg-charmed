@@ -252,7 +252,7 @@ The output starts with ``# HELP`` lines. If there is no ``gopkg-k8s`` target
 at all although the integration is listed, Prometheus has not reloaded its
 configuration yet; wait a minute and query the targets again.
 
-If the direct request is refused on the ``metrics-port`` port, or answers
+If the direct request is refused on the ``metrics-port`` set in ``paas-config.yaml``, or answers
 ``404`` on the application port, the running image does not serve metrics:
 it was built from a checkout that predates ``app/observability.go``, or the
 pod is still running an older image that was cached under the same tag,

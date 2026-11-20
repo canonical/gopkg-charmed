@@ -20,9 +20,11 @@ To change it and verify the result, follow
 :ref:`configure-hostname-and-check-go-import`.
 
 Running ``juju config gopkg-k8s`` also lists the options that the Go
-framework extension adds when the charm is packed: ``app-port``,
-``app-secret-key``, ``app-secret-key-id``, ``metrics-port``, and
-``metrics-path``. The observability options are described in
+framework extension adds when the charm is packed: ``app-secret-key``, a
+secret-typed option that takes a Juju user secret ID. The application port
+and the metrics port and path are not charm options; they are set at build
+time in ``app/charm/paas-config.yaml`` to the Go framework defaults ``8080``,
+``8080`` and ``/metrics``, and changing them needs a repack. The observability settings are described in
 :ref:`integrations`, and
 :ref:`charmcraft:go-framework-extension-config-options` documents the
 extension's full set.

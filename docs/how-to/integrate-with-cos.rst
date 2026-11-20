@@ -157,13 +157,20 @@ Keep the metrics endpoint off the public hostname
 
 By default the metrics endpoint shares the application port, so ingress
 publishes it at ``/metrics`` on the public hostname. Move it to a port that
-ingress does not route. The charm passes the new port to the service, which
+ingress does not route. The metrics port is not a ``juju config`` option: it
+is set at build time in ``app/charm/paas-config.yaml``, so change it there,
+then pack the charm and refresh the deployment as described in
+:ref:`improve-code`. The charm passes the new port to the service, which
 opens a second listener for the metrics path only, and updates the scrape
 job:
 
-.. code-block:: bash
+.. SPREAD SKIP
 
-   juju config gopkg-k8s metrics-port=9102
+.. code-block:: yaml
+
+   port: 8080
+   metrics-port: 9102
+   metrics-path: /metrics
 
 Confirm that Prometheus scrapes the new port, then that the public hostname
 no longer serves metrics. The ``up`` series cannot tell the ports apart,
@@ -185,6 +192,8 @@ of every active target. The loop waits until the target whose URL ends in
    curl --silent --output /dev/null --write-out '%{http_code}\n' \
      http://${INGRESS_HOST}/metrics \
      --resolve ${INGRESS_HOST}:80:127.0.0.1 | grep -Fx 404
+
+.. SPREAD SKIP END
 
 The first command prints the matching part of the target entry, from its
 scrape URL to ``"health":"up"``, or the message on its last line if no such

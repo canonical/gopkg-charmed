@@ -264,7 +264,7 @@ still ``waiting`` or ``maintenance``, run the command again after a minute:
    nginx-ingress-integrator/0*  active    idle   10.1.58.141
 
    Integration provider                  Requirer                              Interface       Type     Message
-   gopkg-k8s:secret-storage          gopkg-k8s:secret-storage          secret-storage  peer
+   gopkg-k8s:peers                   gopkg-k8s:peers                   peers           peer
    nginx-ingress-integrator:ingress      gopkg-k8s:ingress                 ingress         regular
    nginx-ingress-integrator:nginx-peers  nginx-ingress-integrator:nginx-peers  nginx-instance  peer
 

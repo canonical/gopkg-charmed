@@ -131,7 +131,7 @@ module "gopkg" {
 
   gopkg = {
     channel = "latest/stable"
-    # renovate: charm="gopkg-k8s" track="latest" risk="stable" base="24.04" arch="amd64"
+    # renovate: charm="gopkg-k8s" track="latest" risk="stable" base="26.04" arch="amd64"
     revision = 12
   }
 }

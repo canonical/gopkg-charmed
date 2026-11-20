@@ -8,7 +8,7 @@ Integrations
 
 The Go framework extension gives ``gopkg-k8s`` the endpoints below. To
 connect the observability endpoints, follow :ref:`integrate-with-cos`; for
-ingress, follow :ref:`configure-ingress`. The ``secret-storage`` peer relation
+ingress, follow :ref:`configure-ingress`. The ``peers`` peer relation
 is internal to the extension. For how the extension implements these
 endpoints, see :ref:`charmcraft:go-framework-extension-relations` and
 :ref:`charmcraft:go-framework-extension-observability`.
@@ -47,7 +47,8 @@ Observability options
 ---------------------
 
 ``metrics-port`` (default ``8080``, the application port) and
-``metrics-path`` (default ``/metrics``) are framework options that reach the
+``metrics-path`` (default ``/metrics``) are set at build time in
+``app/charm/paas-config.yaml``, not with ``juju config``, and reach the
 service as ``APP_METRICS_PORT`` and ``APP_METRICS_PATH``. When the port
 differs from the application port, the service opens a second listener that
 serves only the metrics path, which keeps the endpoint off the port that

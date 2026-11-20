@@ -9,7 +9,8 @@ name: gopkg-k8s
 
 type: charm
 
-base: ubuntu@24.04
+base: ubuntu@26.04
+charm-user: non-root
 
 title: gopkg.in - a 12-Factor Application
 
@@ -79,10 +80,6 @@ extensions:
 #     limit: 1
 #   mongodb:
 #     interface: mongodb_client
-#     optional: false
-#     limit: 1
-#   redis:
-#     interface: redis
 #     optional: false
 #     limit: 1
 #   valkey:

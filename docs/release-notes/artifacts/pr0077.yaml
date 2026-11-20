@@ -1,0 +1,21 @@
+version_schema: 2
+
+changes:
+  - title: Upgraded the charm and rock to paas-charm 2.0 on Ubuntu 26.04 LTS
+    author: alithethird
+    type: breaking
+    description: >-
+      The charm now uses paas-charm 2.0 on the ubuntu@26.04 base and the rock builds on
+      ubuntu@26.04. The app-port, metrics-port, metrics-path and app-secret-key-id options were
+      removed; the port and metrics endpoint are now set at build time in
+      app/charm/paas-config.yaml, which keeps the Go defaults (8080, 8080, /metrics).
+      app-secret-key is now a secret-typed option, so an existing key must be supplied as a Juju
+      secret, and the secret-storage peer relation is renamed peers. Refresh with
+      --base ubuntu@26.04 and the new app-image resource.
+    urls:
+      pr:
+        - "https://github.com/canonical/gopkg-charmed/pull/77"
+      related_doc: "https://github.com/canonical/gopkg-charmed/blob/main/docs/how-to/integrate-with-cos.rst"
+      related_issue:
+    visibility: public
+    highlight: true

@@ -1,0 +1,9 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# Build-time paas-charm settings, packaged into the charm. These are the Go
+# framework defaults, set explicitly so they have one inspectable source.
+# Changing them needs a repack and `juju refresh`, not `juju config`.
+port: 8080
+metrics-port: 8080
+metrics-path: /metrics

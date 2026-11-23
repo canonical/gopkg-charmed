@@ -9,16 +9,39 @@ image reference, and in CI charm-ci does both. charm-ci's pytest plugin reads
 the file and provides the ``charm_path`` and ``resource_images`` fixtures.
 
 Tests use Jubilant: ``gopkg_app`` deploys the charm into pytest-jubilant's
-``juju`` model.
+``juju`` model. Every test module first logs the model's Juju version, which
+CI checks against the major version the job's spread backend expects.
 """
 
+import logging
+import os
 import platform
 
 import jubilant
 import pytest
 
+logger = logging.getLogger(__name__)
+
 APP_NAME = "gopkg-k8s"
 _ARCH_MAP = {"aarch64": "arm64", "x86_64": "amd64"}
+
+
+@pytest.fixture(scope="module", name="check_juju_version", autouse=True)
+def check_juju_version_fixture(juju: jubilant.Juju) -> None:
+    """Log the model's Juju version and fail if it is not the major version CI expects.
+
+    CI runs the suite on Juju 3 and on Juju 4. Each spread backend sets
+    EXPECTED_JUJU_MAJOR next to, not from, the concierge file that installs
+    Juju, so a job provisioned from the wrong file fails here instead of
+    passing under the other Juju. Local runs without the variable only log.
+    """
+    version = juju.status().model.version
+    expected_major = os.environ.get("EXPECTED_JUJU_MAJOR", "")
+    logger.info("Juju model version: %s (expected major: %s)", version, expected_major or "any")
+    if expected_major:
+        assert version.split(".")[0] == expected_major, (
+            f"this job expects Juju {expected_major}, but the model runs Juju {version}"
+        )
 
 
 @pytest.fixture(scope="module", name="gopkg_app")

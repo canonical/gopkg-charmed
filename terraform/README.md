@@ -29,7 +29,7 @@ instead.
 |---|---|---|---|
 | `app_name` | `string` | `"gopkg"` | Name of the application in the Juju model. |
 | `model_uuid` | `string` | *(required)* | UUID of an existing Juju model. This module does not create the model. |
-| `base` | `string` | `"ubuntu@24.04"` | Operating system base for the charm. |
+| `base` | `string` | `"ubuntu@26.04"` | Operating system base for the charm. |
 | `channel` | `string` | `"latest/edge"` | Charmhub channel to deploy from. |
 | `revision` | `number` | `null` | Pin a specific charm revision; `null` uses the latest in `channel`. |
 | `config` | `map(string)` | `{}` | Charm config, passed straight through. See [Config options](#config-options). |
@@ -50,11 +50,12 @@ https://charmhub.io/gopkg-k8s/configurations once published):
 | Key | Purpose |
 |---|---|
 | `hostname` | Hostname rendered into import paths and links, injected as `APP_HOSTNAME`. Must match the host clients actually use, or go-import metadata points at the wrong place. |
-| `app-port` | Port the application listens on. |
-| `metrics-path` | Path where Prometheus metrics are scraped. |
-| `metrics-port` | Port where Prometheus metrics are scraped. |
-| `app-secret-key` | Shared secret for sessions/CSRF. Prefer `app-secret-key-id`. |
-| `app-secret-key-id` | Juju user secret ID holding the application secret key. |
+| `app-secret-key` | Juju user secret (`secret:<id>`) holding the application secret key. If unset, the charm generates one. |
+
+The application port and the metrics port and path are no longer charm
+options: since paas-charm 2.0 they are set at build time in
+`app/charm/paas-config.yaml` to the Go framework defaults (`8080`, `8080`,
+`/metrics`), and changing them needs a repack.
 
 ## Outputs
 

@@ -5,14 +5,51 @@
 name = "gopkg-charm"
 version = "0.1.0"
 description = "Juju charm for the gopkg.in versioned Go import-path service"
-requires-python = ">=3.12"
-# Runtime dependencies of the charm code. Keep requirements.txt in step with
-# this list: the go-framework extension builds the charm with Charmcraft's
-# charm plugin, which installs requirements.txt, while uv.lock records the
-# exact versions this list resolves to.
+requires-python = ">=3.14"
+# Runtime dependencies of the charm code. The go-framework extension builds
+# the charm with Charmcraft's uv plugin, which installs these from uv.lock.
 dependencies = [
-    "ops~=3.8",
-    "paas-charm>=1.12.2,<2",
+    "paas-charm>=2.0b1,<3",
+]
+
+[dependency-groups]
+# PYDEPS from libraries that the charm uses; the uv plugin installs only this
+# group into the charm.
+charmlibs-pydeps = []
+# paas-charm is pinned once here and pulled into the groups that import the
+# charm code.
+charm = ["paas-charm>=2.0b1,<3"]
+format = ["ruff"]
+lint = [
+    "ruff",
+    "codespell",
+    "mypy",
+    "ops[testing]",
+    {include-group = "charm"},
+]
+unit = [
+    "pytest",
+    "coverage[toml]",
+    "ops[testing]",
+    {include-group = "charm"},
+]
+coverage-report = [
+    "pytest",
+    "coverage[toml]",
+    {include-group = "charm"},
+]
+static = [
+    "bandit[toml]",
+    "pyright",
+    {include-group = "charm"},
+]
+integration = [
+    "pytest",
+    "jubilant>=1.8,<2",
+    "pytest-jubilant>=2.0.1,<3",
+    "requests",
+    "opcli @ git+https://github.com/canonical/charm-ci.git@v1.0.1",
+    {include-group = "charm"},
 ]
 
 [tool.uv]
@@ -45,6 +82,10 @@ filterwarnings = [
     # paas_charm.charm_state calls pydantic's deprecated BaseModel.dict();
     # the fix belongs upstream in canonical/paas-charm.
     "ignore:The `dict` method is deprecated; use `model_dump` instead:DeprecationWarning",
+    # dpcharmlibs.interfaces (imported by paas_charm.valkey) attaches Field()
+    # metadata inside Annotated unions; the fix belongs upstream in
+    # canonical/data-platform-libs.
+    "ignore::pydantic.warnings.UnsupportedFieldAttributeWarning",
 ]
 
 # Linting tools configuration
@@ -80,7 +121,7 @@ lint.per-file-ignores = {"tests/*" = ["D100","D101","D102","D103","D104","D212",
 max-complexity = 10
 
 [tool.codespell]
-skip = "build,lib,venv,icon.svg,.tox,.git,.mypy_cache,.ruff_cache,.coverage"
+skip = "build,lib,venv,icon.svg,.tox,.git,.mypy_cache,.ruff_cache,.coverage,uv.lock"
 
 [tool.pyright]
 include = ["src/**.py"]

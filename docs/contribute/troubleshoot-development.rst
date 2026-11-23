@@ -54,7 +54,7 @@ Rock build fails on a Python file from another OS
 -------------------------------------------------
 
 **Symptom:** ``rockcraft pack`` reports ``PermissionError`` for a path such as
-``app/charm/.tox/unit/bin/python3.12``.
+``app/charm/.tox/unit/bin/python3.14``.
 
 **Cause:** Python environment files created on another operating system entered
 the rock build context through a mounted checkout.

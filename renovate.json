@@ -6,7 +6,7 @@
       "defaultRegistryUrlTemplate": "https://api.charmhub.io/v2/charms/info/{{packageName}}?fields=channel-map",
       "format": "json",
       "transformTemplates": [
-        "{\"releases\": [{\"version\": $string($$.(`channel-map`[channel.risk = 'edge' and channel.track = 'latest' and channel.base.architecture = 'amd64' and channel.base.channel = '24.04'].revision.revision))}]}"
+        "{\"releases\": [{\"version\": $string($$.(`channel-map`[channel.risk = 'edge' and channel.track = 'latest' and channel.base.architecture = 'amd64' and channel.base.channel = '26.04'].revision.revision))}]}"
       ]
     }
   },
@@ -79,10 +79,10 @@
       "enabled": false
     },
     {
-      "description": "CI Python must match app/charm/tox.ini basepython, i.e. the Python shipped with the charmcraft.yaml base (ubuntu@24.04 -> 3.12). Bump together with the charm base.",
+      "description": "CI Python must match app/charm/tox.ini basepython, i.e. the Python shipped with the charmcraft.yaml base (ubuntu@26.04 -> 3.14). Bump together with the charm base.",
       "matchManagers": ["github-actions"],
       "matchDepNames": ["python"],
-      "allowedVersions": "<3.13"
+      "allowedVersions": "<3.15"
     },
     {
       "groupName": "charm-ci",

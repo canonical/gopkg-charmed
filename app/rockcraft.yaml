@@ -2,8 +2,8 @@
 # See LICENSE file for licensing details.
 name: gopkg
 base: bare
-build-base: ubuntu@24.04
-version: '0.1'
+build-base: ubuntu@26.04
+version: '0.2'
 summary: Stable APIs for the Go language
 description: The gopkg.in versioned-import-path redirector.
 license: BSD-2-Clause
@@ -15,7 +15,7 @@ platforms:
 extensions:
   - go-framework
 parts:
-  go-framework/install-app:
+  go-framework.install-app:
     build-environment:
       - CGO_ENABLED: "0"
     # `go install` names the binary after the last element of the module

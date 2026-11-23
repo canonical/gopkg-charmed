@@ -77,6 +77,30 @@ documentation checks (build, spelling, style, inclusive language, and links),
 and it detects documentation URLs removed by a pull request to ``main``, so
 release-path links cannot break by accident.
 
+Rock version in the documentation
+---------------------------------
+
+Workflow: ``.github/workflows/check_docs_rock_version.yaml``
+
+``rockcraft pack`` names the rock after the ``version`` in
+``app/rockcraft.yaml``, and the pages that build from source spell that file
+name out, along with the image tags they push the rock under. No other
+workflow runs those commands, so a version change that misses a page would go
+unnoticed until a reader copies the command.
+
+This workflow runs ``tests/docs/check_rock_version.py`` on every pull
+request. The script reads every rock file name, image tag, and registry tag
+check in the repository's Markdown and RST files, and fails if one names a
+version other than the one in ``app/rockcraft.yaml``, listing each line to
+update. A tag may add a suffix after a hyphen, such as ``<version>-1``.
+Release notes are not checked, because they describe earlier versions.
+
+To run the check locally, from the repository root:
+
+.. code-block:: bash
+
+   python3 tests/docs/check_rock_version.py
+
 Documentation tests
 -------------------
 

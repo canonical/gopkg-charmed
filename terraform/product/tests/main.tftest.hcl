@@ -9,8 +9,12 @@ run "setup_tests" {
   }
 }
 
+# Apply, not plan: only a deployment asks Charmhub for the charms, so a plan
+# passes even when no revision exists for a default channel and base. Every
+# charm setting stays at the module defaults, so this deploys what a caller
+# gets without overriding them.
 run "basic_deploy" {
-  command = plan
+  command = apply
 
   variables {
     model_uuid        = run.setup_tests.model_uuid
@@ -29,6 +33,7 @@ run "basic_deploy" {
   }
 }
 
+# A plan is enough here: the run only checks that the integrator is dropped.
 run "no_ingress" {
   command = plan
 

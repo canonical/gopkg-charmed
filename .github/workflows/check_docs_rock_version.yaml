@@ -1,0 +1,28 @@
+# Copyright 2026 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+# `rockcraft pack` names the rock after the version in app/rockcraft.yaml, and
+# the build-from-source pages spell that file name and the image tags out. No
+# other job runs those commands, so this fast check catches a version change
+# that misses a page. It runs on every pull request, with no paths filter,
+# because a change to either side can break the match.
+name: Check docs rock version
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check-docs-rock-version:
+    name: Rock file names and tags in the docs match app/rockcraft.yaml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compare the docs with app/rockcraft.yaml
+        run: python3 tests/docs/check_rock_version.py

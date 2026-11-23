@@ -68,7 +68,7 @@ an LXD instance and fetches packages from the Ubuntu archive, so the first
 build takes several minutes; if it fails with a network error from the
 archive, run the command again.
 
-The pack command produces ``gopkg_0.1_<architecture>.rock`` in ``app/``. Kubernetes pulls
+The pack command produces ``gopkg_0.2_<architecture>.rock`` in ``app/``. Kubernetes pulls
 images from a registry, not from files, so push the rock to the local registry
 that the MicroK8s ``registry`` add-on runs on port 32000, and check that the
 registry lists the tag:
@@ -78,10 +78,10 @@ registry lists the tag:
    microk8s kubectl rollout status deployment/registry \
      -n container-registry --timeout=15m
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
-     oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
-     docker://localhost:32000/gopkg:0.1
+     oci-archive:gopkg_0.2_$(dpkg --print-architecture).rock \
+     docker://localhost:32000/gopkg:0.2
    curl --fail --silent --show-error \
-     http://localhost:32000/v2/gopkg/tags/list | grep -F '"0.1"'
+     http://localhost:32000/v2/gopkg/tags/list | grep -F '"0.2"'
 
 ``rockcraft.skopeo`` is the copy of ``skopeo`` inside
 the Rockcraft snap; its flags allow the plain-HTTP, unauthenticated local
@@ -104,7 +104,7 @@ machine's architecture, which the rock you built requires:
    juju add-model gopkg-k8s
    juju set-model-constraints arch=$(dpkg --print-architecture)
    juju deploy ./gopkg-k8s_$(dpkg --print-architecture).charm gopkg-k8s \
-     --resource app-image=localhost:32000/gopkg:0.1
+     --resource app-image=localhost:32000/gopkg:0.2
 
 From here, follow the tutorial starting at :ref:`deploy-and-verify-on-kubernetes`:
 deploy and integrate the ingress integrator, set both hostname settings,

@@ -263,12 +263,12 @@ attach that tag as the resource, which replaces the pod:
 .. code-block:: bash
 
    cd ~/gopkg-charm/app
-   rm -f gopkg_0.1_$(dpkg --print-architecture).rock
+   rm -f gopkg_0.2_$(dpkg --print-architecture).rock
    ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true rockcraft pack
    rockcraft.skopeo copy --insecure-policy --dest-tls-verify=false --dest-no-creds \
-     oci-archive:gopkg_0.1_$(dpkg --print-architecture).rock \
-     docker://localhost:32000/gopkg:0.1-1
-   juju attach-resource gopkg-k8s app-image=localhost:32000/gopkg:0.1-1
+     oci-archive:gopkg_0.2_$(dpkg --print-architecture).rock \
+     docker://localhost:32000/gopkg:0.2-1
+   juju attach-resource gopkg-k8s app-image=localhost:32000/gopkg:0.2-1
    microk8s kubectl -n gopkg-k8s rollout status statefulset/gopkg-k8s --timeout=15m
 
 The application stays ``active`` while its pod is replaced, so the last

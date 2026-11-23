@@ -18,7 +18,9 @@ Revisions are pinned one layer up, in a deployment module (see
   application name when bundled.
 - **versions.tf** - Pins the required Terraform and `juju` provider versions.
 - **tests/** - `terraform test` suite. Requires a real Juju controller and
-  Kubernetes cloud.
+  Kubernetes cloud. It deploys gopkg and the ingress integrator with the
+  module's defaults, so it fails when Charmhub has no revision for a default
+  channel and base.
 
 ## Inputs
 

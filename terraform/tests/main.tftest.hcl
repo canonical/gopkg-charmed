@@ -9,14 +9,16 @@ run "setup_tests" {
   }
 }
 
+# Apply, not plan: only a deployment asks Charmhub for the charm, so a plan
+# passes even when no revision exists for the default channel and base. The
+# charm's channel, revision and base stay at the module defaults, so this
+# deploys what a caller gets without overriding them.
 run "basic_deploy" {
-  command = plan
+  command = apply
 
   variables {
     app_name   = "gopkg"
     model_uuid = run.setup_tests.model_uuid
-    channel    = "latest/edge"
-    revision   = null
   }
 
   assert {

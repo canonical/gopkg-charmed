@@ -22,6 +22,9 @@ instead.
 - **tests/** - `terraform test` suite (`main.tftest.hcl` + a `setup/` helper
   module that creates an ephemeral model). Requires a real Juju controller and
   Kubernetes cloud; intended to run in CI, not locally without infrastructure.
+  The suite deploys the charm with the module's default channel, revision and
+  base, so it fails when Charmhub has no revision for them: change a default
+  only once a matching revision is published.
 
 ## Inputs
 
